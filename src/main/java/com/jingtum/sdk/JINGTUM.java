@@ -21,4 +21,5 @@ package com.jingtum.sdk;
  */
 public class JINGTUM {
 	public static final String SWT = "SWT";
+	
 }

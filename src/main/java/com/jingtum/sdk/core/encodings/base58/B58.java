@@ -24,7 +24,7 @@ package com.jingtum.sdk.core.encodings.base58;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
-import com.jingtum.sdk.core.utils.HashUtils;
+import com.jingtum.sdk.utils.HashUtils;
 
 
 public class B58 {

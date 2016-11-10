@@ -15,10 +15,6 @@
  */
 package com.jingtum.sdk;
 
-/**
- * @author Administrator
- *
- */
 public class ERROR {
 	public static final String INVALID_JINGTUM_ADDRESS = "Invalid Jingtum address!";
 	public static final String INVALID_ORDER_NUMBER = "Order number cannot be empty!";
@@ -47,7 +43,7 @@ public class ERROR {
 	public static final String EMPTY_SECRET = "Custom secret is not set!";
 	public static final String UNRECOGNIZED_HTTP_METHOD = "Unrecognized HTTP method %s. ";
 	public static final String SERVER_ERROR = "IOException during API request to Jingtum (%s): %s "
-            					+ "Please check your internet connection and try again. If this problem persists,"
-            					+ "you should check Jingtum's service status at https://api.jingtum.com,"
-            					+ " or let us know at support@jingtum.com.";
+			+ "Please check your internet connection and try again. If this problem persists,"
+			+ "you should check Jingtum's service status at https://api.jingtum.com,"
+			+ " or let us know at support@jingtum.com.";
 }

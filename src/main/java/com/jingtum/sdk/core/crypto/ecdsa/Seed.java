@@ -22,10 +22,10 @@
 package com.jingtum.sdk.core.crypto.ecdsa;
 
 import com.jingtum.sdk.ERROR;
-import com.jingtum.sdk.core.utils.HashUtils;
-import com.jingtum.sdk.core.utils.Sha512;
-import com.jingtum.sdk.core.utils.Utils;
 import com.jingtum.sdk.exception.InvalidParameterException;
+import com.jingtum.sdk.utils.HashUtils;
+import com.jingtum.sdk.utils.Sha512;
+import com.jingtum.sdk.utils.Utils;
 
 import static com.jingtum.sdk.core.config.Config.getB58IdentiferCodecs;
 

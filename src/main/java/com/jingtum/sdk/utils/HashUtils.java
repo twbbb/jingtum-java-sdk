@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package com.jingtum.sdk.core.utils;
+package com.jingtum.sdk.utils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

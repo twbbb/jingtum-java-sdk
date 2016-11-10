@@ -23,7 +23,7 @@ package com.jingtum.sdk.core.crypto.ecdsa;
 
 import com.jingtum.sdk.core.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import com.jingtum.sdk.core.bouncycastle.crypto.signers.ECDSASigner;
-import com.jingtum.sdk.core.utils.Utils;
+import com.jingtum.sdk.utils.Utils;
 
 import java.math.BigInteger;
 

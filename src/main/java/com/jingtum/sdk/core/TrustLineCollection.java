@@ -19,16 +19,11 @@
  * under the License.
  */
 
-package com.jingtum.sdk.core.utils;
-import java.math.BigInteger;
+package com.jingtum.sdk.core;
 
-import com.jingtum.sdk.core.encodings.common.B16;
-
-public class Utils {
-    public static String bigHex(BigInteger bn) {
-        return B16.toStringTrimmed(bn.toByteArray());
-    }
-    public static BigInteger uBigInt(byte[] bytes) {
-        return new BigInteger(1, bytes);
-    }
+/**
+ * @author jzhao
+ * @version 1.0 Trust line collection class
+ */
+public class TrustLineCollection extends JingtumCollection<TrustLine> {
 }
