@@ -1,0 +1,8 @@
+webSocketServer: wss://tapi.jingtum.com:5443
+apiServer: https://tapi.jingtum.com
+activateAmount: 25
+defaultTrustLimit: 100000000
+paymentPathRate: 1.01
+prefix: prefix
+apiVersion: v2
+ttServer: http://www.tongall.com
