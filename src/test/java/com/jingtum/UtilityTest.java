@@ -35,25 +35,28 @@ public class UtilityTest {
 	/**
 	* 
 	* GetOrderBook 获得货币对的挂单列表
-	* 
+	* Changed the Counterparty used. 
 	*/
 	@Test
 	public void testGetOrderBook() throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, FailedException {
 		//Wallet wallet = new Wallet("js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa","snqFcHzRe22JTM8j7iZVpQYzxEEbW"); 
 		Amount base = new Amount(); //基准货币（currency+counterparty）
 		base.setCurrency(Jingtum.getCurrencyCNY());
-		base.setCounterparty("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
+		base.setCounterparty("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT");
+		//base.setCounterparty("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
 		
 		Amount counter = new Amount(); //目标货币（currency+counterparty）
 		counter.setCurrency(Jingtum.getCurrencyUSD());
-		counter.setCounterparty("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
+		//counter.setCounterparty("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
+		counter.setCounterparty("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT");
 		
 		//正常情况 
 		OrderBookResult oBR = JingtumAPIAndWSServer.getTestInstance().getOrderBook(base, counter);
 		//判断获取挂单列表是否成功
 		assertEquals(true,oBR.getSuccess()); //请求结果
 		assertEquals(true,oBR.getValidated()); //交易服务器状态
-		assertEquals("CNY+jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS/USD+jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",oBR.getOrderbook()); //挂单货币对
+		assertEquals("CNY+jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT/USD+jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT",oBR.getOrderbook()); //挂单货币对
+//		assertEquals("CNY+jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS/USD+jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",oBR.getOrderbook()); //挂单货币对
 		
 		//获取Asks
 		OrderBookCollection asks = oBR.getAsks();
