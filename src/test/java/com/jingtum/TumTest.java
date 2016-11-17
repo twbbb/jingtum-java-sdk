@@ -15,11 +15,11 @@ import com.jingtum.net.JingtumFingate;
 
 //http://developer.jingtum.com/tongtong-start.html
 
-public class TongTongTest {
+public class TumTest {
 	public static void main(String[] args) throws AuthenticationException, InvalidRequestException, APIConnectionException, ChannelException, APIException, FailedException, InvalidParameterException{
 		JingtumFingate.getTestInstance().setFinGate("js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa", "snqFcHzRe22JTM8j7iZVpQYzxEEbW"); //FinGate地址密码
-		JingtumFingate.getTestInstance().setCustom("JT00000027");  //设置用户编号
-		JingtumFingate.getTestInstance().setCustomSecret("353631eaa0ac5d564f51074e3890a210d745958b732d6d055f83919f2b608c0c"); //用户密码
+		JingtumFingate.getTestInstance().setCustom("00000003");  //设置用户编号
+		JingtumFingate.getTestInstance().setCustomSecret("feef59f67303bf7d0b8dcbb1cc99e802b937ff87"); //用户密码
 		String orderNumber = JingtumAPIAndWSServer.getTestInstance().getNextUUID(); //获得唯一订单号
 		
 		System.out.println("================issue custom tum================");
@@ -28,7 +28,7 @@ public class TongTongTest {
 		System.out.println(wallet.getSecret());
 		JingtumFingate.getTestInstance().activateWallet(wallet.getAddress());
 		
-		boolean isSuccessful = JingtumFingate.getTestInstance().issueCustomTum(orderNumber, "8300000027000020160415201704150120000003", 5, wallet.getAddress());
+		boolean isSuccessful = JingtumFingate.getTestInstance().issueCustomTum(orderNumber, "8100000003000020160022201800220020000001", 5, wallet.getAddress());
 		System.out.println(isSuccessful);
 
 		
@@ -59,7 +59,9 @@ public class TongTongTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		IssueRecord ir = JingtumFingate.getTestInstance().queryIssue(orderNumber);
+                //Another test order number is
+		//IssueRecord ir = JingtumFingate.getTestInstance().queryIssue("prefix1479331641000001");
+                IssueRecord ir = JingtumFingate.getTestInstance().queryIssue(orderNumber);
 		System.out.println(ir.getAccount());
 		System.out.println(ir.getAmount());
 		System.out.println(ir.getCurrency());

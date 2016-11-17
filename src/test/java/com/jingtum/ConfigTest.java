@@ -41,10 +41,10 @@ public class ConfigTest {
         assertEquals("wss://tapi.jingtum.com:5443", config.getWebSocketServer());
         assertEquals("https://tapi.jingtum.com", config.getApiServer());
         assertEquals((Integer) 25, config.getActivateAmount());
-        assertEquals("v2", config.getApiVersion());
+        assertEquals("v1", config.getApiVersion());
         assertEquals((Integer) 100000000, config.getDefaultTrustLimit());
         assertEquals(1.01, config.getPaymentPathRate(), 0.0000001);
         assertEquals("prefix", config.getPrefix());
-        assertEquals("http://test.tongall.com", config.getTtServer());
+        assertEquals("http://tfingate.jingtum.com", config.getTtServer());
     }
 }

@@ -257,31 +257,38 @@ public class JingtumFingate extends BaseWallet {
         sb.append(amountString);
         sb.append(account);
         String hmac = Utility.buildHmac(sb.toString(), this.customSecret);
+        
+//build the paramers in JSON format
+//var postData = {
+//      cmd: 'IssueTum', // 业务类型，固定值“IssueTum” 签名顺序1
+//      custom: '00000002', // 商户编号 签名顺序2
+//      order: '01', // 发行订单号 签名顺序3
+//      currency: '8100000002000020160013000000000020000001',  // 用户通编码 签名顺序4
+//      amount: '1000.00', // 发行量，保留两位小数 签名顺序5
+//      account: 'jnRLtkRNKEcfi2f6cyvJfUjXHWJ5CSLp3W', // 接收用户通的用户地址签名顺序6
+//      hmac: "8f99ffe04f1a953d5f439f04ccc83fac"  // 签名数据
+//      }
 
         StringBuffer param = new StringBuffer();
-        param.append("p0_cmd=");
+        param.append("cmd:");
         param.append(TongTong.CmdType.IssueCurrency);
-        param.append("&");
-        param.append("p1_custom=");
+        param.append(",custom:");
         param.append(this.custom);
-        param.append("&");
-        param.append("p2_order=");
+        param.append(",order:");
         param.append(orderNumber);
-        param.append("&");
-        param.append("p3_currency=");
+        param.append(",currency:");
         param.append(currency);
-        param.append("&");
-        param.append("p4_amount=");
+        param.append(",amount:");
         param.append(amountString);
-        param.append("&");
-        param.append("p5_account=");
+        param.append(",account:");
         param.append(account);
-        param.append("&");
-        param.append("hmac=");
+        param.append(",hmac:");
         param.append(hmac);
 
         try {
-            tt = APIProxy.request(APIProxy.RequestMethod.POST_FORM, tt_server + ISSUE_CURRENCY, param.toString(), TongTong.class);
+            //Note the tt_server value is fixed at this moment
+            //https://fingate.jingtum.com/v1/business/node
+            tt = APIProxy.request(APIProxy.RequestMethod.POST_FORM, tt_server, param.toString(), TongTong.class);
         } catch (JingtumException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -321,20 +328,17 @@ public class JingtumFingate extends BaseWallet {
         String hmac = Utility.buildHmac(sb.toString(), this.customSecret);
 
         StringBuffer param = new StringBuffer();
-        param.append("p0_cmd=");
+        param.append("cmd:");
         param.append(TongTong.CmdType.QueryIssue);
-        param.append("&");
-        param.append("p1_custom=");
+        param.append(",custom:");
         param.append(this.custom);
-        param.append("&");
-        param.append("p2_order=");
+        param.append(",order:");
         param.append(order);
-        param.append("&");
-        param.append("hmac=");
+        param.append(",hmac:");
         param.append(hmac);
 
         try {
-            return APIProxy.request(APIProxy.RequestMethod.GET, tt_server + QUERY_ISSUE, param.toString(), IssueRecord.class);
+            return APIProxy.request(APIProxy.RequestMethod.GET, tt_server, param.toString(), IssueRecord.class);
         } catch (AuthenticationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -378,30 +382,26 @@ public class JingtumFingate extends BaseWallet {
         long unix = System.currentTimeMillis() / 1000L;
 
         StringBuffer sb = new StringBuffer();
-        sb.append(TongTong.CmdType.CurrencyStatus);
+        sb.append(TongTong.CmdType.QueryTum);
         sb.append(this.custom);
         sb.append(currency);
         sb.append(unix);
         String hmac = Utility.buildHmac(sb.toString(), this.customSecret);
 
         StringBuffer param = new StringBuffer();
-        param.append("p0_cmd=");
-        param.append(TongTong.CmdType.CurrencyStatus);
-        param.append("&");
-        param.append("p1_custom=");
+        param.append("cmd:");
+        param.append(TongTong.CmdType.QueryTum);
+        param.append(",custom:");
         param.append(this.custom);
-        param.append("&");
-        param.append("p2_currency=");
+        param.append(",currency:");
         param.append(currency);
-        param.append("&");
-        param.append("p3_date=");
+        param.append(",date:");
         param.append(unix);
-        param.append("&");
-        param.append("hmac=");
+        param.append(",hmac:");
         param.append(hmac);
 
         try {
-            return APIProxy.request(APIProxy.RequestMethod.GET, tt_server + CURRENCY_STATUS, param.toString(), TumInfo.class);
+            return APIProxy.request(APIProxy.RequestMethod.GET, tt_server, param.toString(), TumInfo.class);
         } catch (AuthenticationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
