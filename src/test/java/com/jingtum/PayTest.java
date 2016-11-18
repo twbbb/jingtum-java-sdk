@@ -456,12 +456,17 @@ public class PayTest {
 	*/
 	@Test
 	public void testGetPaymentPath() throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException, ChannelException, APIException, FailedException {
-		Wallet wallet = new Wallet("js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa","snqFcHzRe22JTM8j7iZVpQYzxEEbW"); //如进行支付，密钥为必须参数
+		//Wallet wallet = new Wallet("js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa","snqFcHzRe22JTM8j7iZVpQYzxEEbW"); //如进行支付，密钥为必须参数
+		Wallet wallet = new Wallet("jfCiWtSt4juFbS3NaXvYV9xNYxakm5yP9S","snwjtucx9vEP7hCazriMbVz8hFiK9"); //如进行支付，密钥为必须参数
 		Amount jtc = new Amount(); //构建支付的货币
-		jtc.setValue(100); //金额
-		jtc.setCounterparty("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
-		jtc.setCurrency(Jingtum.getCurrencyUSD());
-		PaymentCollection pc = wallet.getPathList("jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh", jtc);
+		jtc.setValue(1.0); //金额
+		jtc.setCounterparty("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT");
+		jtc.setCurrency(Jingtum.getCurrencyCNY());
+		//jtc.setValue(100); //金额
+		//jtc.setCounterparty("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
+		//jtc.setCurrency(Jingtum.getCurrencyUSD());
+		PaymentCollection pc = wallet.getPathList("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT", jtc);
+		//PaymentCollection pc = wallet.getPathList("jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh", jtc);
 		Payment pay = null;
 		Iterator<Payment> it_2 = pc.getData().iterator();
 		while(it_2.hasNext())
