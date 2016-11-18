@@ -45,6 +45,6 @@ public class ConfigTest {
         assertEquals((Integer) 100000000, config.getDefaultTrustLimit());
         assertEquals(1.01, config.getPaymentPathRate(), 0.0000001);
         assertEquals("prefix", config.getPrefix());
-        assertEquals("http://tfingate.jingtum.com", config.getTtServer());
+        assertEquals("http://tfingate.jingtum.com/v1/business/node", config.getTtServer());
     }
 }
