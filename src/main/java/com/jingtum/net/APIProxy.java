@@ -230,7 +230,6 @@ public class APIProxy extends JingtumObject {
             throws APIConnectionException {
         HttpResponse<JsonNode> jsonResponse = null;
         Unirest.setTimeouts(30 * 1000, 80 * 1000);
-        System.out.println(url);
         try {
             switch (method) {
                 case GET:
@@ -279,6 +278,9 @@ public class APIProxy extends JingtumObject {
 
         JingtumResponse response;
 
+        System.out.println(method);
+        System.out.println("API proxy URL: "+url);
+        System.out.println("PARAMS: "+params);
         try {
             response = makeRequest(method, url, params);
         } catch (ClassCastException ce) {

@@ -1581,6 +1581,7 @@ public class Wallet extends BaseWallet {
     	sb.append("+");
     	sb.append(amount.getCounterparty());
     	sb.append(Utility.buildSignString(this.getAddress(), this.getSecret()));
+
     	return APIProxy.request(
     	        APIProxy.RequestMethod.GET,
                 APIProxy.formatURL(

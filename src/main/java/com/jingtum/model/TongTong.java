@@ -36,7 +36,7 @@ public class TongTong extends JingtumObject{
 	private String hmac;
 	
 	public enum CmdType {
-        IssueCurrency, QueryIssue,QueryTum
+        IssueTum, QueryIssue,QueryTum
     }
 	
 	/**
