@@ -33,6 +33,7 @@ import com.jingtum.util.Utility;
 
 import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 
 /**
  * Created by yifan on 11/15/16.
@@ -93,7 +94,7 @@ public class JingtumFingate extends BaseWallet {
             String configFile = isTest ? DEV_PROPERTY_FILE : PROPERTY_FILE;
             Config FingateConfig = Config.loadConfig(configFile);
             this.activateAmount = FingateConfig.getActivateAmount();
-            this.tt_server = FingateConfig.getApiServer();
+            this.tt_server = FingateConfig.getTtServer();
             this.trustLimit = FingateConfig.getDefaultTrustLimit();
             this.pathRate = FingateConfig.getPaymentPathRate();
         } catch (FileNotFoundException e) {
@@ -242,6 +243,7 @@ public class JingtumFingate extends BaseWallet {
         if (Utility.isEmpty(orderNumber)) {
             try {
                 orderNumber = JingtumAPIAndWSServer.getInstance().getNextUUID();
+                System.out.println(orderNumber);
             } catch (JingtumException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -249,15 +251,16 @@ public class JingtumFingate extends BaseWallet {
             }
         }
 
-        StringBuffer sb = new StringBuffer();
-        sb.append(TongTong.CmdType.IssueCurrency);
+        //build the HMAC signature using input info
+       StringBuffer sb = new StringBuffer();
+        sb.append(TongTong.CmdType.IssueTum);
         sb.append(this.custom);
         sb.append(orderNumber);
         sb.append(currency);
         sb.append(amountString);
         sb.append(account);
         String hmac = Utility.buildHmac(sb.toString(), this.customSecret);
-        
+        //System.out.println(sb);
 //build the paramers in JSON format
 //var postData = {
 //      cmd: 'IssueTum', // 业务类型，固定值“IssueTum” 签名顺序1
@@ -269,9 +272,18 @@ public class JingtumFingate extends BaseWallet {
 //      hmac: "8f99ffe04f1a953d5f439f04ccc83fac"  // 签名数据
 //      }
 
-        StringBuffer param = new StringBuffer();
+        HashMap<String, Object> content = new HashMap<String, Object>();
+        content.put("cmd", TongTong.CmdType.IssueTum);
+        content.put("custom", this.custom);
+        content.put("order", orderNumber);
+        content.put("currency", currency);
+        content.put("amount", amountString);
+        content.put("account", account);
+        content.put("hmac", hmac);
+
+        /*StringBuffer param = new StringBuffer();
         param.append("cmd:");
-        param.append(TongTong.CmdType.IssueCurrency);
+        param.append(TongTong.CmdType.IssueTum);
         param.append(",custom:");
         param.append(this.custom);
         param.append(",order:");
@@ -283,12 +295,17 @@ public class JingtumFingate extends BaseWallet {
         param.append(",account:");
         param.append(account);
         param.append(",hmac:");
-        param.append(hmac);
+        param.append(hmac);*/
+        String param = APIProxy.GSON.toJson(content);
 
+        System.out.println(param);
+        System.out.println("send to: "+tt_server);
         try {
             //Note the tt_server value is fixed at this moment
             //https://fingate.jingtum.com/v1/business/node
-            tt = APIProxy.request(APIProxy.RequestMethod.POST_FORM, tt_server, param.toString(), TongTong.class);
+            //tt = APIProxy.request(APIProxy.RequestMethod.POST_FORM, tt_server, param.toString(), TongTong.class);
+            tt = APIProxy.request(APIProxy.RequestMethod.POST, tt_server, param, TongTong.class);
+
         } catch (JingtumException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -327,18 +344,15 @@ public class JingtumFingate extends BaseWallet {
         sb.append(order);
         String hmac = Utility.buildHmac(sb.toString(), this.customSecret);
 
-        StringBuffer param = new StringBuffer();
-        param.append("cmd:");
-        param.append(TongTong.CmdType.QueryIssue);
-        param.append(",custom:");
-        param.append(this.custom);
-        param.append(",order:");
-        param.append(order);
-        param.append(",hmac:");
-        param.append(hmac);
+        HashMap<String, Object> content = new HashMap<String, Object>();
+        content.put("cmd", TongTong.CmdType.QueryIssue);
+        content.put("custom", this.custom);
+        content.put("order", order);
+           content.put("hmac", hmac);
 
+        String param = APIProxy.GSON.toJson(content);
         try {
-            return APIProxy.request(APIProxy.RequestMethod.GET, tt_server, param.toString(), IssueRecord.class);
+            return APIProxy.request(APIProxy.RequestMethod.POST, tt_server, param, IssueRecord.class);
         } catch (AuthenticationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -388,20 +402,17 @@ public class JingtumFingate extends BaseWallet {
         sb.append(unix);
         String hmac = Utility.buildHmac(sb.toString(), this.customSecret);
 
-        StringBuffer param = new StringBuffer();
-        param.append("cmd:");
-        param.append(TongTong.CmdType.QueryTum);
-        param.append(",custom:");
-        param.append(this.custom);
-        param.append(",currency:");
-        param.append(currency);
-        param.append(",date:");
-        param.append(unix);
-        param.append(",hmac:");
-        param.append(hmac);
+        HashMap<String, Object> content = new HashMap<String, Object>();
+        content.put("cmd", TongTong.CmdType.QueryTum);
+        content.put("custom", this.custom);
+        content.put("currency", currency);
+        content.put("date", unix);
+        content.put("hmac", hmac);
+
+        String param = APIProxy.GSON.toJson(content);
 
         try {
-            return APIProxy.request(APIProxy.RequestMethod.GET, tt_server, param.toString(), TumInfo.class);
+            return APIProxy.request(APIProxy.RequestMethod.POST, tt_server, param, TumInfo.class);
         } catch (AuthenticationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

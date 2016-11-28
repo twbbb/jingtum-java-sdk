@@ -300,6 +300,8 @@ public class JingtumAPIAndWSServer extends BaseWallet {
         sb.append("+");
         sb.append(counter.getCounterparty());
 
+        System.out.println(sb);
+
         if (this.secret == null) {
             this.secret = Seed.generateSecret();
             this.address = Seed.computeAddress(secret);

@@ -1510,6 +1510,8 @@ public class Wallet extends BaseWallet {
     	sb.append("+");
     	sb.append(amount.getCounterparty());
     	sb.append(Utility.buildSignString(this.getAddress(), this.getSecret()));
+        System.out.println(sb);
+
     	return APIProxy.request(APIProxy.RequestMethod.GET, APIProxy.formatURL(Payment.class,this.getAddress(),sb.toString()), null, Wallet.class).getPaymentsCollection();
     }
 }
