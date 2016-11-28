@@ -288,7 +288,6 @@ public class Wallet extends BaseWallet {
     	    	sb.append(counterparty);
     		}
     	}
-    	Utility.buildSignString()
 		return APIProxy.request(
 		        APIProxy.RequestMethod.GET,
                 APIProxy.formatURL(

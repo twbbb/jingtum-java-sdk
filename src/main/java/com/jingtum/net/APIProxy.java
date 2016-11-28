@@ -140,10 +140,10 @@ public class APIProxy extends JingtumObject {
 
     public static String formatURL(Class<?> clazz, String address, String secret, String params, Boolean shouldAppendSignature) throws InvalidRequestException{
         if(shouldAppendSignature){
-            return
+            return "";
         }
         else{
-
+            return "";
         }
     }
 
