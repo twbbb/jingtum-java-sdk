@@ -93,7 +93,7 @@ public class JingtumFingate extends BaseWallet {
             String configFile = isTest ? DEV_PROPERTY_FILE : PROPERTY_FILE;
             Config FingateConfig = Config.loadConfig(configFile);
             this.activateAmount = FingateConfig.getActivateAmount();
-            this.tt_server = FingateConfig.getApiServer();
+            this.tt_server = FingateConfig.getTtServer();
             this.trustLimit = FingateConfig.getDefaultTrustLimit();
             this.pathRate = FingateConfig.getPaymentPathRate();
         } catch (FileNotFoundException e) {

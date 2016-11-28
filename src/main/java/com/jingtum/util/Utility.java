@@ -73,6 +73,7 @@ public class Utility {
 /*    	if(!Jingtum.isSignOn()){ // check if the functionality is turned on
     		return "?";
     	}*/
+
 		long timestamp = System.currentTimeMillis();
 		String messageString = Jingtum.getSignString() + address + timestamp;
     	IKeyPair keyPair = null;
@@ -110,7 +111,6 @@ public class Utility {
 		sb.append(timestamp);
 		return sb.toString();    	
     }    
-    
 
     /**
      * @param aValue

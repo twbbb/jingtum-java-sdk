@@ -102,7 +102,11 @@ public class APIProxy extends JingtumObject {
      * @return formed URL
      */
     public static String formatURL(String param) {
-        return String.format("%s/%s/%s", JingtumAPIAndWSServer.getInstance().getJingtumServerHost(), JingtumAPIAndWSServer.getInstance().getApiVersion(), param);
+        return String.format(
+                "%s/%s/%s",
+                JingtumAPIAndWSServer.getInstance().getJingtumServerHost(),
+                JingtumAPIAndWSServer.getInstance().getApiVersion(),
+                param);
     }
 
     /**
@@ -126,8 +130,36 @@ public class APIProxy extends JingtumObject {
      * @throws InvalidRequestException
      */
     public static String formatURL(Class<?> clazz, String address, String param) throws InvalidRequestException {
-        return String.format("%s/%s/%s%s", classURL(), address, className(clazz), param);
+        return String.format(
+                "%s/%s/%s%s",
+                classURL(),
+                address,
+                className(clazz),
+                param);
     }
+
+    public static String formatURL(Class<?> clazz, String address, String secret, String params, Boolean shouldAppendSignature) throws InvalidRequestException{
+        if(shouldAppendSignature){
+            return
+        }
+        else{
+
+        }
+    }
+
+    /**
+     * Should append signature string.
+     *
+     * @param requestMethod the request method
+     * @param apiVersion    the api version
+     * @return the string
+     */
+    public static Boolean shouldAppendSignature(String requestMethod, String apiVersion)
+    {
+
+        return false;
+    }
+
 
     /**
      * Error class
@@ -198,7 +230,7 @@ public class APIProxy extends JingtumObject {
             throws APIConnectionException {
         HttpResponse<JsonNode> jsonResponse = null;
         Unirest.setTimeouts(30 * 1000, 80 * 1000);
-
+        System.out.println(url);
         try {
             switch (method) {
                 case GET:

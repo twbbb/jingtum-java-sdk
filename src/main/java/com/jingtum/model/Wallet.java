@@ -243,9 +243,13 @@ public class Wallet extends BaseWallet {
     public BalanceCollection getBalance()
             throws AuthenticationException, InvalidRequestException,
             APIConnectionException, APIException, ChannelException, FailedException {
+
 		return APIProxy.request(
 				APIProxy.RequestMethod.GET,
-				APIProxy.formatURL(Balance.class, this.getAddress(), Utility.buildSignString(this.getAddress(), this.getSecret())),
+				APIProxy.formatURL(
+				        Balance.class,
+                        this.getAddress(),
+                        Utility.buildSignString(this.getAddress(), this.getSecret())),
 				null,
 				Wallet.class).getBalances();
     }
@@ -284,9 +288,13 @@ public class Wallet extends BaseWallet {
     	    	sb.append(counterparty);
     		}
     	}
+    	Utility.buildSignString()
 		return APIProxy.request(
 		        APIProxy.RequestMethod.GET,
-                APIProxy.formatURL(Balance.class, this.getAddress(), Utility.buildSignString(this.getAddress(), this.getSecret()) + sb.toString()),
+                APIProxy.formatURL(
+                        Balance.class,
+                        this.getAddress(),
+                        Utility.buildSignString(this.getAddress(), this.getSecret()) + sb.toString()),
                 null,
                 Wallet.class).getBalances();
     }
@@ -497,7 +505,14 @@ public class Wallet extends BaseWallet {
     	if(Utility.isEmpty(id)){
     		throw new InvalidParameterException(JingtumMessage.INVALID_ID,id,null);
     	}
-    	return APIProxy.request(APIProxy.RequestMethod.GET, APIProxy.formatURL(Payment.class,this.getAddress(),"/" + id + Utility.buildSignString(this.getAddress(), this.getSecret())), null, Payment.class);
+    	return APIProxy.request(
+    	        APIProxy.RequestMethod.GET,
+                APIProxy.formatURL(
+                        Payment.class,
+                        this.getAddress(),
+                        "/" + id + Utility.buildSignString(this.getAddress(), this.getSecret())),
+                null,
+                Payment.class);
     }  
     /**
      * @return PaymentCollection
@@ -588,7 +603,14 @@ public class Wallet extends BaseWallet {
        		param.append("page=");
        		param.append(page);
        	}
-    	return APIProxy.request(APIProxy.RequestMethod.GET, APIProxy.formatURL(Payment.class,this.getAddress(),Utility.buildSignString(this.getAddress(), this.getSecret()) + param.toString()), null, Wallet.class).getPaymentsCollection();
+    	return APIProxy.request(
+    	        APIProxy.RequestMethod.GET,
+                APIProxy.formatURL(
+                        Payment.class,
+                        this.getAddress(),
+                        Utility.buildSignString(this.getAddress(), this.getSecret()) + param.toString()),
+                null,
+                Wallet.class).getPaymentsCollection();
     }    
     /**
      * Post a new order request
@@ -755,7 +777,14 @@ public class Wallet extends BaseWallet {
     	}catch(InvalidRequestException e){
     		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
     	}
-    	return APIProxy.request(APIProxy.RequestMethod.GET, APIProxy.formatURL(Order.class,this.getAddress(),Utility.buildSignString(this.getAddress(), this.getSecret())), null, Wallet.class).getOrdersCollection();
+    	return APIProxy.request(
+    	        APIProxy.RequestMethod.GET,
+                APIProxy.formatURL(
+                        Order.class,
+                        this.getAddress(),
+                        Utility.buildSignString(this.getAddress(), this.getSecret())),
+                null,
+                Wallet.class).getOrdersCollection();
     }    
     /**
      * Get order by ID
@@ -781,7 +810,14 @@ public class Wallet extends BaseWallet {
     	if(Utility.isEmpty(id)){
     		throw new InvalidParameterException(JingtumMessage.INVALID_ID,id,null);
     	}
-    	return APIProxy.request(APIProxy.RequestMethod.GET, APIProxy.formatURL(Order.class,this.getAddress(),"/" + id + Utility.buildSignString(this.getAddress(), this.getSecret())), null, Order.class);
+    	return APIProxy.request(
+    			APIProxy.RequestMethod.GET,
+				APIProxy.formatURL(
+						Order.class,
+                        this.getAddress(),
+						"/" + id + Utility.buildSignString(this.getAddress(), this.getSecret())),
+				null,
+				Order.class);
     }    
     /**
      * Get all trust lines
@@ -843,7 +879,14 @@ public class Wallet extends BaseWallet {
     			param.append(counterparty);
     		}
     	}
-    	return APIProxy.request(APIProxy.RequestMethod.GET, APIProxy.formatURL(TrustLine.class,this.getAddress(),Utility.buildSignString(this.getAddress(), this.getSecret()) + param.toString()), null, Wallet.class).getTrustLinesCollection();
+    	return APIProxy.request(
+    	        APIProxy.RequestMethod.GET,
+                APIProxy.formatURL(
+                        TrustLine.class,
+                        this.getAddress(),
+                        Utility.buildSignString(this.getAddress(), this.getSecret()) + param.toString()),
+                null,
+                Wallet.class).getTrustLinesCollection();
     }    
     /**
      * Add a new trust line
@@ -999,7 +1042,15 @@ public class Wallet extends BaseWallet {
     	if(Utility.isEmpty(ID)){
     		throw new InvalidParameterException(JingtumMessage.INVALID_ID,ID,null);
     	}
-    	return APIProxy.request(APIProxy.RequestMethod.GET, APIProxy.formatURL(Notification.class,this.getAddress(),"/" + ID + Utility.buildSignString(this.getAddress(), this.getSecret())), null, Wallet.class).getMyNotification();
+    	return APIProxy.request(
+    	        APIProxy.RequestMethod.GET,
+                APIProxy.formatURL(
+                        Notification.class,
+                        this.getAddress(),
+                        "/" + ID + Utility.buildSignString(this.getAddress(), this.getSecret())),
+                null,
+                Wallet.class
+        ).getMyNotification();
     } 
     
     /**
@@ -1079,7 +1130,14 @@ public class Wallet extends BaseWallet {
 			param.append(direction);
 		}
 
-    	return APIProxy.request(APIProxy.RequestMethod.GET, APIProxy.formatURL(Transaction.class,this.getAddress(),Utility.buildSignString(this.getAddress(), this.getSecret()) + param.toString()), null, Wallet.class).getMyTransactionCollection();
+    	return APIProxy.request(
+    	        APIProxy.RequestMethod.GET,
+                APIProxy.formatURL(
+                        Transaction.class,
+                        this.getAddress(),
+                        Utility.buildSignString(this.getAddress(), this.getSecret()) + param.toString()),
+                null,
+                Wallet.class).getMyTransactionCollection();
     }    
     /**
      * Get transaction by hash number
@@ -1105,7 +1163,14 @@ public class Wallet extends BaseWallet {
     	if(Utility.isEmpty(id)){
     		throw new InvalidParameterException(JingtumMessage.INVALID_ID,id,null);
     	}
-    	return APIProxy.request(APIProxy.RequestMethod.GET, APIProxy.formatURL(Transaction.class,this.getAddress(),"/" + id + Utility.buildSignString(this.getAddress(), this.getSecret())), null, Wallet.class).getTransaction();
+    	return APIProxy.request(
+    	        APIProxy.RequestMethod.GET,
+                APIProxy.formatURL(
+                        Transaction.class,
+                        this.getAddress(),
+                        "/" + id + Utility.buildSignString(this.getAddress(), this.getSecret())),
+                null,
+                Wallet.class).getTransaction();
     }
     /**
      * Add relation
@@ -1345,7 +1410,14 @@ public class Wallet extends BaseWallet {
     			param.append(amount.getIssuer());
     		}
     	}
-    	return APIProxy.request(APIProxy.RequestMethod.GET, APIProxy.formatURL(Relation.class,this.getAddress(),Utility.buildSignString(this.getAddress(), this.getSecret()) + param.toString()), null, Wallet.class).getMyRelations();
+    	return APIProxy.request(
+    	        APIProxy.RequestMethod.GET,
+                APIProxy.formatURL(
+                        Relation.class,
+                        this.getAddress(),
+                        Utility.buildSignString(this.getAddress(), this.getSecret()) + param.toString()),
+                null,
+                Wallet.class).getMyRelations();
     } 
     /**
      * Get all counter party relations
@@ -1510,6 +1582,13 @@ public class Wallet extends BaseWallet {
     	sb.append("+");
     	sb.append(amount.getCounterparty());
     	sb.append(Utility.buildSignString(this.getAddress(), this.getSecret()));
-    	return APIProxy.request(APIProxy.RequestMethod.GET, APIProxy.formatURL(Payment.class,this.getAddress(),sb.toString()), null, Wallet.class).getPaymentsCollection();
+    	return APIProxy.request(
+    	        APIProxy.RequestMethod.GET,
+                APIProxy.formatURL(
+                        Payment.class,
+                        this.getAddress(),
+                        sb.toString()),
+                null,
+                Wallet.class).getPaymentsCollection();
     }
 }

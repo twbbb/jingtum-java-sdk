@@ -305,7 +305,9 @@ public class JingtumAPIAndWSServer extends BaseWallet {
             this.address = Seed.computeAddress(secret);
         }
         return APIProxy.request(APIProxy.RequestMethod.GET,
-                APIProxy.formatURL(OrderBook.class, this.address,
+                APIProxy.formatURL(
+                        OrderBook.class,
+                        this.address,
                         sb.toString() + Utility.buildSignString(this.address, this.secret)),
                 null, OrderBookResult.class);
     }
