@@ -95,17 +95,17 @@ public class UtilityTest {
 			ob = (OrderBook)it_4.next();
 			
 			assertEquals(false,ob.getPassive());
-			assertEquals(false,ob.getSell());
+			assertEquals(true,ob.getSell());
 			assertEquals("USD",ob.getPrice().getCurrency());
-			assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",ob.getPrice().getCounterparty());
+			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT",ob.getPrice().getCounterparty());
 			assertEquals("USD",ob.getTaker_gets_funded().getCurrency());
-			assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",ob.getTaker_gets_funded().getCounterparty());
+			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT",ob.getTaker_gets_funded().getCounterparty());
 			assertEquals("USD",ob.getTaker_gets_total().getCurrency());
-			assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",ob.getTaker_gets_total().getCounterparty());
+			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT",ob.getTaker_gets_total().getCounterparty());
 			assertEquals("CNY",ob.getTaker_pays_funded().getCurrency());
-			assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",ob.getTaker_pays_funded().getCounterparty());
+			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT",ob.getTaker_pays_funded().getCounterparty());
 			assertEquals("CNY",ob.getTaker_pays_total().getCurrency());
-			assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",ob.getTaker_pays_total().getCounterparty());
+			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT",ob.getTaker_pays_total().getCounterparty());
 		}
 		
 		//异常情况1  base为null时

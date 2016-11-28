@@ -1405,7 +1405,7 @@ public class Wallet extends BaseWallet {
     			param.append("&");
     			param.append("currency=");
     			param.append(amount.getCurrency());
-    			param.append("+");
+    			param.append("%2B");
     			param.append(amount.getIssuer());
     		}
     	}
@@ -1486,7 +1486,7 @@ public class Wallet extends BaseWallet {
     			param.append("&");
     			param.append("currency=");
     			param.append(amount.getCurrency());
-    			param.append("+");
+    			param.append("%2B");
     			param.append(amount.getIssuer());
     		}
     	}
@@ -1574,13 +1574,10 @@ public class Wallet extends BaseWallet {
     	StringBuilder sb = new StringBuilder();
     	sb.append("/paths/");
     	sb.append(receiver);
-    	sb.append("/");
+        sb.append("/");
     	sb.append(amount.getValue());
-    	sb.append("+");
-    	sb.append(amount.getCurrency());
-    	sb.append("+");
+    	sb.append("%2B" + amount.getCurrency().toString() + "%2B");
     	sb.append(amount.getCounterparty());
-    	sb.append(Utility.buildSignString(this.getAddress(), this.getSecret()));
 
     	return APIProxy.request(
     	        APIProxy.RequestMethod.GET,

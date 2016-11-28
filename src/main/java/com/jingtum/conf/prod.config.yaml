@@ -4,5 +4,5 @@ activateAmount: 25
 defaultTrustLimit: 100000000
 paymentPathRate: 1.01
 prefix: prefix
-apiVersion: v2
+apiVersion: v1
 ttServer: http://www.tongall.com

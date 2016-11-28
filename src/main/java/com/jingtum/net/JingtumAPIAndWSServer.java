@@ -293,14 +293,12 @@ public class JingtumAPIAndWSServer extends BaseWallet {
         StringBuffer sb = new StringBuffer();
         sb.append("/");
         sb.append(base.getCurrency());
-        sb.append("+");
+        sb.append("%2B");
         sb.append(base.getCounterparty());
         sb.append("/");
         sb.append(counter.getCurrency());
-        sb.append("+");
+        sb.append("%2B");
         sb.append(counter.getCounterparty());
-
-        System.out.println(sb);
 
         if (this.secret == null) {
             this.secret = Seed.generateSecret();
@@ -310,7 +308,7 @@ public class JingtumAPIAndWSServer extends BaseWallet {
                 APIProxy.formatURL(
                         OrderBook.class,
                         this.address,
-                        sb.toString() + Utility.buildSignString(this.address, this.secret)),
+                        sb.toString()),
                 null, OrderBookResult.class);
     }
 }

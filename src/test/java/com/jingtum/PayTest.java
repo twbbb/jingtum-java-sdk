@@ -474,13 +474,13 @@ public class PayTest {
 		    pay = (Payment)it_2.next();
 		    
 		    //判断获取信息的结果是否成功
-			assertEquals("js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa", pay.getSourceAccount());
+			assertEquals("jfCiWtSt4juFbS3NaXvYV9xNYxakm5yP9S", pay.getSourceAccount());
 			assertEquals("", pay.getSourceAmount().getIssuer());
 			assertEquals("0.0", String.valueOf(pay.getSourceSlippage()));
-			assertEquals("jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh", pay.getDestinationAccount());
-			assertEquals("100.0", String.valueOf(pay.getDestinationAmount().getValue()));
-			assertEquals("USD", pay.getDestinationAmount().getCurrency());
-			assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS", pay.getDestinationAmount().getIssuer());
+			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT", pay.getDestinationAccount());
+			assertEquals("1.0", String.valueOf(pay.getDestinationAmount().getValue()));
+			assertEquals("CNY", pay.getDestinationAmount().getCurrency());
+			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT", pay.getDestinationAmount().getIssuer());
 		}
 		//使用路径进行支付
 		RequestResult payment = wallet.submitPayment(pay, true, JingtumAPIAndWSServer.getTestInstance().getNextUUID()); //支付，参数为：获取方地址，货币，是否等待支付结果，和资源号（选填）

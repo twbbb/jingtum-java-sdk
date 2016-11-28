@@ -38,6 +38,11 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.http.JsonNode;
+import org.apache.http.HttpHost;
+
+import java.util.Arrays;
+
+import static com.jingtum.net.APIProxy.RequestMethod.GET;
 
 /**
  * @author jzhao
@@ -110,26 +115,15 @@ public class APIProxy extends JingtumObject {
     }
 
     /**
-     * @param url
-     * @param query
-     * @return url
-     */
-    private static String formatURL(String url, String query) {
-        if (query == null || query.isEmpty()) {
-            return url;
-        } else {
-            String separator = url.contains("?") ? "&" : "?";
-            return String.format("%s%s%s", url, separator, query);
-        }
-    }
-
-    /**
      * @param clazz
      * @param param
      * @return formed URL
      * @throws InvalidRequestException
      */
-    public static String formatURL(Class<?> clazz, String address, String param) throws InvalidRequestException {
+    public static String formatURL(
+            Class<?> clazz,
+            String address,
+            String param) throws InvalidRequestException {
         return String.format(
                 "%s/%s/%s%s",
                 classURL(),
@@ -138,12 +132,19 @@ public class APIProxy extends JingtumObject {
                 param);
     }
 
-    public static String formatURL(Class<?> clazz, String address, String secret, String params, Boolean shouldAppendSignature) throws InvalidRequestException{
+    public static String formatURL(
+            Class<?> clazz,
+            String address,
+            String secret,
+            String params,
+            Boolean shouldAppendSignature) throws InvalidRequestException{
+
         if(shouldAppendSignature){
-            return "";
+            String signature = Utility.buildSignString(address, secret);
+            return formatURL(clazz, address, signature + params);
         }
         else{
-            return "";
+            return formatURL(clazz, address, params);
         }
     }
 
@@ -154,10 +155,16 @@ public class APIProxy extends JingtumObject {
      * @param apiVersion    the api version
      * @return the string
      */
-    public static Boolean shouldAppendSignature(String requestMethod, String apiVersion)
+    public static Boolean shouldAppendSignature(
+            APIProxy.RequestMethod requestMethod,
+            String apiVersion)
     {
-
-        return false;
+        if (requestMethod == GET && apiVersion.toLowerCase().equals("v1")) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
 
@@ -230,6 +237,8 @@ public class APIProxy extends JingtumObject {
             throws APIConnectionException {
         HttpResponse<JsonNode> jsonResponse = null;
         Unirest.setTimeouts(30 * 1000, 80 * 1000);
+        Unirest.setProxy(new HttpHost("127.0.0.1", 8888));
+        System.out.println(url);
         try {
             switch (method) {
                 case GET:
@@ -277,10 +286,6 @@ public class APIProxy extends JingtumObject {
             InvalidRequestException, APIConnectionException, ChannelException, APIException, FailedException {
 
         JingtumResponse response;
-
-        System.out.println(method);
-        System.out.println("API proxy URL: "+url);
-        System.out.println("PARAMS: "+params);
         try {
             response = makeRequest(method, url, params);
         } catch (ClassCastException ce) {
