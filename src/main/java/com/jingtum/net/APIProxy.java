@@ -237,8 +237,6 @@ public class APIProxy extends JingtumObject {
             throws APIConnectionException {
         HttpResponse<JsonNode> jsonResponse = null;
         Unirest.setTimeouts(30 * 1000, 80 * 1000);
-        Unirest.setProxy(new HttpHost("127.0.0.1", 8888));
-        System.out.println(url);
         try {
             switch (method) {
                 case GET:

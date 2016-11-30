@@ -525,7 +525,7 @@ public class Wallet extends BaseWallet {
     public PaymentCollection getPaymentList() throws AuthenticationException, InvalidRequestException, 
     APIConnectionException, APIException, ChannelException, FailedException{
     	try {
-			return getPaymentList(null,null,false,Payment.Direction.all,0,0);
+			return getPaymentList(null, null, false, Payment.Direction.all, 0, 0);
 		} catch (InvalidParameterException e) {
 			e.printStackTrace();
 		}
@@ -1134,7 +1134,7 @@ public class Wallet extends BaseWallet {
                 APIProxy.formatURL(
                         Transaction.class,
                         this.getAddress(),
-                        Utility.buildSignString(this.getAddress(), this.getSecret()) + param.toString()),
+                        "?" + param.toString()),
                 null,
                 Wallet.class).getMyTransactionCollection();
     }    

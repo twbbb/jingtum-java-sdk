@@ -284,7 +284,7 @@ public class PayTest {
 	*/	
 	@Test
 	public void testGetPayments() throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, FailedException{
-		Wallet wallet002 = new Wallet("jfCiWtSt4juFbS3NaXvYV9xNYxakm5yP9S","snwjtucx9vEP7hCazriMbVz8hFiK9");
+		Wallet wallet002 = new Wallet("jfCiWtSt4juFbS3NaXvYV9xNYxakm5yP9S", "snwjtucx9vEP7hCazriMbVz8hFiK9");
 		//正常情况下
 		PaymentCollection pc = wallet002.getPaymentList();
 		//测试对象pc是否为null

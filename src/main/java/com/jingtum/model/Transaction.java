@@ -35,6 +35,10 @@ public class Transaction extends JingtumObject{
 	@Expose
 	private TranType type;
 	@Expose
+	private String offertype;
+    @Expose
+    private int seq;
+	@Expose
 	private String fee;
 	@Expose
 	private String result;
@@ -156,4 +160,20 @@ public class Transaction extends JingtumObject{
 	public MemoCollection getMemos() {
 		return memos;
 	}
+	/**
+	 * Gets offertype.
+	 *
+	 * @return the offertype
+	 */
+	public String getOffertype() {
+		return offertype;
+	}
+    /**
+     * Gets seq.
+     *
+     * @return the seq
+     */
+    public int getSeq() {
+        return seq;
+    }
 }

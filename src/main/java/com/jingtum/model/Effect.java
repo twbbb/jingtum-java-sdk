@@ -33,12 +33,14 @@ public class Effect extends JingtumObject{
 	private String price;
 	private boolean cancelled;
 	private boolean remaining;
+    private boolean deleted;
 	private int seq;
 	private Amount got;
 	private Amount paid;
-	private String counterparty;
+	private CounterParty counterparty;
 	private Amount limit;
 	private String currency;
+    private String hash;
 	private Amount from;
 	private Amount to;
 	private Amount amount;		
@@ -61,6 +63,14 @@ public class Effect extends JingtumObject{
 	public int getSeq() {
 		return seq;
 	}
+    /**
+     * Gets hash.
+     *
+     * @return the hash
+     */
+    public String getHash() {
+        return hash;
+    }
 	/**
 	 * Get effect type
 	 * @return effect
@@ -110,6 +120,12 @@ public class Effect extends JingtumObject{
 	public boolean getRemaining() {
 		return remaining;
 	}
+    /**
+     * Gets deleted.
+     *
+     * @return the deleted
+     */
+    public boolean getDeleted() {return deleted;}
 	/**
 	 * For offer_bought, get got amount
 	 * @return got
@@ -128,7 +144,7 @@ public class Effect extends JingtumObject{
 	 * For trust_create_local and trust_change_local, get counter party trusted
 	 * @return counter party
 	 */
-	public String getCounterparty() {
+	public CounterParty getCounterparty() {
 		return counterparty;
 	}
 	/**
