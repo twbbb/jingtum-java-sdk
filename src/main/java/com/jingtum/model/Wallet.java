@@ -258,7 +258,7 @@ public class Wallet extends AccountClass {
                         this.getAddress(),
                         Utility.buildSignString(this.getAddress(), this.getSecret())),
 				null,
-				Wallet.class).getBalance();
+				Wallet.class).getBalances();
     }
     /**
      * Get balance filtered by currency/counterparty
@@ -302,7 +302,7 @@ public class Wallet extends AccountClass {
                         this.getAddress(),
                         Utility.buildSignString(this.getAddress(), this.getSecret()) + sb.toString()),
                 null,
-                Wallet.class).getBalance();
+                Wallet.class).getBalances();
     }
     /**
      * Post a payment

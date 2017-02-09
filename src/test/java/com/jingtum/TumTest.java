@@ -33,7 +33,7 @@ public class TumTest {
 		System.out.println(wallet.getAddress());
 		System.out.println(wallet.getSecret());
 		//FinGate.getInstance().activateWallet(wallet.getAddress());
-
+		System.out.println("issusing......"+FinGate.getInstance().getTumServer().getServerURL());
 		boolean isSuccessful = FinGate.getInstance().issueCustomTum(order_id, "8200000005000020170006000000000020000001", 11.27, wallet.getAddress());
 		System.out.println(isSuccessful);
 

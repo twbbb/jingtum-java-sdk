@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 
+import com.jingtum.net.FinGate;
 import org.junit.Test;
 
 import com.jingtum.exception.APIConnectionException;
@@ -28,8 +29,11 @@ public class BalancesTest {
 	*/
 	@Test
 	public void testGetBalance() throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, NoSuchAlgorithmException, FailedException {
+
+		//设置测试环境
+		FinGate.getInstance().setMode(1);
 		//已激活的钱包
-		Wallet wallet = new Wallet("jMXY6oWZD1XPTNsczHSQLr2inLA4Tkg6VT","shJuHFACSXhHUDCBmCDbBACCdf5LC");
+		Wallet wallet = new Wallet("ssHC71HCbhp6FVLLcK2oyyUVjcAY4");
 		BalanceCollection bc = wallet.getBalance();
 		//测试对象bc是否为null
 		assertNotNull(bc);
@@ -42,7 +46,7 @@ public class BalancesTest {
 		}
 		
 		//正常情况2    钱包未激活时
-		Wallet wallet01 = new Wallet("jhoitsF8aPz6tzxFW4JmiNWoxsHtsnds5z","saadV1p5vQeh4N1YdPGo3N3NS7dZo");
+		Wallet wallet01 = new Wallet("saadV1p5vQeh4N1YdPGo3N3NS7dZo");
 		try {
 			@SuppressWarnings("unused")
 			BalanceCollection bc1 = wallet01.getBalance();
@@ -60,7 +64,7 @@ public class BalancesTest {
 	@Test
 	public void testGetParaBalance() throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, FailedException {
 		//已激活的钱包
-		Wallet wallet = new Wallet("js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa","snqFcHzRe22JTM8j7iZVpQYzxEEbW");
+		Wallet wallet = new Wallet("snqFcHzRe22JTM8j7iZVpQYzxEEbW");
 		//正常情况1   货币为SWT，无银关时
 		BalanceCollection bc = wallet.getBalance("SWT","");
 		//测试对象bc是否为null

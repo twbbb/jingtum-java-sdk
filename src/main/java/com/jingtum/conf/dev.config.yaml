@@ -5,4 +5,4 @@ defaultTrustLimit: 100000000
 paymentPathRate: 1.01
 prefix: prefix
 apiVersion: v1
-tumServer: http://tfingate.jingtum.com
+tumServer: http://tfingate.jingtum.com/v1/business/node

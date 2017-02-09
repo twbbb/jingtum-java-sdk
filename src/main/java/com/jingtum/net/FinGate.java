@@ -58,7 +58,7 @@ public class FinGate extends AccountClass {
 
 
     private static final String PROPERTY_FILE = "src/main/java/com/jingtum/conf/prod.config.yaml"; // property file for production
-    private static final String DEV_PROPERTY_FILE = "src/test/java/com/jingtum/conf/dev.config.yaml"; // property file for development
+    private static final String DEV_PROPERTY_FILE = "src/main/java/com/jingtum/conf/dev.config.yaml"; // property file for development
 
     private static final String ISSUE_CURRENCY = "/currency/issue";
     private static final String QUERY_ISSUE = "/currency/queryIssue";
@@ -130,6 +130,8 @@ public class FinGate extends AccountClass {
 
             this.pathRate = FingateConfig.getPaymentPathRate();
 
+            System.out.println("Tum server");
+            System.out.println(FingateConfig.getTumServer());
             //Setup the servers with input string from config file
             if (this.tum_server == null) {
                 this.tum_server = new TumServer(FingateConfig.getTumServer());
@@ -254,6 +256,8 @@ public class FinGate extends AccountClass {
      * @throws InvalidParameterException
      */
     public boolean issueCustomTum(String order, String currency, double amount, String account) throws InvalidParameterException {
+
+        System.out.println("Tum Server: " + tum_server.getServerURL());
         if (Utility.isEmpty(this.token)) {
             throw new InvalidParameterException(JingtumMessage.EMPTY_TOKEN, this.token, null);
         }
@@ -335,12 +339,13 @@ public class FinGate extends AccountClass {
         String param = tum_server.GSON.toJson(content);
 
         System.out.println(param);
-        System.out.println("send to: " + TumServer.getServerURL());
+        System.out.println("send to: " + tum_server.getServerURL());
+
         try {
             //Note the tum_server value is fixed at this moment
             //https://fingate.jingtum.com/v1/business/node
             //tt = APIServer.request(APIServer.RequestMethod.POST_FORM, tum_server, param.toString(), TongTong.class);
-            tt = APIServer.request(APIServer.RequestMethod.POST, TumServer.getServerURL(), param, TongTong.class);
+            tt = tum_server.request(TumServer.RequestMethod.POST, tum_server.getServerURL(), param, TongTong.class);
 
         } catch (JingtumException e) {
             // TODO Auto-generated catch block

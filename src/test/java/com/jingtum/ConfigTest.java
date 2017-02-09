@@ -36,7 +36,7 @@ import static junit.framework.TestCase.assertEquals;
 public class ConfigTest {
     @Test
     public void testLoadYamlConfig() throws FileNotFoundException{
-        String config_file_path = "src/test/java/com/jingtum/conf/dev.config.yaml";
+        String config_file_path = "src/main/java/com/jingtum/conf/dev.config.yaml";
         Config config = Config.loadConfig(config_file_path);
         assertEquals("wss://tapi.jingtum.com:5443", config.getWebSocketServer());
         assertEquals("https://tapi.jingtum.com", config.getApiServer());

@@ -228,6 +228,9 @@ public class APIServer extends ServerClass {
             throws APIConnectionException {
         HttpResponse<JsonNode> jsonResponse = null;
         Unirest.setTimeouts(30 * 1000, 80 * 1000);
+
+        System.out.println(url);
+        System.out.println("----------------------");
         try {
             switch (method) {
                 case GET:
@@ -275,6 +278,8 @@ public class APIServer extends ServerClass {
             InvalidRequestException, APIConnectionException, ChannelException, APIException, FailedException {
 
         JingtumResponse response;
+
+
         try {
             response = makeRequest(method, url, params);
         } catch (ClassCastException ce) {
