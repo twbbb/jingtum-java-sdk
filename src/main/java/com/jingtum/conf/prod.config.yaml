@@ -5,4 +5,4 @@ defaultTrustLimit: 100000000
 paymentPathRate: 1.01
 prefix: prefix
 apiVersion: v1
-ttServer: http://www.tongall.com
+tumServer: http://fingate.jingtum.com

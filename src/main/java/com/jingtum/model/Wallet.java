@@ -31,6 +31,8 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.LongSerializationPolicy;
 import com.google.gson.annotations.Expose;
 import com.jingtum.net.APIProxy;
+import com.jingtum.net.APIServer;
+import com.jingtum.net.FinGate;
 import com.jingtum.net.JingtumAPIAndWSServer;
 import com.jingtum.net.JingtumFingate;
 import com.jingtum.util.Utility;
@@ -52,7 +54,7 @@ import java.util.HashMap;
  * @version 1.0
  * Wallet class, main entry point
  */
-public class Wallet extends BaseWallet {
+public class Wallet extends AccountClass {
 	@Expose
 	private boolean success; //Operation success or not
 	@Expose
@@ -75,6 +77,8 @@ public class Wallet extends BaseWallet {
 	private Transaction transaction;
 	@Expose
 	private RelationCollection relations;
+
+	private APIServer api_server = null;
 
 	private static final String VALIDATED = "?validated=";
 
@@ -178,6 +182,8 @@ public class Wallet extends BaseWallet {
 		}
 		this.address = address;
 		this.secret = secret;
+		//use the singleton mode
+		this.api_server = FinGate.getInstance().getAPIServer();
 	}	
 	/*
 	 * Create Wallet instance from secret
@@ -191,6 +197,7 @@ public class Wallet extends BaseWallet {
 		}
 		this.address = Seed.computeAddress(secret);
 		this.secret = secret;
+		this.api_server = FinGate.getInstance().getAPIServer();
 	}	
     /**
      * Gson builder
@@ -251,7 +258,7 @@ public class Wallet extends BaseWallet {
                         this.getAddress(),
                         Utility.buildSignString(this.getAddress(), this.getSecret())),
 				null,
-				Wallet.class).getBalances();
+				Wallet.class).getBalance();
     }
     /**
      * Get balance filtered by currency/counterparty
@@ -295,7 +302,7 @@ public class Wallet extends BaseWallet {
                         this.getAddress(),
                         Utility.buildSignString(this.getAddress(), this.getSecret()) + sb.toString()),
                 null,
-                Wallet.class).getBalances();
+                Wallet.class).getBalance();
     }
     /**
      * Post a payment

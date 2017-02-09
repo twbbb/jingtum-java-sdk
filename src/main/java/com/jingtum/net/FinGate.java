@@ -1,3 +1,4 @@
+package com.jingtum.net;
 /*
  *
  *  * Copyright www.jingtum.com Inc.
@@ -21,137 +22,169 @@
  *
  */
 
-package com.jingtum.net;
 
-import com.jingtum.Jingtum;
-import com.jingtum.JingtumMessage;
-import com.jingtum.core.crypto.ecdsa.Seed;
-import com.jingtum.exception.*;
-import com.jingtum.model.*;
-import com.jingtum.util.Config;
-import com.jingtum.util.Utility;
+        import com.jingtum.Jingtum;
+        import com.jingtum.JingtumMessage;
+        import com.jingtum.core.crypto.ecdsa.Seed;
+        import com.jingtum.exception.*;
+        import com.jingtum.model.AccountClass;
+        import com.jingtum.model.Wallet;
+        import com.jingtum.model.Amount;
+        import com.jingtum.model.IssueRecord;
+        import com.jingtum.model.TongTong;
+        import com.jingtum.model.TumInfo;
+        import com.jingtum.model.Payment;
+        import com.jingtum.model.RequestResult;
+        import com.jingtum.net.APIServer;
+        import com.jingtum.net.TumServer;
+        import com.jingtum.net.JingtumAPIAndWSServer;
+        import com.jingtum.util.Config;
+        import com.jingtum.util.Utility;
 
-import java.io.FileNotFoundException;
-import java.text.DecimalFormat;
-import java.util.HashMap;
+        import java.io.FileNotFoundException;
+        import java.text.DecimalFormat;
+        import java.util.HashMap;
 
 /**
  * Created by yifan on 11/15/16.
+ * Modified by zpli on 2017/01/28
+ * Added the setMode to replace setTest
+ * Mode
+ * 0 - production mode, default
+ * 1 - development mode
+ * others - reserved for future usage
  */
-public class JingtumFingate extends BaseWallet {
-    private static final String PROPERTY_FILE = "src/main/java/com/jingtum/conf/prod.config.yaml"; // property file for prod
-    private static final String DEV_PROPERTY_FILE = "src/test/java/com/jingtum/conf/test.config.yaml"; // property file for testing
+public class FinGate extends AccountClass {
+
+
+    private static final String PROPERTY_FILE = "src/main/java/com/jingtum/conf/prod.config.yaml"; // property file for production
+    private static final String DEV_PROPERTY_FILE = "src/test/java/com/jingtum/conf/dev.config.yaml"; // property file for development
+
     private static final String ISSUE_CURRENCY = "/currency/issue";
     private static final String QUERY_ISSUE = "/currency/queryIssue";
     private static final String CURRENCY_STATUS = "/currency/status";
 
     private double activateAmount; // default amout of SWT to activate wallet
-    private double trustLimit;
+    //private double trustLimit;
     private double pathRate;
-    private String tt_server;
-    private String custom;
-    private String customSecret;
+
+    private String token;
+    private String signKey;
+
+    //A wallet object to active new wallets
     private Wallet wallet;
 
-    private static JingtumFingate instance = null;
+    //Server classes
+    private APIServer api_server = null;
+    private TumServer tum_server = null;
+
+
+
+    private static FinGate instance = null;
 
     /**
      * Singleton mode
      *
-     * @return JingtumFingate instance
+     * @return FinGate instance
      */
-    public static final JingtumFingate getInstance() {
+    public static final FinGate getInstance() {
+
+        //default is production  mode 0
         if (instance == null) {
-            instance = new JingtumFingate(false);
+            instance = new FinGate(0);
         }
         return instance;
     }
 
-    /**
-     * Singleton mode
-     *
-     * @return JingtumFingate instance
-     */
-    public static final JingtumFingate getTestInstance() {
-        if (instance == null) {
-            instance = new JingtumFingate(true);
-        }
-        return instance;
-    }
 
     /**
-     * Read yaml config file and initialize jingtumServer class
+     * Read yaml config file and initialize FinGate class
+     * with information from config files.
      */
-    private JingtumFingate(Boolean isTest) {
-        init(isTest);
+    private FinGate(int in_mode) {
+        init(in_mode);
     }
 
     /**
      * Read yaml config file
+     *
      */
-    private void init(Boolean isTest) {
+    private void init(int in_mode) {
+        String configFile = null;
         try {
-            String configFile = isTest ? DEV_PROPERTY_FILE : PROPERTY_FILE;
+            if ( in_mode == 0) {
+                configFile = PROPERTY_FILE;
+
+            }else if( in_mode == 1){
+                configFile = DEV_PROPERTY_FILE;
+            }else
+                throw new InvalidParameterException(JingtumMessage.UNKNOWN_MODE, null, null);
+
+        } catch (InvalidParameterException e) {
+            e.printStackTrace();
+        }
+
+        try {
             Config FingateConfig = Config.loadConfig(configFile);
             this.activateAmount = FingateConfig.getActivateAmount();
-            this.tt_server = FingateConfig.getTumServer();
-            this.trustLimit = FingateConfig.getDefaultTrustLimit();
+
             this.pathRate = FingateConfig.getPaymentPathRate();
+
+            //Setup the servers with input string from config file
+            if (this.tum_server == null) {
+                this.tum_server = new TumServer(FingateConfig.getTumServer());
+            }else
+                this.tum_server.setServerURL(FingateConfig.getTumServer());
+
+            if (this.api_server == null) {
+                this.api_server = new APIServer(FingateConfig.getApiServer());
+            }else
+                this.api_server.setServerURL(FingateConfig.getApiServer());
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
+    //Return the object
+    public APIServer getAPIServer(){ return api_server; }
+
+    public TumServer getTumServer(){ return tum_server; }
+
     /**
-     * Get custom number
+     * Get token number
      *
-     * @return custom
+     * @return token
      */
-    public String getCustom() {
-        return custom;
+    public String getToken() {
+        return token;
     }
 
     /**
-     * Set custom number
+     * Set token number
      *
-     * @param custom
+     * @param token
      */
-    public void setCustom(String custom) {
-        this.custom = custom;
+    public void setToken(String token) {
+        this.token = token;
     }
 
     /**
-     * Get custom secret
+     * Get token secret
      *
-     * @return custom secret
+     * @return token secret
      */
-    public String getCustomSecret() {
-        return customSecret;
+    public String getKey() {
+        return signKey;
     }
 
     /**
-     * Set custom secret
+     * Set token secret
      *
-     * @param customSecret
+     * @param signKey
      */
-    public void setCustomSecret(String customSecret) {
-        this.customSecret = customSecret;
-    }
-
-    /**
-     * @return default trust limit
-     */
-    public double getTrustLimit() {
-        return trustLimit;
-    }
-
-    /**
-     * Set default trust limit
-     *
-     * @param trustLimit
-     */
-    public void setTrustLimit(double trustLimit) {
-        this.trustLimit = trustLimit;
+    public void setKey(String signKey) {
+        this.signKey = signKey;
     }
 
     /**
@@ -187,26 +220,29 @@ public class JingtumFingate extends BaseWallet {
     }
 
     /**
-     * Initialize JingtumFingate
+     * Initialize FinGate
      *
      * @param address
      * @param secret
      * @throws InvalidParameterException
      */
-    public void setFinGate(String address, String secret) throws InvalidParameterException {
-        if (!Utility.validateKeyPair(address, secret)) {
-            throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS_OR_SECRET, address + secret,
+    public void setAccount(String secret, String address) throws InvalidParameterException {
+        if (!Utility.validateKeyPair(secret, address)) {
+            throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS_OR_SECRET, secret+address ,
                     null);
         }
         this.address = address;
         this.secret = secret;
     }
 
-    /**
-     * @return JingtumFingate address
-     */
-    public String getFinGate() {
-        return address;
+
+    public void setAccount (String secret) throws InvalidParameterException {
+        if(!Utility.isValidSecret(secret)){
+            throw new InvalidParameterException(JingtumMessage.INVALID_SECRET, secret, null);
+        }
+        this.address = Seed.computeAddress(secret);
+        this.secret = secret;
+
     }
 
     /**
@@ -218,12 +254,12 @@ public class JingtumFingate extends BaseWallet {
      * @throws InvalidParameterException
      */
     public boolean issueCustomTum(String order, String currency, double amount, String account) throws InvalidParameterException {
-        if (Utility.isEmpty(this.custom)) {
-            throw new InvalidParameterException(JingtumMessage.EMPTY_TOKEN, this.custom, null);
+        if (Utility.isEmpty(this.token)) {
+            throw new InvalidParameterException(JingtumMessage.EMPTY_TOKEN, this.token, null);
         }
 
-        if (Utility.isEmpty(this.customSecret)) {
-            throw new InvalidParameterException(JingtumMessage.EMPTY_KEY, this.customSecret, null);
+        if (Utility.isEmpty(this.signKey)) {
+            throw new InvalidParameterException(JingtumMessage.EMPTY_KEY, this.signKey, null);
         }
 
         if (Utility.isEmpty(currency) || Utility.isEmpty(account) || amount <= 0) {
@@ -252,19 +288,19 @@ public class JingtumFingate extends BaseWallet {
         }
 
         //build the HMAC signature using input info
-       StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer();
         sb.append(TongTong.CmdType.IssueTum);
-        sb.append(this.custom);
+        sb.append(this.token);
         sb.append(orderNumber);
         sb.append(currency);
         sb.append(amountString);
         sb.append(account);
-        String hmac = Utility.buildHmac(sb.toString(), this.customSecret);
+        String hmac = Utility.buildHmac(sb.toString(), this.signKey);
         //System.out.println(sb);
 //build the paramers in JSON format
 //var postData = {
 //      cmd: 'IssueTum', // 业务类型，固定值“IssueTum” 签名顺序1
-//      custom: '00000002', // 商户编号 签名顺序2
+//      token: '00000002', // 商户编号 签名顺序2
 //      order: '01', // 发行订单号 签名顺序3
 //      currency: '8100000002000020160013000000000020000001',  // 用户通编码 签名顺序4
 //      amount: '1000.00', // 发行量，保留两位小数 签名顺序5
@@ -274,7 +310,7 @@ public class JingtumFingate extends BaseWallet {
 
         HashMap<String, Object> content = new HashMap<String, Object>();
         content.put("cmd", TongTong.CmdType.IssueTum);
-        content.put("custom", this.custom);
+        content.put("custom", this.token);
         content.put("order", orderNumber);
         content.put("currency", currency);
         content.put("amount", amountString);
@@ -284,8 +320,8 @@ public class JingtumFingate extends BaseWallet {
         /*StringBuffer param = new StringBuffer();
         param.append("cmd:");
         param.append(TongTong.CmdType.IssueTum);
-        param.append(",custom:");
-        param.append(this.custom);
+        param.append(",token:");
+        param.append(this.token);
         param.append(",order:");
         param.append(orderNumber);
         param.append(",currency:");
@@ -296,15 +332,15 @@ public class JingtumFingate extends BaseWallet {
         param.append(account);
         param.append(",hmac:");
         param.append(hmac);*/
-        String param = APIProxy.GSON.toJson(content);
+        String param = tum_server.GSON.toJson(content);
 
         System.out.println(param);
-        System.out.println("send to: "+tt_server);
+        System.out.println("send to: " + TumServer.getServerURL());
         try {
-            //Note the tt_server value is fixed at this moment
+            //Note the tum_server value is fixed at this moment
             //https://fingate.jingtum.com/v1/business/node
-            //tt = APIProxy.request(APIProxy.RequestMethod.POST_FORM, tt_server, param.toString(), TongTong.class);
-            tt = APIProxy.request(APIProxy.RequestMethod.POST, tt_server, param, TongTong.class);
+            //tt = APIServer.request(APIServer.RequestMethod.POST_FORM, tum_server, param.toString(), TongTong.class);
+            tt = APIServer.request(APIServer.RequestMethod.POST, TumServer.getServerURL(), param, TongTong.class);
 
         } catch (JingtumException e) {
             // TODO Auto-generated catch block
@@ -326,12 +362,12 @@ public class JingtumFingate extends BaseWallet {
      * @throws InvalidParameterException
      */
     public IssueRecord queryIssue(String order) throws InvalidParameterException {
-        if (Utility.isEmpty(this.custom)) {
-            throw new InvalidParameterException(JingtumMessage.EMPTY_TOKEN, this.custom, null);
+        if (Utility.isEmpty(this.token)) {
+            throw new InvalidParameterException(JingtumMessage.EMPTY_TOKEN, this.token, null);
         }
 
-        if (Utility.isEmpty(this.customSecret)) {
-            throw new InvalidParameterException(JingtumMessage.EMPTY_KEY, this.customSecret, null);
+        if (Utility.isEmpty(this.signKey)) {
+            throw new InvalidParameterException(JingtumMessage.EMPTY_KEY, this.signKey, null);
         }
 
         if (Utility.isEmpty(order)) {
@@ -340,19 +376,19 @@ public class JingtumFingate extends BaseWallet {
 
         StringBuffer sb = new StringBuffer();
         sb.append(TongTong.CmdType.QueryIssue);
-        sb.append(this.custom);
+        sb.append(this.token);
         sb.append(order);
-        String hmac = Utility.buildHmac(sb.toString(), this.customSecret);
+        String hmac = Utility.buildHmac(sb.toString(), this.signKey);
 
         HashMap<String, Object> content = new HashMap<String, Object>();
         content.put("cmd", TongTong.CmdType.QueryIssue);
-        content.put("custom", this.custom);
+        content.put("token", this.token);
         content.put("order", order);
-           content.put("hmac", hmac);
+        content.put("hmac", hmac);
 
-        String param = APIProxy.GSON.toJson(content);
+        String param = TumServer.GSON.toJson(content);
         try {
-            return APIProxy.request(APIProxy.RequestMethod.POST, tt_server, param, IssueRecord.class);
+            return TumServer.request(TumServer.RequestMethod.POST, tum_server.getServerURL(), param, IssueRecord.class);
         } catch (AuthenticationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -376,43 +412,46 @@ public class JingtumFingate extends BaseWallet {
     }
 
     /**
-     * @param currency
+     * Return the custom Tum information
+     * at the present time.
+     * @param tum_code
+     *
      * @return TumInfo
      * @throws InvalidParameterException
      */
-    public TumInfo queryCustomTum(String currency) throws InvalidParameterException {
-        if (Utility.isEmpty(this.custom)) {
-            throw new InvalidParameterException(JingtumMessage.EMPTY_TOKEN, this.custom, null);
+    public TumInfo queryCustomTum(String tum_code) throws InvalidParameterException {
+        if (Utility.isEmpty(this.token)) {
+            throw new InvalidParameterException(JingtumMessage.EMPTY_TOKEN, this.token, null);
         }
 
-        if (Utility.isEmpty(this.customSecret)) {
-            throw new InvalidParameterException(JingtumMessage.EMPTY_KEY, this.customSecret, null);
+        if (Utility.isEmpty(this.signKey)) {
+            throw new InvalidParameterException(JingtumMessage.EMPTY_KEY, this.signKey, null);
         }
 
-        if (Utility.isEmpty(currency)) {
-            throw new InvalidParameterException(JingtumMessage.ERROR_INPUT, currency, null);
+        if (Utility.isEmpty(tum_code)) {
+            throw new InvalidParameterException(JingtumMessage.ERROR_INPUT, tum_code, null);
         }
 
         long unix = System.currentTimeMillis() / 1000L;
 
         StringBuffer sb = new StringBuffer();
         sb.append(TongTong.CmdType.QueryTum);
-        sb.append(this.custom);
-        sb.append(currency);
+        sb.append(this.token);
+        sb.append(tum_code);
         sb.append(unix);
-        String hmac = Utility.buildHmac(sb.toString(), this.customSecret);
+        String hmac = Utility.buildHmac(sb.toString(), this.signKey);
 
         HashMap<String, Object> content = new HashMap<String, Object>();
         content.put("cmd", TongTong.CmdType.QueryTum);
-        content.put("custom", this.custom);
-        content.put("currency", currency);
+        content.put("custom", this.token);
+        content.put("currency", tum_code);
         content.put("date", unix);
         content.put("hmac", hmac);
 
-        String param = APIProxy.GSON.toJson(content);
+        String param = APIServer.GSON.toJson(content);
 
         try {
-            return APIProxy.request(APIProxy.RequestMethod.POST, tt_server, param, TumInfo.class);
+            return TumServer.request(TumServer.RequestMethod.POST, tum_server.getServerURL(), param, TumInfo.class);
         } catch (AuthenticationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -449,7 +488,7 @@ public class JingtumFingate extends BaseWallet {
             e.printStackTrace();
         }
         try {
-            return new Wallet(address, secret);
+            return new Wallet(secret, address);
         } catch (InvalidParameterException e) {
             e.printStackTrace();
         }
@@ -507,5 +546,10 @@ public class JingtumFingate extends BaseWallet {
             wallet = new Wallet(this.address, this.secret);
         }
         return wallet;
+    }
+
+    //
+    public void setMode(int in_mode) {
+        init(in_mode);
     }
 }

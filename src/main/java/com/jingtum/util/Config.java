@@ -41,7 +41,7 @@ public class Config {
     private Float paymentPathRate;
     private String prefix;
     private String apiVersion;
-    private String ttServer;
+    private String tumServer;
 
     public String getWebSocketServer() {
         return webSocketServer;
@@ -99,12 +99,12 @@ public class Config {
         this.apiVersion = apiVersion;
     }
 
-    public String getTtServer() {
-        return ttServer;
+    public String getTumServer() {
+        return tumServer;
     }
 
-    public void setTtServer(String ttServer) {
-        this.ttServer = ttServer;
+    public void setTumServer(String in_server) {
+        this.tumServer = in_server;
     }
 
     public static Config loadConfig(String config_file_path) throws FileNotFoundException {
@@ -115,4 +115,6 @@ public class Config {
         Yaml yaml = new Yaml();
         return yaml.loadAs(new FileInputStream(new File(config_file_path)), Config.class);
     }
+
+
 }

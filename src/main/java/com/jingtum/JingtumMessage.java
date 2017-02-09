@@ -48,11 +48,12 @@ public abstract class JingtumMessage {
 	public static final String ERROR_MESSAGE = "Error message: ";
 	public static final String ERROR_CODE = "Error code: ";
 	public static final String ERROR_INPUT = "Input value cannot be empty!";
-	public static final String EMPTY_CUSTOM = "Custom is not set!";
-	public static final String EMPTY_SECRET = "Custom secret is not set!";
+	public static final String EMPTY_TOKEN = "FinGate custom token is not set!";
+	public static final String EMPTY_KEY = "FinGate custom key is not set!";
 	public static final String UNRECOGNIZED_HTTP_METHOD = "Unrecognized HTTP method %s. ";
 	public static final String SERVER_ERROR = "IOException during API request to Jingtum (%s): %s "
             					+ "Please check your internet connection and try again. If this problem persists,"
             					+ "you should check Jingtum's service status at https://api.jingtum.com,"
             					+ " or let us know at support@jingtum.com.";
+	public static final String UNKNOWN_MODE = "FinGate mode is unknown!";
 }

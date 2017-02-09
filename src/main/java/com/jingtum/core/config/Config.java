@@ -24,7 +24,7 @@ package com.jingtum.core.config;
 import com.jingtum.core.encodings.B58IdentiferCodecs;
 import com.jingtum.core.encodings.base58.B58;
 
-// Somewhat of a global registry, dependency injection ala guice would be nicer, but trying to KISS
+// A global registry, not reading the Jingtum config
 public class Config {
     public  static final String DEFAULT_ALPHABET = "jpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65rkm8oFqi1tuvAxyz";
 

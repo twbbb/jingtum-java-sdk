@@ -20,21 +20,21 @@ public class TumTest {
 			APIConnectionException, ChannelException, APIException, FailedException, InvalidParameterException {
 		//FinGate fg = FinGate.getInstance();
 		FinGate.getInstance().setMode(1);
-		FinGate.getInstance().setAccount("js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa", "snqFcHzRe22JTM8j7iZVpQYzxEEbW"); //FinGate地址密码
-		FinGate.getInstance().setToken("00000003");  //设置用户编号
-		FinGate.getInstance().setKey("feef59f67303bf7d0b8dcbb1cc99e802b937ff87"); //用户密码
+		FinGate.getInstance().setAccount("snqFcHzRe22JTM8j7iZVpQYzxEEbW"); //FinGate地址密码
+		FinGate.getInstance().setToken("00000005");  //设置用户编号
+		FinGate.getInstance().setKey("b33802b7f345fc44e6bd1d3b11c86b412de9ec38"); //用户密码
 
 		String order_id = "thisorderid01"; //获得唯一订单号
 
 		System.out.println("================issue custom tum================");
 		//Wallet wallet = FinGate.getInstance().createWallet();
 		//used an existing wallet instead
-		Wallet wallet = new Wallet("snqFcHzRe22JTM8j7iZVpQYzxEEbW");
+		Wallet wallet = new Wallet("ssHC71HCbhp6FVLLcK2oyyUVjcAY4");
 		System.out.println(wallet.getAddress());
 		System.out.println(wallet.getSecret());
 		//FinGate.getInstance().activateWallet(wallet.getAddress());
 
-		boolean isSuccessful = FinGate.getInstance().issueCustomTum(order_id, "8100000003000020160022201800220020000001", 11.27, wallet.getAddress());
+		boolean isSuccessful = FinGate.getInstance().issueCustomTum(order_id, "8200000005000020170006000000000020000001", 11.27, wallet.getAddress());
 		System.out.println(isSuccessful);
 
 
