@@ -123,7 +123,13 @@ public class APIServer extends ServerClass {
      * @return class URL
      */
     protected static String classURL() {
-        return INSTANCE.getServerURL().concat(INSTANCE.getVersionURL());
+        //return INSTANCE.getServerURL().concat(INSTANCE.getVersionURL());
+        //TODO check if the url is null
+        //give out a exception if not
+        return String.format(
+                "%s/%s/accounts",
+                INSTANCE.getServerURL(),
+                INSTANCE.getVersionURL());
     }
 
     /**
@@ -148,12 +154,24 @@ public class APIServer extends ServerClass {
             Class<?> clazz,
             String address,
             String param) throws InvalidRequestException {
+
         return String.format(
                 "%s/%s/%s%s",
                 classURL(),
                 address,
                 className(clazz),
                 param);
+    }
+
+    public static String formatURL(
+            Class<?> clazz,
+            String address) throws InvalidRequestException {
+
+        return String.format(
+                "%s/%s/%s",
+                classURL(),
+                address,
+                className(clazz));
     }
 
     public static String formatURL(
@@ -262,6 +280,7 @@ public class APIServer extends ServerClass {
         HttpResponse<JsonNode> jsonResponse = null;
         Unirest.setTimeouts(30 * 1000, 80 * 1000);
 
+        System.out.println("-------URL send---------------");
         System.out.println(url);
         System.out.println("----------------------");
         try {

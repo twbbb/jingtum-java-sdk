@@ -38,14 +38,8 @@ import com.jingtum.exception.FailedException;
 import com.jingtum.exception.InvalidParameterException;
 import com.jingtum.exception.InvalidRequestException;
 import com.jingtum.exception.JingtumException;
-import com.jingtum.model.AccountClass;
-import com.jingtum.model.Amount;
-import com.jingtum.model.IssueRecord;
-import com.jingtum.model.RequestResult;
-import com.jingtum.model.TongTong;
-import com.jingtum.model.TumInfo;
-import com.jingtum.model.Wallet;
-import com.jingtum.util.Config;
+        import com.jingtum.model.*;
+        import com.jingtum.util.Config;
 import com.jingtum.util.Utility;
 
 /**
@@ -500,26 +494,46 @@ public class FinGate extends AccountClass {
     /**
      * Activate newly created wallet
      *
-     * @param address
+     * @param dest_address, wallet address to active, need to check if the address is already actived or not
      * @return true if successfully activated wallet
      * @throws APIException
      * @throws InvalidParameterException
      */
-    public boolean activateWallet(String address) throws APIException, InvalidParameterException {
-        if (this.address == null) { // Must initialized the gateway first
+    public boolean activateWallet(String dest_address) throws APIException, InvalidParameterException {
+        if (this.address == null) { // Must initialized the FinGate first
             throw new APIException(JingtumMessage.GATEWAY_NOT_INITIALIZED, null);
         }
-        if (!Utility.isValidAddress(address)) {
-            throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS, address, null);
+        if (!Utility.isValidAddress(dest_address)) {
+            throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS, dest_address, null);
         }
         RequestResult payment = null;
-        Amount jtc = new Amount(); // build jingtum amount
+//        Amount jtc = new Amount(); // build jingtum amount
         try {
-            jtc.setCounterparty("");
-            jtc.setCurrency(Jingtum.getCurrencySWT());
-            jtc.setValue(this.activateAmount); // value
+
             // send default amount of SWT to each wallet
-            payment = getMyWallet().submitPayment(address, jtc, true, JingtumAPIAndWSServer.getInstance().getNextUUID());
+
+            HashMap<String, String> destination_amount = new HashMap<String, String>();
+            destination_amount.put("currency", "SWT");
+            destination_amount.put("value", Utility.doubleToString(this.activateAmount));
+            destination_amount.put("issuer","");
+
+            //Build a payment object with active amount of SWT
+            HashMap<String, Object> active_payment = new HashMap<String, Object>();
+            active_payment.put("source_account", this.address);
+            active_payment.put("destination_account", dest_address);
+            active_payment.put("destination_amount", destination_amount);
+
+            HashMap<String, Object> content = new HashMap<String, Object>();
+            long unix = System.currentTimeMillis() / 1000L;
+            String uid = "activewallet"+Long.toString(unix); //获得唯一订单号order_id
+            content.put("secret", this.secret);
+            content.put("client_resource_id", uid);
+            content.put("payment", active_payment);
+
+            String params = APIServer.GSON.toJson(content);
+            payment = APIServer.request(APIServer.RequestMethod.POST, APIServer.formatURL(Payment.class, this.address, "?VALIDATED=true"), params, RequestResult.class);
+
+             //= submitPayment(address, jtc, true, JingtumAPIAndWSServer.getInstance().getNextUUID());
         } catch (FailedException e) {
             e.printStackTrace();
         } catch (AuthenticationException e) {
@@ -530,9 +544,8 @@ public class FinGate extends AccountClass {
             e.printStackTrace();
         } catch (ChannelException e) {
             e.printStackTrace();
-        } catch (InvalidParameterException e) {
-            e.printStackTrace();
         }
+
         if (payment != null) {
             return payment.getSuccess();
         }
@@ -543,12 +556,12 @@ public class FinGate extends AccountClass {
      * @return wallet
      * @throws InvalidParameterException
      */
-    private Wallet getMyWallet() throws InvalidParameterException {
-        if (wallet == null) {
-            wallet = new Wallet(this.address, this.secret);
-        }
-        return wallet;
-    }
+//    private Wallet getMyWallet() throws InvalidParameterException {
+//        if (wallet == null) {
+//            wallet = new Wallet(this.address, this.secret);
+//        }
+//        return wallet;
+//    }
 
     //
     public void setMode(int in_mode) {

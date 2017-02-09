@@ -45,6 +45,13 @@ public class ConfigTest {
         assertEquals((Integer) 100000000, config.getDefaultTrustLimit());
         assertEquals(1.01, config.getPaymentPathRate(), 0.0000001);
         assertEquals("prefix", config.getPrefix());
-        assertEquals("http://tfingate.jingtum.com", config.getTumServer());
+        assertEquals("http://tfingate.jingtum.com/v1/business/node", config.getTumServer());
     }
+
+
+//    public void testLoadTestConfig() throws FileNotFoundException{
+//        String config_file_path = "src/test/java/com/jingtum/conf/test.config.yaml";
+//        Config config = Config.loadConfig(config_file_path);
+////TODO
+//    }
 }

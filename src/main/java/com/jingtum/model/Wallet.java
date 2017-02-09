@@ -78,7 +78,6 @@ public class Wallet extends AccountClass {
 	@Expose
 	private RelationCollection relations;
 
-	private APIServer api_server = null;
 
 	private static final String VALIDATED = "?validated=";
 
@@ -176,14 +175,13 @@ public class Wallet extends AccountClass {
 	 * @param secret
 	 * @throws InvalidParameterException 
 	 */
-	public Wallet (String address, String secret) throws InvalidParameterException{
+	public Wallet (String secret, String address) throws InvalidParameterException{
 		if(!Utility.validateKeyPair(address, secret)){
 			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS_OR_SECRET, address + secret, null);
 		}
 		this.address = address;
 		this.secret = secret;
-		//use the singleton mode
-		this.api_server = FinGate.getInstance().getAPIServer();
+
 	}	
 	/*
 	 * Create Wallet instance from secret
@@ -197,9 +195,6 @@ public class Wallet extends AccountClass {
 		}
 		this.address = Seed.computeAddress(secret);
 		this.secret = secret;
-		this.api_server = FinGate.getInstance().getAPIServer();
-		System.out.println("Server API "+FinGate.getInstance().getAPIServer().getServerURL());
-		System.out.println("Server Tum "+FinGate.getInstance().getTumServer().getServerURL());
 	}	
     /**
      * Gson builder
@@ -238,9 +233,11 @@ public class Wallet extends AccountClass {
 	 */
 	public String getSecret() {
 		return this.secret;
-	}	
+	}
+
     /**
      * Static method to get the balance collection of a given address
+	 * without any parameters, this returns all the balances
      * @return BalanceCollection instance
      * @throws AuthenticationException
      * @throws InvalidRequestException
@@ -253,12 +250,11 @@ public class Wallet extends AccountClass {
             throws AuthenticationException, InvalidRequestException,
             APIConnectionException, APIException, ChannelException, FailedException {
 
-		return APIProxy.request(
-				APIProxy.RequestMethod.GET,
-				APIProxy.formatURL(
+		return APIServer.request(
+				APIServer.RequestMethod.GET,
+				APIServer.formatURL(
 				        Balance.class,
-                        this.getAddress(),
-                        Utility.buildSignString(this.getAddress(), this.getSecret())),
+                        this.getAddress()),
 				null,
 				Wallet.class).getBalances();
     }
@@ -279,12 +275,12 @@ public class Wallet extends AccountClass {
             throws AuthenticationException, InvalidRequestException,
             APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException {
     	StringBuilder sb = new StringBuilder();
-    	//check if currcncy is valid
+    	//check if currency is valid
     	if(Utility.isNotEmpty(currency)){ 
     		if(!Utility.isValidCurrency(currency)){
     			throw new InvalidParameterException(JingtumMessage.INVALID_CURRENCY,currency,null);
     		}else{
-    	    	sb.append("&currency=");
+    	    	sb.append("?currency=");
     	    	sb.append(currency);
     		}
     	}
@@ -293,16 +289,21 @@ public class Wallet extends AccountClass {
     		if(!Utility.isValidAddress(counterparty)){
     			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,counterparty,null);
     		}else{
-    	    	sb.append("&counterparty=");
+//if only one parameter is available, use ?
+				//otherwise use & to seperate the parameters.
+    			if (sb.length() > 0)
+    	    		sb.append("&counterparty=");
+    			else
+					sb.append("?counterparty=");
     	    	sb.append(counterparty);
     		}
     	}
-		return APIProxy.request(
-		        APIProxy.RequestMethod.GET,
-                APIProxy.formatURL(
+		return APIServer.request(
+				APIServer.RequestMethod.GET,
+				APIServer.formatURL(
                         Balance.class,
                         this.getAddress(),
-                        Utility.buildSignString(this.getAddress(), this.getSecret()) + sb.toString()),
+                        sb.toString()),
                 null,
                 Wallet.class).getBalances();
     }

@@ -28,6 +28,7 @@ package com.jingtum.model;
 import com.google.gson.annotations.Expose;
 
 public class Balance extends JingtumObject{
+	//TODO changed the counterparty to issuer
 	@Expose
 	private double value;
 	@Expose

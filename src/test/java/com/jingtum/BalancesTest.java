@@ -63,6 +63,9 @@ public class BalancesTest {
 	*/
 	@Test
 	public void testGetParaBalance() throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, FailedException {
+		//设置测试环境
+		FinGate.getInstance().setMode(1);
+
 		//已激活的钱包
 		Wallet wallet = new Wallet("snqFcHzRe22JTM8j7iZVpQYzxEEbW");
 		//正常情况1   货币为SWT，无银关时
@@ -128,7 +131,7 @@ public class BalancesTest {
 		}
         
 		//异常情况1   钱包未激活时
-		Wallet wallet01 = new Wallet("jhoitsF8aPz6tzxFW4JmiNWoxsHtsnds5z","saadV1p5vQeh4N1YdPGo3N3NS7dZo");
+		Wallet wallet01 = new Wallet("saadV1p5vQeh4N1YdPGo3N3NS7dZo","jhoitsF8aPz6tzxFW4JmiNWoxsHtsnds5z");
 		try {
 			@SuppressWarnings("unused")
 			BalanceCollection bc01 = wallet01.getBalance("SWT","");
@@ -137,7 +140,7 @@ public class BalancesTest {
 	    }
 		
 		//异常情况2   钱包未激活时
-		Wallet wallet02 = new Wallet("jhoitsF8aPz6tzxFW4JmiNWoxsHtsnds5z","saadV1p5vQeh4N1YdPGo3N3NS7dZo");
+		Wallet wallet02 = new Wallet("saadV1p5vQeh4N1YdPGo3N3NS7dZo");
 		try {
 			@SuppressWarnings("unused")
 			BalanceCollection bc02 = wallet02.getBalance("CNY","janxMdrWE2SUzTqRUtfycH4UGewMMeHa9f");
@@ -147,7 +150,7 @@ public class BalancesTest {
 		
 		//异常情况3   货币为无效时，捕获异常
 		try {
-			Wallet wallet03 = new Wallet("js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa","snqFcHzRe22JTM8j7iZVpQYzxEEbW");
+			Wallet wallet03 = new Wallet("snqFcHzRe22JTM8j7iZVpQYzxEEbW");
 			@SuppressWarnings("unused")
 			BalanceCollection bc03 = wallet03.getBalance("CNY01","janxMdrWE2SUzTqRUtfycH4UGewMMeHa9f");
 	    } catch (InvalidParameterException ex) {
@@ -156,7 +159,7 @@ public class BalancesTest {
 		
 		//异常情况4    银关为无效时,捕获异常
 		try {
-			Wallet wallet03 = new Wallet("js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa","snqFcHzRe22JTM8j7iZVpQYzxEEbW");
+			Wallet wallet03 = new Wallet("snqFcHzRe22JTM8j7iZVpQYzxEEbW");
 			@SuppressWarnings("unused")
 			BalanceCollection bc03 = wallet03.getBalance("CNY","janxMdrWE2SUzTqRUtfycH4UGewMMe0000");
 	    } catch (InvalidParameterException ex) {

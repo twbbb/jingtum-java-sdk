@@ -45,6 +45,7 @@ public class JingtumResponse {
      * @return http responseBody
      */
     public String getResponseBody() {
+        System.out.println("res body:"+responseBody);
         return responseBody;
     }
 }
