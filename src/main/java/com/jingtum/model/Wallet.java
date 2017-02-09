@@ -198,6 +198,8 @@ public class Wallet extends AccountClass {
 		this.address = Seed.computeAddress(secret);
 		this.secret = secret;
 		this.api_server = FinGate.getInstance().getAPIServer();
+		System.out.println("Server API "+FinGate.getInstance().getAPIServer().getServerURL());
+		System.out.println("Server Tum "+FinGate.getInstance().getTumServer().getServerURL());
 	}	
     /**
      * Gson builder

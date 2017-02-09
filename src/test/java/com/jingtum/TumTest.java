@@ -23,7 +23,9 @@ public class TumTest {
 		FinGate.getInstance().setToken("00000005");  //设置用户编号
 		FinGate.getInstance().setKey("b33802b7f345fc44e6bd1d3b11c86b412de9ec38"); //用户密码
 
-		String order_id = "thisorderid01"; //获得唯一订单号
+
+		long unix = System.currentTimeMillis() / 1000L;
+		String order_id = "thisorderid"+Long.toString(unix); //获得唯一订单号order_id
 
 		System.out.println("================issue custom tum================");
 		//Wallet wallet = FinGate.getInstance().createWallet();

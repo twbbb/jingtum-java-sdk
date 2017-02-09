@@ -164,6 +164,7 @@ public class TumServer extends ServerClass {
             }
             // trigger the request
             String rBody = jsonResponse.getBody().toString();
+            System.out.println("TumServer Res: "+rBody);
             Integer rCode = jsonResponse.getStatus();
 
             return new JingtumResponse(rCode, rBody);
@@ -171,7 +172,7 @@ public class TumServer extends ServerClass {
             throw new APIConnectionException(
                     String.format(
                             JingtumMessage.SERVER_ERROR,
-                            JingtumAPIAndWSServer.getInstance().getJingtumServerHost(), e.getMessage()), e);
+                            INSTANCE.getServerURL(), e.getMessage()), e);
         }
     }
 

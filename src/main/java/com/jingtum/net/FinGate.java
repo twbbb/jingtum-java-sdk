@@ -385,7 +385,7 @@ public class FinGate extends AccountClass {
 
         HashMap<String, Object> content = new HashMap<String, Object>();
         content.put("cmd", TongTong.CmdType.QueryIssue);
-        content.put("token", this.token);
+        content.put("custom", this.token);
         content.put("order", order);
         content.put("hmac", hmac);
 
