@@ -21,20 +21,20 @@
 
 package com.jingtum.net;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import static com.jingtum.net.APIServer.RequestMethod.GET;
+
 import com.jingtum.JingtumMessage;
-import com.jingtum.exception.*;
-import com.jingtum.model.EffectCollection;
-import com.jingtum.net.ServerClass;
+import com.jingtum.exception.APIConnectionException;
+import com.jingtum.exception.APIException;
+import com.jingtum.exception.AuthenticationException;
+import com.jingtum.exception.ChannelException;
+import com.jingtum.exception.FailedException;
+import com.jingtum.exception.InvalidRequestException;
 import com.jingtum.util.Utility;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-
-import static com.jingtum.net.APIServer.RequestMethod.GET;
 
 /**
  * @author Jingtum Inc.

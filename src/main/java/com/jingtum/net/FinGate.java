@@ -23,27 +23,30 @@ package com.jingtum.net;
  */
 
 
-        import com.jingtum.Jingtum;
-        import com.jingtum.JingtumMessage;
-        import com.jingtum.core.crypto.ecdsa.Seed;
-        import com.jingtum.exception.*;
-        import com.jingtum.model.AccountClass;
-        import com.jingtum.model.Wallet;
-        import com.jingtum.model.Amount;
-        import com.jingtum.model.IssueRecord;
-        import com.jingtum.model.TongTong;
-        import com.jingtum.model.TumInfo;
-        import com.jingtum.model.Payment;
-        import com.jingtum.model.RequestResult;
-        import com.jingtum.net.APIServer;
-        import com.jingtum.net.TumServer;
-        import com.jingtum.net.JingtumAPIAndWSServer;
-        import com.jingtum.util.Config;
-        import com.jingtum.util.Utility;
-
         import java.io.FileNotFoundException;
-        import java.text.DecimalFormat;
-        import java.util.HashMap;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+
+import com.jingtum.Jingtum;
+import com.jingtum.JingtumMessage;
+import com.jingtum.core.crypto.ecdsa.Seed;
+import com.jingtum.exception.APIConnectionException;
+import com.jingtum.exception.APIException;
+import com.jingtum.exception.AuthenticationException;
+import com.jingtum.exception.ChannelException;
+import com.jingtum.exception.FailedException;
+import com.jingtum.exception.InvalidParameterException;
+import com.jingtum.exception.InvalidRequestException;
+import com.jingtum.exception.JingtumException;
+import com.jingtum.model.AccountClass;
+import com.jingtum.model.Amount;
+import com.jingtum.model.IssueRecord;
+import com.jingtum.model.RequestResult;
+import com.jingtum.model.TongTong;
+import com.jingtum.model.TumInfo;
+import com.jingtum.model.Wallet;
+import com.jingtum.util.Config;
+import com.jingtum.util.Utility;
 
 /**
  * Created by yifan on 11/15/16.
@@ -77,11 +80,8 @@ public class FinGate extends AccountClass {
     //Server classes
     private APIServer api_server = null;
     private TumServer tum_server = null;
-
-
-
+    
     private static FinGate instance = null;
-
     /**
      * Singleton mode
      *
