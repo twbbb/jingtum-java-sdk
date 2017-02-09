@@ -22,8 +22,12 @@
  */
 package com.jingtum.net;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jingtum.JingtumMessage;
 import com.jingtum.exception.*;
+import com.jingtum.model.EffectCollection;
 import com.jingtum.net.ServerClass;
 import com.jingtum.net.JingtumAPIAndWSServer;
 import com.jingtum.util.Utility;
@@ -40,12 +44,28 @@ import java.net.URISyntaxException;
  * @version 1.0 JingtumAPIAndWSServer class
  */
 public class TumServer extends ServerClass {
-
+	
+	private static TumServer INSTANCE = null;
+    static {
+    	INSTANCE = new TumServer();
+    }
+    
+    private TumServer(){
+    	super("");
+    }
 
     public TumServer(String in_url){
         //call the parent constructor to create the class
         super(in_url);
 
+        INSTANCE.setServerURL(in_url);
+    }
+    
+    @Override
+    public void setServerURL(String in_url) {
+    	super.setServerURL(in_url);
+    	
+    	INSTANCE.serverURL = in_url;
     }
 
     /**

@@ -256,7 +256,6 @@ public class FinGate extends AccountClass {
      * @throws InvalidParameterException
      */
     public boolean issueCustomTum(String order, String currency, double amount, String account) throws InvalidParameterException {
-
         System.out.println("Tum Server: " + tum_server.getServerURL());
         if (Utility.isEmpty(this.token)) {
             throw new InvalidParameterException(JingtumMessage.EMPTY_TOKEN, this.token, null);
@@ -336,7 +335,7 @@ public class FinGate extends AccountClass {
         param.append(account);
         param.append(",hmac:");
         param.append(hmac);*/
-        String param = tum_server.GSON.toJson(content);
+        String param = TumServer.GSON.toJson(content);
 
         System.out.println(param);
         System.out.println("send to: " + tum_server.getServerURL());
@@ -345,8 +344,7 @@ public class FinGate extends AccountClass {
             //Note the tum_server value is fixed at this moment
             //https://fingate.jingtum.com/v1/business/node
             //tt = APIServer.request(APIServer.RequestMethod.POST_FORM, tum_server, param.toString(), TongTong.class);
-            tt = tum_server.request(TumServer.RequestMethod.POST, tum_server.getServerURL(), param, TongTong.class);
-
+            tt = TumServer.request(TumServer.RequestMethod.POST, tum_server.getServerURL(), param, TongTong.class);
         } catch (JingtumException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -453,8 +451,7 @@ public class FinGate extends AccountClass {
         content.put("date", unix);
         content.put("hmac", hmac);
 
-        String param = APIServer.GSON.toJson(content);
-
+        String param = TumServer.GSON.toJson(content);
         try {
             return TumServer.request(TumServer.RequestMethod.POST, tum_server.getServerURL(), param, TumInfo.class);
         } catch (AuthenticationException e) {

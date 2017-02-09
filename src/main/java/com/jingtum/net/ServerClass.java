@@ -30,6 +30,9 @@ package com.jingtum.net;
         import com.google.gson.GsonBuilder;
         import com.jingtum.model.EffectCollection;
         import com.jingtum.model.JingtumObject;
+import com.jingtum.model.OrderBookResult;
+import com.jingtum.model.PaymentCollection;
+import com.jingtum.model.Wallet;
 
 /**
  * @author zp li.
@@ -57,7 +60,7 @@ public class ServerClass extends JingtumObject {
     public String getServerURL(){
         return serverURL;
     }
-
+    
     /**
      * Gson object use to transform json string to Jingtum object
      */

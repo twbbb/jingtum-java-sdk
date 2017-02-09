@@ -23,6 +23,9 @@ package com.jingtum.net;
 
 import static com.jingtum.net.APIServer.RequestMethod.GET;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jingtum.JingtumMessage;
 import com.jingtum.exception.APIConnectionException;
 import com.jingtum.exception.APIException;
@@ -30,6 +33,7 @@ import com.jingtum.exception.AuthenticationException;
 import com.jingtum.exception.ChannelException;
 import com.jingtum.exception.FailedException;
 import com.jingtum.exception.InvalidRequestException;
+import com.jingtum.model.EffectCollection;
 import com.jingtum.util.Utility;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
