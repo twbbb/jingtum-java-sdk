@@ -47,18 +47,47 @@ import static com.jingtum.net.APIServer.RequestMethod.GET;
  *
  */
 public class APIServer extends ServerClass {
-    private static final String VERSION_URL = null;
     /**
      * URLEncoder charset
      */
     public static final String CHARSET = "UTF-8";
+    
+    private static APIServer INSTANCE = null;
+    static {
+    	INSTANCE = new APIServer();
+    }
 
+    private String versionURL;
+    
+    private APIServer(){
+    	super("");
+    }
 
-    public APIServer(String in_url){
+    public APIServer(String in_url, String version_url){
         //call the parent constructor to create the class
         super(in_url);
-
+        this.versionURL = version_url;
+        
+        INSTANCE.setServerURL(in_url);
+        INSTANCE.setVersionURL(version_url);
     }
+    
+    @Override
+    public void setServerURL(String in_url) {
+    	super.setServerURL(in_url);
+    	
+    	INSTANCE.serverURL = in_url;
+    }
+    
+    public void setVersionURL(String version_url) {
+		this.versionURL = version_url;
+		
+		INSTANCE.versionURL = version_url;
+	}
+    
+    public String getVersionURL() {
+		return versionURL;
+	}
 
     /**
      * Http request method:
@@ -90,7 +119,7 @@ public class APIServer extends ServerClass {
      * @return class URL
      */
     protected static String classURL() {
-        return getServerURL().concat(VERSION_URL);
+        return INSTANCE.getServerURL().concat(INSTANCE.getVersionURL());
     }
 
     /**
@@ -100,8 +129,8 @@ public class APIServer extends ServerClass {
     public static String formatURL(String param) {
         return String.format(
                 "%s/%s/%s",
-                getServerURL(),
-                VERSION_URL,
+                INSTANCE.getServerURL(),
+                INSTANCE.getVersionURL(),
                 param);
     }
 
@@ -255,7 +284,7 @@ public class APIServer extends ServerClass {
         } catch (UnirestException e) {
             throw new APIConnectionException(
                     String.format(
-                            JingtumMessage.SERVER_ERROR, getServerURL(), e.getMessage()), e);
+                            JingtumMessage.SERVER_ERROR, INSTANCE.getServerURL(), e.getMessage()), e);
         }
     }
 

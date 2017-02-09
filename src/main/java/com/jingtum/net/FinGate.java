@@ -114,35 +114,35 @@ public class FinGate extends AccountClass {
         try {
             if ( in_mode == 0) {
                 configFile = PROPERTY_FILE;
-
             }else if( in_mode == 1){
                 configFile = DEV_PROPERTY_FILE;
-            }else
+            }else {
                 throw new InvalidParameterException(JingtumMessage.UNKNOWN_MODE, null, null);
-
+            }
         } catch (InvalidParameterException e) {
             e.printStackTrace();
         }
 
         try {
-            Config FingateConfig = Config.loadConfig(configFile);
-            this.activateAmount = FingateConfig.getActivateAmount();
+            Config config = Config.loadConfig(configFile);
+            this.activateAmount = config.getActivateAmount();
 
-            this.pathRate = FingateConfig.getPaymentPathRate();
+            this.pathRate = config.getPaymentPathRate();
 
             System.out.println("Tum server");
-            System.out.println(FingateConfig.getTumServer());
+            System.out.println(config.getTumServer());
             //Setup the servers with input string from config file
             if (this.tum_server == null) {
-                this.tum_server = new TumServer(FingateConfig.getTumServer());
-            }else
-                this.tum_server.setServerURL(FingateConfig.getTumServer());
-
+                this.tum_server = new TumServer(config.getTumServer());
+            }else {
+                this.tum_server.setServerURL(config.getTumServer());
+            }
             if (this.api_server == null) {
-                this.api_server = new APIServer(FingateConfig.getApiServer());
-            }else
-                this.api_server.setServerURL(FingateConfig.getApiServer());
-
+                this.api_server = new APIServer(config.getApiServer(), config.getApiVersion());
+            }else {
+                this.api_server.setServerURL(config.getApiServer());
+                this.api_server.setVersionURL(config.getApiVersion());
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

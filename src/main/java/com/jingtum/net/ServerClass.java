@@ -39,13 +39,12 @@ package com.jingtum.net;
  * Contains the basic info for servers
  */
 public class ServerClass extends JingtumObject {
-    private static String serverURL; // server url
-
     /**
      * URLEncoder charset
      */
     public static final String CHARSET = "UTF-8";
 
+    protected String serverURL; // server url
 
     protected ServerClass(String in_url){
         serverURL = in_url;
@@ -55,10 +54,9 @@ public class ServerClass extends JingtumObject {
         serverURL = in_url;
     }
 
-    public static String getServerURL(){
+    public String getServerURL(){
         return serverURL;
     }
-
 
     /**
      * Gson object use to transform json string to Jingtum object
