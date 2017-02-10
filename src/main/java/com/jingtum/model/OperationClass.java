@@ -28,7 +28,7 @@ public class OperationClass extends JingtumObject{
 	private String src_address;
 	private String src_secret;
 
-	public Boolean validate;
+	public Boolean validate = true;
 
 	//String used to identify the asy mode or sy mode
 	protected static final String VALIDATED = "?validated=";
@@ -46,6 +46,14 @@ public class OperationClass extends JingtumObject{
 	 */
 	public String getSrcSecret() {
 		return src_secret;
+	}
+	
+	/**
+	 * Waiting for validated result or not
+	 * @return validate
+	 */
+	public Boolean getValidate() {
+		return validate;
 	}
 
 

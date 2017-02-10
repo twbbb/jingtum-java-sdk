@@ -37,8 +37,8 @@ public class PaymentTest {
 		PaymentOperation op = new PaymentOperation(wallet1);
 		op.setDestAddress("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ");
 		op.setAmount(jtc);
-		//op.setValidate(true);
-		//op.setClientId("20611171957");//can be skipped
+//		op.setValidate(true);
+//		op.setClientId("20611171957");//can be skipped
 
 // 3. submit payment
 		RequestResult payment01 = op.submit();

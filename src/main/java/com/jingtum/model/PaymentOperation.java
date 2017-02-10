@@ -148,17 +148,17 @@ public class PaymentOperation extends OperationClass{
         HashMap<String, Object> payment = new HashMap<String, Object>();
         payment.put("source_account", this.getSrcAddress());
         payment.put("destination_account", this.dest_address);
-        //payment.put("destination_amount", destination_amount);optional,
+        payment.put("destination_amount", destination_amount);
 
         HashMap<String, Object> content = new HashMap<String, Object>();
         content.put("secret", this.getSrcSecret());
         content.put("client_resource_id", this.client_resource_id);
         content.put("payment", payment);
 
-        String params = FinGate.getInstance().getAPIServer().GSON.toJson(content);
-        String url = FinGate.getInstance().getAPIServer().formatURL(Payment.class, this.dest_address, VALIDATED + Boolean.toString(this.validate));
+        String params = APIServer.GSON.toJson(content);
+        String url = APIServer.formatURL(Payment.class, this.dest_address, VALIDATED + Boolean.toString(this.validate));
         System.out.println("Payment URL:"+url);
 
-        return FinGate.getInstance().getAPIServer().request(APIServer.RequestMethod.POST, url, params, RequestResult.class);
+        return APIServer.request(APIServer.RequestMethod.POST, url, params, RequestResult.class);
     }
 }
