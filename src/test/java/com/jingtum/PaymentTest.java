@@ -4,6 +4,7 @@ import com.jingtum.exception.*;
 import com.jingtum.model.*;
 import com.jingtum.net.FinGate;
 import com.jingtum.net.JingtumAPIAndWSServer;
+import com.jingtum.model.PaymentOperation.PaymentListener;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -14,7 +15,7 @@ public class PaymentTest {
 
 	/**
 	*
-	* Pay test
+	* Pay validate=true(default) test
 	 * @throws FailedException 
 	*  
 	*/
@@ -42,12 +43,60 @@ public class PaymentTest {
 
 // 3. submit payment
 		RequestResult payment01 = op.submit();
+		
+		System.out.println("result:" + payment01.toString());
 
 		//正常情况1  是否等待结果为true时
 		assertEquals(true, payment01.getSuccess()); //交易是否成功
 		assertEquals("validated", payment01.getState()); //交易状态
 		assertEquals("tesSUCCESS", payment01.getResult()); //支付服务器结果
 
+	}
+	
+	/**
+	*
+	* Pay validate=false test
+	 * @throws FailedException 
+	*  
+	*/
+	@Test
+	public void testValidatedPay() throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, FailedException {
+		FinGate.getInstance().setMode(1);
+
+		//已有钱包1余额充足  作为支付方
+		Wallet wallet1 = new Wallet("ssHC71HCbhp6FVLLcK2oyyUVjcAY4"); //如进行支付，密钥为必须参数
+		Amount jtc = new Amount(); //构建支付的货币
+		jtc.setCounterparty(""); //货币发行方
+		jtc.setCurrency("SWT"); //货币单位
+		jtc.setValue(0.1); //金额
+
+		//Init the payment operation
+		//PaymentOperation op = new PaymentOperation(wallet1);
+
+		//op.setDestAddress();
+		// 2. construct payment operation
+		PaymentOperation op = new PaymentOperation(wallet1);
+		op.setDestAddress("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ");
+		op.setAmount(jtc);
+		op.setValidate(false);
+//		op.setClientId("20611171957");//can be skipped
+
+// 3. submit payment
+		op.submit(new PaymentListener() {
+			
+			public void onFail(RequestResult result) {
+				// TODO Auto-generated method stub
+				System.out.println("fail");
+			}
+			
+			public void onComplete(RequestResult payment02) {
+				//正常情况1  是否等待结果为true时
+				assertNotNull(payment02);
+				assertEquals(true, payment02.getSuccess()); //交易是否成功
+				assertEquals("validated", payment02.getState()); //交易状态
+				assertEquals("tesSUCCESS", payment02.getResult()); //支付服务器结果
+			}
+		});
 	}
 
 }

@@ -48,6 +48,7 @@ public abstract class JingtumMessage {
 	public static final String ERROR_MESSAGE = "Error message: ";
 	public static final String ERROR_CODE = "Error code: ";
 	public static final String ERROR_INPUT = "Input value cannot be empty!";
+	public static final String ERROR_CLIENT_ID = "Client Id cannot be empty!";
 	public static final String EMPTY_TOKEN = "FinGate custom token is not set!";
 	public static final String EMPTY_KEY = "FinGate custom key is not set!";
 	public static final String UNRECOGNIZED_HTTP_METHOD = "Unrecognized HTTP method %s. ";

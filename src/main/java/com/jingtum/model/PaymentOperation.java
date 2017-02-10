@@ -157,8 +157,42 @@ public class PaymentOperation extends OperationClass{
 
         String params = APIServer.GSON.toJson(content);
         String url = APIServer.formatURL(Payment.class, this.dest_address, VALIDATED + Boolean.toString(this.validate));
-        System.out.println("Payment URL:"+url);
+        System.out.println("Payment URL:" + url);
 
         return APIServer.request(APIServer.RequestMethod.POST, url, params, RequestResult.class);
+    }
+    
+    public void submit(PaymentListener listener)throws AuthenticationException, InvalidRequestException,
+    			APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
+    	RequestResult payment01 = this.submit();
+		System.out.println("result01:" + payment01.toString());
+		if(payment01.getSuccess()){
+			try {
+				Thread.sleep(5000);
+				RequestResult payment02 = this.queryResult();
+				System.out.println("result02:" + payment01.toString());
+				listener.onComplete(payment02);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}else{
+			listener.onComplete(payment01);
+		}
+    }
+    
+    public RequestResult queryResult()
+            throws AuthenticationException, InvalidRequestException,
+            APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
+        if(Utility.isEmpty(this.client_resource_id)){
+            throw new InvalidParameterException(JingtumMessage.ERROR_CLIENT_ID,this.client_resource_id,null);
+        }
+        String url = APIServer.formatURL(Payment.class, this.dest_address, "/" + this.client_resource_id);
+        System.out.println("Payment URL:" + url);
+
+        return APIServer.request(APIServer.RequestMethod.GET, url, null, RequestResult.class);
+    }
+    
+    public interface PaymentListener {
+    	public void onComplete(RequestResult result);
     }
 }
