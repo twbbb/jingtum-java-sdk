@@ -39,8 +39,7 @@ public class PaymentTest {
 		op.setDestAddress("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ");
 		op.setAmount(jtc);
 //		op.setValidate(true);
-//		op.setClientId("20611171957");//can be skipped
-
+//		op.setClientId("20611171957");//optional
 // 3. submit payment
 		RequestResult payment01 = op.submit();
 		

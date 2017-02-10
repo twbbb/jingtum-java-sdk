@@ -18,6 +18,7 @@ public class TumTest {
 	public static void main(String[] args) throws AuthenticationException, InvalidRequestException,
 			APIConnectionException, ChannelException, APIException, FailedException, InvalidParameterException {
 		//FinGate fg = FinGate.getInstance();
+		//设置测试环境
 		FinGate.getInstance().setMode(1);
 		FinGate.getInstance().setAccount("snqFcHzRe22JTM8j7iZVpQYzxEEbW"); //FinGate地址密码
 		FinGate.getInstance().setToken("00000005");  //设置用户编号

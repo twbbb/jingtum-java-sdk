@@ -134,11 +134,19 @@ public class APIServer extends ServerClass {
     protected static String classURL() {
         //return INSTANCE.getServerURL().concat(INSTANCE.getVersionURL());
         //TODO check if the url is null
-        //give out a exception if not
-        return String.format(
-                "%s/%s/accounts",
-                INSTANCE.getServerURL(),
-                INSTANCE.getVersionURL());
+//        try{
+        if(INSTANCE.getServerURL()!= null) {
+//            throw new APIConnectionException(
+//                "Empty URL");
+
+            //give out a exception if not
+            return String.format(
+                    "%s/%s/accounts",
+                    INSTANCE.getServerURL(),
+                    INSTANCE.getVersionURL());
+        }
+        else
+            return String.format("Empty url");
     }
 
     /**

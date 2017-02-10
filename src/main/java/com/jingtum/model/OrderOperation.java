@@ -22,10 +22,176 @@
 package com.jingtum.model;
 
 
+import com.jingtum.JingtumMessage;
+import com.jingtum.exception.*;
+import com.jingtum.net.APIServer;
+import com.jingtum.util.Utility;
+
+import java.util.HashMap;
+
 /**
  * Created by zpli on 2/8/17.
  */
 
 
 public class OrderOperation extends OperationClass{
+    //Amount used for the submit order
+    private String paths;
+    private String dest_address;
+    private Amount source_amount;
+    private double source_slippage;
+    private Amount destination_amount;
+
+    private String client_resource_id;
+    private String prefix;
+
+    public OrderOperation(Wallet src_wallet){
+        //check if the wallet if an active one, this may delay the process of Operation
+        //
+        this.setSrcAddress(src_wallet.getAddress());
+        this.setSrcSecret(src_wallet.getSecret());
+
+        client_resource_id = "";
+
+    }
+
+    /* Get submit order paths
+	 * @return paths
+	 */
+    public String getPaths() {
+        return paths;
+    }
+
+    /**
+     * Get submit order amount
+     * @return amount
+     */
+    public Amount getAmount() {
+        return source_amount;
+    }
+    /**
+     * Get submit order resource id
+     * @return client_resource_id
+     */
+    public String getClientID() {
+        return client_resource_id;
+    }
+
+    /**
+     * Get submit order resource id
+     * @return client_resource_id
+     */
+    public void setClientID(String in_id){this.client_resource_id = in_id;};
+    public void setPrefix(String in_id){this.prefix = in_id;};
+
+    public void setClientId(String id){};
+
+    public void setAmount(Amount in_amt)throws InvalidParameterException {
+        if(!Utility.isValidAmount(in_amt)){
+            throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_AMOUNT,null,null);
+        }
+        this.source_amount = in_amt;
+    };
+
+    public void setDestAddress(String in_address){dest_address = in_address;};
+
+    /**
+     * Submit a submit order by orgnazing the
+     *
+     * @return PostResult instance
+     * @throws AuthenticationException
+     * @throws InvalidRequestException
+     * @throws APIConnectionException
+     * @throws APIException
+     * @throws ChannelException
+     * @throws InvalidParameterException
+     * @throws FailedException
+     */
+    public RequestResult submit()
+            throws AuthenticationException, InvalidRequestException,
+            APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
+
+//        try{
+//            if(!isActivated()){
+//                throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
+//            }
+//        }catch(InvalidRequestException e){
+//            throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
+//        }
+
+        if(!Utility.isValidAddress(this.dest_address)){
+            throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,this.dest_address,null);
+        }
+        if(!Utility.isValidAmount(this.source_amount)){
+            throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_AMOUNT,null,null);
+        }
+        if(this.source_amount.getValue() <= 0){
+            throw new InvalidParameterException(JingtumMessage.INVALID_VALUE,String.valueOf(source_amount.getValue()),null);
+        }
+
+        if(Utility.isEmpty(this.client_resource_id)){ // if uid is null
+
+            //Generate an uid if the user didn't set it.
+            this.client_resource_id = "paymentid"+Long.toString(System.currentTimeMillis() ); //获得唯一单号payment_id// generate a resouce ID
+
+        }
+
+        HashMap<String, String> destination_amount = new HashMap<String, String>();
+        destination_amount.put("currency", source_amount.getCurrency());
+        destination_amount.put("value", Utility.doubleToString(source_amount.getValue()));
+        destination_amount.put("issuer",source_amount.getCounterparty());
+
+        HashMap<String, Object> order_data = new HashMap<String, Object>();
+        order_data.put("source_account", this.getSrcAddress());
+        order_data.put("destination_account", this.dest_address);
+        order_data.put("destination_amount", destination_amount);
+
+        HashMap<String, Object> content = new HashMap<String, Object>();
+        content.put("secret", this.getSrcSecret());
+        content.put("client_resource_id", this.client_resource_id);
+        content.put("payment", order_data);
+
+        String params = APIServer.GSON.toJson(content);
+        String url = APIServer.formatURL(Order.class, this.dest_address, VALIDATED + Boolean.toString(this.validate));
+        System.out.println("Order URL:" + url);
+
+        return APIServer.request(APIServer.RequestMethod.POST, url, params, RequestResult.class);
+    }
+
+    /*
+     * Submit with asyn method
+     */
+    public void submit(OrderOperation.OrderListener listener)throws AuthenticationException, InvalidRequestException,
+            APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
+        RequestResult order01 = this.submit();
+        System.out.println("result01:" + order01.toString());
+        if(order01.getSuccess()){
+            try {
+                Thread.sleep(5000);
+                RequestResult order02 = this.queryResult();
+                System.out.println("result02:" + order01.toString());
+                listener.onComplete(order02);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }else{
+            listener.onComplete(order01);
+        }
+    }
+
+    public RequestResult queryResult()
+            throws AuthenticationException, InvalidRequestException,
+            APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
+        if(Utility.isEmpty(this.client_resource_id)){
+            throw new InvalidParameterException(JingtumMessage.ERROR_CLIENT_ID,this.client_resource_id,null);
+        }
+        String url = APIServer.formatURL(Order.class, this.dest_address, "/" + this.client_resource_id);
+        System.out.println("Order URL:" + url);
+
+        return APIServer.request(APIServer.RequestMethod.GET, url, null, RequestResult.class);
+    }
+
+    public interface OrderListener {
+        public void onComplete(RequestResult result);
+    }
 }

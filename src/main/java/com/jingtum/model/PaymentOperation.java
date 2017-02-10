@@ -101,7 +101,8 @@ public class PaymentOperation extends OperationClass{
     public void setDestAddress(String in_address){dest_address = in_address;};
 
     /**
-     * Submit a payment
+     * Submit a payment by orgnazing the
+     *
      * @return PostResult instance
      * @throws AuthenticationException
      * @throws InvalidRequestException
