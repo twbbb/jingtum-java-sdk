@@ -25,14 +25,12 @@
 package com.jingtum.net;
 
 
-        import com.google.gson.FieldNamingPolicy;
-        import com.google.gson.Gson;
-        import com.google.gson.GsonBuilder;
-        import com.jingtum.model.EffectCollection;
-        import com.jingtum.model.JingtumObject;
-import com.jingtum.model.OrderBookResult;
-import com.jingtum.model.PaymentCollection;
-import com.jingtum.model.Wallet;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.jingtum.model.BalanceCollection;
+import com.jingtum.model.EffectCollection;
+import com.jingtum.model.JingtumObject;
 
 /**
  * @author zp li.
@@ -67,5 +65,6 @@ public class ServerClass extends JingtumObject {
     public static final Gson GSON = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .registerTypeAdapter(EffectCollection.class, new EffectCollectionDeserializer())
+            .registerTypeAdapter(BalanceCollection.class, new BalanceCollectionDeserializer())
             .create();
 }
