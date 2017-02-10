@@ -9,6 +9,9 @@ import java.security.NoSuchAlgorithmException;
 
 import static org.junit.Assert.assertEquals;
 
+/*
+ * Test the FinGate function to create a new wallet address and send active amount to the address
+ */
 public class CreateWalletTest {
 
 	@Test

@@ -62,6 +62,7 @@ public class APIServer extends ServerClass {
     }
 
     private String versionURL;
+    private String prefix="prefix";
     
     private APIServer(){
     	super("");
@@ -92,6 +93,14 @@ public class APIServer extends ServerClass {
     public String getVersionURL() {
 		return versionURL;
 	}
+
+	//Set the prefix to return
+	public void setPrefix(String in_prefix){this.prefix = in_prefix;};
+
+    //Return a client resouirce id for payment
+    public String getClientId() {
+        return prefix+Long.toString(System.currentTimeMillis() );
+    }
 
     /**
      * Http request method:
@@ -155,6 +164,7 @@ public class APIServer extends ServerClass {
             String address,
             String param) throws InvalidRequestException {
 
+        System.out.println("build url1"+address);
         return String.format(
                 "%s/%s/%s%s",
                 classURL(),

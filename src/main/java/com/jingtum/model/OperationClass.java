@@ -19,158 +19,39 @@ package com.jingtum.model;
  *
  * @author zpli
  */
-import com.jingtum.net.APIServer;
-import com.jingtum.net.FinGate;
+//import com.jingtum.net.APIServer;
+//import com.jingtum.net.FinGate;
 
 public class OperationClass extends JingtumObject{
-	private boolean success;
-	private String client_resource_id;
-	private String hash;
-	private StateType state;
-	private String result;
-	private long date;
-	private double fee;
-	private String type;
-	private String counterparty;
-	private Amount amount;
-	private EffectCollection effects;	
-	private String paths;
-	private String source_account;
-	private String destination_account;
-	private Amount source_amount;
-	private double source_slippage;
-	private Amount destination_amount;
+
+
+	private String src_address;
+	private String src_secret;
+
+	public Boolean validate;
+
+	//String used to identify the asy mode or sy mode
+	protected static final String VALIDATED = "?validated=";
+
 	/**
-	 * Server state:
-	 * validated or failed
+	 * Get source address in the Operation
+	 * @return source account address
 	 */
-	public enum StateType{
-		validated, failed
-	}	
-	/**
-	 * payment direction
-	 *
-	 */
-	public enum Direction{
-		incoming,outgoing,all
+	public String getSrcAddress() {
+		return src_address;
 	}
 	/**
-	 * Get payment paths
-	 * @return paths
+	 * Get source secret in the Operation
+	 * @return src_secret
 	 */
-	public String getPaths() {
-		return paths;
+	public String getSrcSecret() {
+		return src_secret;
 	}
-	/**
-	 * Get source account in finding payment path
-	 * @return source account
-	 */
-	public String getSourceAccount() {
-		return source_account;
-	}
-	/**
-	 * Get destination account in finding payment path
-	 * @return destination account
-	 */
-	public String getDestinationAccount() {
-		return destination_account;
-	}
-	/**
-	 * Get destination amount info in finding payment path
-	 * @return destination_amount
-	 */
-	public Amount getDestinationAmount() {
-		return destination_amount;
-	}
-	/**
-	 * Get source slippage
-	 * @return source_sliepage
-	 */
-	public double getSourceSlippage() {
-		return source_slippage;
-	}	
-	/**
-	 * Get source payment needed in finding payment path
-	 * @return source_amount
-	 */
-	public Amount getSourceAmount() {
-		return source_amount;
-	}
-	/**
-	 * Get payment effect effect collection
-	 * @return effects
-	 */
-	public EffectCollection getEffects() {
-		return effects;
-	}
-	/**
-	 * Get payment type
-	 * @return type
-	 */
-	public String getType() {
-		return type;
-	}
-	/**
-	 * Get currency counter party
-	 * @return counterparty
-	 */
-	public String getCounterparty() {
-		return counterparty;
-	}
-	/**
-	 * Get payment amount
-	 * @return amount
-	 */
-	public Amount getAmount() {
-		return amount;
-	}
-	/**
-	 * Return true if request is successful
-	 * @return success
-	 */
-	public boolean getSuccess() {
-		return success;
-	}
-	/**
-	 * Get payment resource id
-	 * @return client_resource_id
-	 */
-	public String getClient_resource_id() {
-		return client_resource_id;
-	}
-	/**
-	 * Get payment hash value
-	 * @return hash
-	 */
-	public String getHash() {
-		return hash;
-	}
-	/**
-	 * Get state type 
-	 * @return state
-	 */
-	public StateType getState() {
-		return state;
-	}
-	/**
-	 * Get server result
-	 * @return result
-	 */
-	public String getResult() {
-		return result;
-	}
-	/**
-	 * Get payment time, in UNIXTIME
-	 * @return date
-	 */
-	public long getDate() {
-		return date;
-	}
-	/**
-	 * Get payment transaction fee, in SWT
-	 * @return fee
-	 */
-	public double getFee() {
-		return fee;
-	}
+
+
+	public void setSrcAddress(String in_address){src_address = in_address;}
+
+	public void setSrcSecret(String in_secret){src_secret = in_secret;}
+
+	public void setValidate(Boolean in_bool){validate = in_bool;}
 }
