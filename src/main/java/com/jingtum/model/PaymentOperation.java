@@ -36,6 +36,9 @@ import com.jingtum.net.FinGate;
 import com.jingtum.util.Utility;
 
 import java.util.HashMap;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class PaymentOperation extends OperationClass{
@@ -164,33 +167,42 @@ public class PaymentOperation extends OperationClass{
     }
     
     public void submit(PaymentListener listener)throws AuthenticationException, InvalidRequestException,
-    			APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	RequestResult payment01 = this.submit();
-		System.out.println("result01:" + payment01.toString());
-		if(payment01.getSuccess()){
-			try {
-				Thread.sleep(5000);
-				RequestResult payment02 = this.queryResult();
-				System.out.println("result02:" + payment01.toString());
-				listener.onComplete(payment02);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}else{
-			listener.onComplete(payment01);
-		}
+    			APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException {
+    	//Later all operators in one ExecutorService?
+    	ExecutorService exec = Executors.newCachedThreadPool();
+    	exec.execute(new PaymentRunnable(this, listener));
+    	exec.shutdown();
     }
     
-    public RequestResult queryResult()
-            throws AuthenticationException, InvalidRequestException,
-            APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-        if(Utility.isEmpty(this.client_resource_id)){
-            throw new InvalidParameterException(JingtumMessage.ERROR_CLIENT_ID,this.client_resource_id,null);
+    private class PaymentRunnable implements Runnable {
+        private PaymentOperation operator;
+        private PaymentListener listener;
+        
+        private PaymentRunnable(PaymentOperation operator, PaymentListener listener){
+            this.operator = operator;
+            this.listener = listener;
         }
-        String url = APIServer.formatURL(Payment.class, this.dest_address, "/" + this.client_resource_id);
-        System.out.println("Payment URL:" + url);
-
-        return APIServer.request(APIServer.RequestMethod.GET, url, null, RequestResult.class);
+        public void run() {
+            try {
+				RequestResult result = this.operator.submit();
+				System.out.println("payment:" + result.toString());
+				this.listener.onComplete(result);
+			} catch (AuthenticationException e) {
+				e.printStackTrace();
+			} catch (InvalidRequestException e) {
+				e.printStackTrace();
+			} catch (APIConnectionException e) {
+				e.printStackTrace();
+			} catch (APIException e) {
+				e.printStackTrace();
+			} catch (ChannelException e) {
+				e.printStackTrace();
+			} catch (InvalidParameterException e) {
+				e.printStackTrace();
+			} catch (FailedException e) {
+				e.printStackTrace();
+			}
+        }
     }
     
     public interface PaymentListener {

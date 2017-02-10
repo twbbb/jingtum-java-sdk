@@ -77,23 +77,17 @@ public class PaymentTest {
 		PaymentOperation op = new PaymentOperation(wallet1);
 		op.setDestAddress("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ");
 		op.setAmount(jtc);
-		op.setValidate(false);
+//		op.setValidate(true);
 //		op.setClientId("20611171957");//can be skipped
 
 // 3. submit payment
 		op.submit(new PaymentListener() {
-			
-			public void onFail(RequestResult result) {
-				// TODO Auto-generated method stub
-				System.out.println("fail");
-			}
-			
-			public void onComplete(RequestResult payment02) {
+			public void onComplete(RequestResult result) {
 				//正常情况1  是否等待结果为true时
-				assertNotNull(payment02);
-				assertEquals(true, payment02.getSuccess()); //交易是否成功
-				assertEquals("validated", payment02.getState()); //交易状态
-				assertEquals("tesSUCCESS", payment02.getResult()); //支付服务器结果
+				assertNotNull(result);
+				assertEquals(true, result.getSuccess()); //交易是否成功
+				assertEquals("validated", result.getState()); //交易状态
+				assertEquals("tesSUCCESS", result.getResult()); //支付服务器结果
 			}
 		});
 	}
