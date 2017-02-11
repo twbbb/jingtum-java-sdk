@@ -65,4 +65,13 @@ public class Balance extends JingtumObject{
 	public String getCounterparty() {
 		return counterparty;
 	}
+
+	/**
+	 * Get balance currency issuer, which equals the counterparty
+	 * in Jingtum System
+	 * @return issuer
+	 */
+	public String getIssuer() {
+		return counterparty;
+	}
 }

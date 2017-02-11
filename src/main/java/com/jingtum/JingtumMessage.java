@@ -57,4 +57,5 @@ public abstract class JingtumMessage {
             					+ "you should check Jingtum's service status at https://api.jingtum.com,"
             					+ " or let us know at support@jingtum.com.";
 	public static final String UNKNOWN_MODE = "FinGate mode is unknown!";
+	public static final String INVALID_TUM_PAIR = "Invalid Tum pair!";
 }

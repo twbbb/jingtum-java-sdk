@@ -350,6 +350,7 @@ public class APIServer extends ServerClass {
         JingtumResponse response;
 
 
+        System.out.println("Req url:"+url);
         try {
             response = makeRequest(method, url, params);
         } catch (ClassCastException ce) {

@@ -22,10 +22,118 @@
 package com.jingtum.model;
 
 
+import com.jingtum.JingtumMessage;
+import com.jingtum.exception.*;
+import com.jingtum.net.APIServer;
+import com.jingtum.util.Utility;
+
+import java.util.HashMap;
+
 /**
  * Created by zpli on 2/8/17.
  */
 
 
 public class CancelOrderOperation extends OperationClass{
+
+    //Order used to cancel the order
+    private String order_id;
+
+
+    public CancelOrderOperation(Wallet src_wallet){
+        //check if the wallet if an active one, this may delay the process of Operation
+        //
+        this.setSrcAddress(src_wallet.getAddress());
+        this.setSrcSecret(src_wallet.getSecret());
+        //set default mode to syn
+        this.validate = true;
+    }
+
+    /**
+     * Set the sequence number of the submitted number
+     * split the
+     * @return
+     */
+    public void setSequence(String in_seq)throws InvalidParameterException {
+        if (in_seq.length() < 1){
+
+            this.order_id = in_seq;
+        }else
+            throw new InvalidParameterException(JingtumMessage.INVALID_ORDER_NUMBER,in_seq,null);
+
+    }
+
+    public void setSequence(long in_seq)throws InvalidParameterException {
+        if (in_seq > 0){
+
+            this.order_id = Long.toString(in_seq);
+        }else
+            throw new InvalidParameterException(JingtumMessage.INVALID_ORDER_NUMBER,Long.toString(in_seq),null);
+
+    }
+    /**
+     * Submit the cancel order operation with the info
+     *
+     * @return PostResult instance
+     * @throws AuthenticationException
+     * @throws InvalidRequestException
+     * @throws APIConnectionException
+     * @throws APIException
+     * @throws ChannelException
+     * @throws InvalidParameterException
+     * @throws FailedException
+     */
+    public RequestResult submit()
+            throws AuthenticationException, InvalidRequestException,
+            APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
+
+        //Check the order id, should be a valid number
+        if(this.order_id.length() < 1)
+            throw new InvalidParameterException(JingtumMessage.INVALID_ORDER_NUMBER,this.order_id,null);
+
+        HashMap<String, Object> content = new HashMap<String, Object>();
+        content.put("secret", this.getSrcSecret());
+
+        String params = APIServer.GSON.toJson(content);
+        String url = APIServer.formatURL(Order.class, this.getSrcAddress(), "/"+this.order_id+VALIDATED + Boolean.toString(this.validate));
+        System.out.println("Cancel Order URL:" + url);
+
+        return APIServer.request(APIServer.RequestMethod.DELETE, url, params, RequestResult.class);
+    }
+
+    /*
+     * Submit with asyn method
+     */
+    public void submit(OrderOperation.OrderListener listener)throws AuthenticationException, InvalidRequestException,
+            APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
+        RequestResult order01 = this.submit();
+        System.out.println("Cancel order result:" + order01.toString());
+        if(order01.getSuccess()){
+            try {
+                Thread.sleep(5000);
+                RequestResult order02 = this.queryResult();
+                System.out.println("result02:" + order01.toString());
+                listener.onComplete(order02);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }else{
+            listener.onComplete(order01);
+        }
+    }
+
+    public RequestResult queryResult()
+            throws AuthenticationException, InvalidRequestException,
+            APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
+        String url = APIServer.formatURL(Order.class, this.getSrcAddress(), VALIDATED + Boolean.toString(this.validate));
+        System.out.println("CancelOrder URL:" + url);
+
+        return APIServer.request(APIServer.RequestMethod.GET, url, null, RequestResult.class);
+    }
+
+    public interface CancelOrderListener {
+        public void onComplete(RequestResult result);
+    }
+
 }
+

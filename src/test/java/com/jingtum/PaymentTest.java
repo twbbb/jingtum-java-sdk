@@ -39,7 +39,8 @@ public class PaymentTest {
 		op.setDestAddress("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ");
 		op.setAmount(jtc);
 //		op.setValidate(true);
-//		op.setClientId("20611171957");//optional
+		String payment_id = "paymenttest"+Long.toString(System.currentTimeMillis());
+		op.setClientId(payment_id);//optional
 // 3. submit payment
 		RequestResult payment01 = op.submit();
 		
@@ -49,6 +50,13 @@ public class PaymentTest {
 		assertEquals(true, payment01.getSuccess()); //交易是否成功
 		assertEquals("validated", payment01.getState()); //交易状态
 		assertEquals("tesSUCCESS", payment01.getResult()); //支付服务器结果
+
+		//Check the payment after ledger close
+		Payment payment1 = wallet1.getPayment(payment_id);
+		assertEquals(payment_id,payment1.getClient_resource_id());
+		assertEquals(true,payment1.getSuccess());
+		assertEquals("tesSUCCESS",payment1.getResult());
+		assertEquals("sent",payment1.getType());
 
 	}
 	

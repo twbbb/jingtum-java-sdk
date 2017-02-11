@@ -514,14 +514,15 @@ public class Wallet extends AccountClass {
     	if(Utility.isEmpty(id)){
     		throw new InvalidParameterException(JingtumMessage.INVALID_ID,id,null);
     	}
-    	return APIProxy.request(
-    	        APIProxy.RequestMethod.GET,
-                APIProxy.formatURL(
-                        Payment.class,
-                        this.getAddress(),
-                        "/" + id + Utility.buildSignString(this.getAddress(), this.getSecret())),
-                null,
-                Payment.class);
+
+		return APIServer.request(
+				APIServer.RequestMethod.GET,
+				APIServer.formatURL(
+						Payment.class,
+						this.getAddress()),
+				"/" + id,
+				Payment.class);
+
     }  
     /**
      * @return PaymentCollection
@@ -786,18 +787,27 @@ public class Wallet extends AccountClass {
     	}catch(InvalidRequestException e){
     		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
     	}
-    	return APIProxy.request(
-    	        APIProxy.RequestMethod.GET,
-                APIProxy.formatURL(
-                        Order.class,
-                        this.getAddress(),
-                        Utility.buildSignString(this.getAddress(), this.getSecret())),
-                null,
-                Wallet.class).getOrdersCollection();
+
+		return APIServer.request(
+				APIServer.RequestMethod.GET,
+				APIServer.formatURL(
+						Order.class,
+						this.getAddress()),
+				null,
+				Wallet.class).getOrdersCollection();
+
+//    	return APIProxy.request(
+//    	        APIProxy.RequestMethod.GET,
+//                APIProxy.formatURL(
+//                        Order.class,
+//                        this.getAddress(),
+//                        Utility.buildSignString(this.getAddress(), this.getSecret())),
+//                null,
+//                Wallet.class).getOrdersCollection();
     }    
     /**
      * Get order by ID
-     * @param id
+     * @param hash_id
      * @return Order instance
      * @throws AuthenticationException
      * @throws InvalidRequestException
@@ -807,7 +817,7 @@ public class Wallet extends AccountClass {
      * @throws InvalidParameterException 
      * @throws FailedException 
      */
-    public Order getOrder(String id)throws AuthenticationException, InvalidRequestException,
+    public Order getOrder(String hash_id)throws AuthenticationException, InvalidRequestException,
     		APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
     	try{
         	if(!isActivated()){
@@ -816,18 +826,19 @@ public class Wallet extends AccountClass {
     	}catch(InvalidRequestException e){
     		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
     	}
-    	if(Utility.isEmpty(id)){
-    		throw new InvalidParameterException(JingtumMessage.INVALID_ID,id,null);
+    	if(Utility.isEmpty(hash_id)){
+    		throw new InvalidParameterException(JingtumMessage.INVALID_ID,hash_id,null);
     	}
-    	return APIProxy.request(
-    			APIProxy.RequestMethod.GET,
-				APIProxy.formatURL(
+
+		return APIServer.request(
+				APIServer.RequestMethod.GET,
+				APIServer.formatURL(
 						Order.class,
-                        this.getAddress(),
-						"/" + id + Utility.buildSignString(this.getAddress(), this.getSecret())),
+						this.getAddress(),"/" + hash_id),
 				null,
 				Order.class);
-    }    
+    }
+
     /**
      * Get all trust lines
      * @return TrustLineCollection

@@ -37,66 +37,67 @@ import java.util.HashMap;
 public class OrderOperation extends OperationClass{
     //Amount used for the submit order
     private String paths;
-    private String dest_address;
-    private Amount source_amount;
-    private double source_slippage;
-    private Amount destination_amount;
 
-    private String client_resource_id;
-    private String prefix;
+    private Amount taker_pays;
+    private Amount taker_gets;
+
+    private double src_amount_value;
+    private double price;
+
+    //pair of Tum, tumCode:issuer/tumCode:issuer
+    private String pair;
+    private String type;//sell or buy
+
+
+    //String used to identify the asy mode or sy mode
+    public static final String SELL = "sell";
+    public static final String BUY = "buy";
 
     public OrderOperation(Wallet src_wallet){
         //check if the wallet if an active one, this may delay the process of Operation
         //
         this.setSrcAddress(src_wallet.getAddress());
         this.setSrcSecret(src_wallet.getSecret());
-
-        client_resource_id = "";
-
-    }
-
-    /* Get submit order paths
-	 * @return paths
-	 */
-    public String getPaths() {
-        return paths;
+        //set default mode to syn
+        this.validate = true;
     }
 
     /**
-     * Get submit order amount
-     * @return amount
+     * Set the Tum pair in the order
+     * split the
+     * @return
      */
-    public Amount getAmount() {
-        return source_amount;
-    }
-    /**
-     * Get submit order resource id
-     * @return client_resource_id
-     */
-    public String getClientID() {
-        return client_resource_id;
+    public void setType(String in_str)throws InvalidParameterException {
+        if (in_str == "sell" || in_str == "buy"){
+
+            this.type = in_str;
+        }else
+            throw new InvalidParameterException(JingtumMessage.SPECIFY_ORDER_TYPE,in_str,null);
+
     }
 
     /**
-     * Get submit order resource id
-     * @return client_resource_id
+     * Set the Tum pair in the order
+     * split the
+     * @return
      */
-    public void setClientID(String in_id){this.client_resource_id = in_id;};
-    public void setPrefix(String in_id){this.prefix = in_id;};
+    public void setPair(String in_pair){
+        this.pair = in_pair;
 
-    public void setClientId(String id){};
+    }
 
-    public void setAmount(Amount in_amt)throws InvalidParameterException {
-        if(!Utility.isValidAmount(in_amt)){
-            throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_AMOUNT,null,null);
-        }
-        this.source_amount = in_amt;
-    };
+    //only two digits allowed in the value
+    //TODO check the value format
+    public void setAmount(double in_value){this.src_amount_value = in_value;};
+    public void setAmount(String in_value){this.src_amount_value = Double.parseDouble(in_value);};
 
-    public void setDestAddress(String in_address){dest_address = in_address;};
+    //
+    public void setPrice(float in_price){ this.price = in_price;}
+
+
 
     /**
-     * Submit a submit order by orgnazing the
+     * Submit the order with the info
      *
      * @return PostResult instance
      * @throws AuthenticationException
@@ -111,49 +112,81 @@ public class OrderOperation extends OperationClass{
             throws AuthenticationException, InvalidRequestException,
             APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
 
-//        try{
-//            if(!isActivated()){
-//                throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-//            }
-//        }catch(InvalidRequestException e){
-//            throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-//        }
+       //split the pair to get the base and counter tum
+        String tum_codes[] = this.pair.split("/");
 
-        if(!Utility.isValidAddress(this.dest_address)){
-            throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,this.dest_address,null);
-        }
-        if(!Utility.isValidAmount(this.source_amount)){
-            throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_AMOUNT,null,null);
-        }
-        if(this.source_amount.getValue() <= 0){
-            throw new InvalidParameterException(JingtumMessage.INVALID_VALUE,String.valueOf(source_amount.getValue()),null);
-        }
+for (int i = 0; i<tum_codes.length; i ++)
+    System.out.println("Tumcodes:"+tum_codes[i]);
 
-        if(Utility.isEmpty(this.client_resource_id)){ // if uid is null
+        if ( tum_codes.length != 2)
+            throw new InvalidParameterException(JingtumMessage.INVALID_TUM_PAIR,this.pair,null);
 
-            //Generate an uid if the user didn't set it.
-            this.client_resource_id = "paymentid"+Long.toString(System.currentTimeMillis() ); //获得唯一单号payment_id// generate a resouce ID
 
-        }
+        String[] base_tum = tum_codes[0].split(":");;
+        String[] counter_tum = tum_codes[1].split(":");
 
-        HashMap<String, String> destination_amount = new HashMap<String, String>();
-        destination_amount.put("currency", source_amount.getCurrency());
-        destination_amount.put("value", Utility.doubleToString(source_amount.getValue()));
-        destination_amount.put("issuer",source_amount.getCounterparty());
+//        if ( tum_codes[0] == "SWT"){
+//            base_tum[0] = "SWT";
+//            base_tum[1] = "";
+//
+//        }else
+//          base_tum = tum_codes[0].split(":");
+//
+//        if ( tum_codes[1] == "SWT"){
+//            counter_tum[0] = "SWT";
+//            counter_tum[1] = "";
+//
+//        }else
+//          counter_tum = tum_codes[1].split(":");
+
+        //Check the src_amount_value is valid
+        //This requires the balances check
+
+//        for (int i = 0; i<tum_codes.length; i ++)
+//          System.out.println("Base:"+tum_codes[i]);
+//        System.out.println("Counter:"+counter_tum[0]);
+
+        //Set the source_amount and destination amount with pair, price and amount value
+        HashMap<String, String> base_amount = new HashMap<String, String>();
+        base_amount.put("currency", base_tum[0]);
+        base_amount.put("value", Utility.doubleToString(this.src_amount_value));
+        if (base_tum.length < 2)
+            base_amount.put("counterparty","");
+        else
+          base_amount.put("counterparty", base_tum[1]);
+
+        HashMap<String, String> counter_amount = new HashMap<String, String>();
+        counter_amount.put("currency", counter_tum[0]);
+        counter_amount.put("value", Utility.doubleToString(this.src_amount_value * this.price));
+        if (counter_tum.length < 2)
+            counter_amount.put("counterparty","");
+        else
+          counter_amount.put("counterparty", counter_tum[1]);
+
 
         HashMap<String, Object> order_data = new HashMap<String, Object>();
-        order_data.put("source_account", this.getSrcAddress());
-        order_data.put("destination_account", this.dest_address);
-        order_data.put("destination_amount", destination_amount);
+
+        //Set the parameters
+        if ( this.type == this.BUY) {
+
+            order_data.put("type", this.type);
+            order_data.put("taker_pays", base_amount);
+            order_data.put("taker_gets", counter_amount);
+        }else if (this.type == this.SELL){
+            order_data.put("type", this.type);
+            order_data.put("taker_pays", counter_amount);
+            order_data.put("taker_gets", base_amount);
+        }else
+            throw new InvalidParameterException(JingtumMessage.SPECIFY_ORDER_TYPE,this.type,null);
 
         HashMap<String, Object> content = new HashMap<String, Object>();
         content.put("secret", this.getSrcSecret());
-        content.put("client_resource_id", this.client_resource_id);
-        content.put("payment", order_data);
+        content.put("order", order_data);
 
         String params = APIServer.GSON.toJson(content);
-        String url = APIServer.formatURL(Order.class, this.dest_address, VALIDATED + Boolean.toString(this.validate));
-        System.out.println("Order URL:" + url);
+        String url = APIServer.formatURL(Order.class, this.getSrcAddress(), VALIDATED + Boolean.toString(this.validate));
+//        System.out.println("Order URL:" + url);
+//        System.out.println("data: " + params);
 
         return APIServer.request(APIServer.RequestMethod.POST, url, params, RequestResult.class);
     }
@@ -182,10 +215,7 @@ public class OrderOperation extends OperationClass{
     public RequestResult queryResult()
             throws AuthenticationException, InvalidRequestException,
             APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-        if(Utility.isEmpty(this.client_resource_id)){
-            throw new InvalidParameterException(JingtumMessage.ERROR_CLIENT_ID,this.client_resource_id,null);
-        }
-        String url = APIServer.formatURL(Order.class, this.dest_address, "/" + this.client_resource_id);
+  String url = APIServer.formatURL(Order.class, this.getSrcAddress(), VALIDATED + Boolean.toString(this.validate));
         System.out.println("Order URL:" + url);
 
         return APIServer.request(APIServer.RequestMethod.GET, url, null, RequestResult.class);
