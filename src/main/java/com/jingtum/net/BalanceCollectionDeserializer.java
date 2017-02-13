@@ -49,6 +49,7 @@ public class BalanceCollectionDeserializer implements JsonDeserializer<BalanceCo
             List<Balance> balance = gson.fromJson(json, balanceListType);
             BalanceCollection collection = new BalanceCollection();
             collection.setData(balance);
+
             return collection;
         }
         return gson.fromJson(json, typeOfT);

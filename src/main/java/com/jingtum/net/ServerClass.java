@@ -30,6 +30,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jingtum.model.BalanceCollection;
 import com.jingtum.model.EffectCollection;
+import com.jingtum.model.OrderCollection;
+import com.jingtum.model.OrderBookCollection;
+import com.jingtum.model.TransactionCollection;
 import com.jingtum.model.JingtumObject;
 
 /**
@@ -66,5 +69,8 @@ public class ServerClass extends JingtumObject {
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .registerTypeAdapter(EffectCollection.class, new EffectCollectionDeserializer())
             .registerTypeAdapter(BalanceCollection.class, new BalanceCollectionDeserializer())
+            .registerTypeAdapter(OrderCollection.class, new OrderCollectionDeserializer())
+            .registerTypeAdapter(OrderBookCollection.class, new OrderBookCollectionDeserializer())
+            .registerTypeAdapter(TransactionCollection.class, new TransactionCollectionDeserializer())
             .create();
 }

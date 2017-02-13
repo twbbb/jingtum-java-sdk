@@ -2,7 +2,6 @@ package com.jingtum;
 
 import com.jingtum.exception.*;
 import com.jingtum.net.FinGate;
-import com.jingtum.net.JingtumFingate;
 import org.junit.Test;
 
 import java.security.NoSuchAlgorithmException;

@@ -40,7 +40,7 @@ public class PaymentTest {
 		op.setAmount(jtc);
 //		op.setValidate(true);
 		String payment_id = "paymenttest"+Long.toString(System.currentTimeMillis());
-		op.setClientId(payment_id);//optional
+		op.setClientID(payment_id);//optional
 // 3. submit payment
 		RequestResult payment01 = op.submit();
 		
@@ -86,7 +86,7 @@ public class PaymentTest {
 		op.setDestAddress("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ");
 		op.setAmount(jtc);
 //		op.setValidate(true);
-//		op.setClientId("20611171957");//can be skipped
+//		op.setClientId("20611171957");//can be set by user
 
 // 3. submit payment
 		op.submit(new PaymentListener() {

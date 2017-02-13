@@ -34,7 +34,9 @@ public class Balance extends JingtumObject{
 	@Expose
 	private String currency;
 	@Expose
-	private String counterparty;	
+	private String issuer;
+	@Expose
+	private String counterparty;
 	@Expose
 	private double freezed;	//Certain amount would be freezed after user post an order.
 	/**
@@ -58,13 +60,6 @@ public class Balance extends JingtumObject{
 	public String getCurrency() {
 		return currency;
 	}
-	/**
-	 * Get balance currency counterparty
-	 * @return counter party
-	 */
-	public String getCounterparty() {
-		return counterparty;
-	}
 
 	/**
 	 * Get balance currency issuer, which equals the counterparty
@@ -72,6 +67,7 @@ public class Balance extends JingtumObject{
 	 * @return issuer
 	 */
 	public String getIssuer() {
-		return counterparty;
+		this.issuer = this.counterparty;
+		return this.issuer;
 	}
 }

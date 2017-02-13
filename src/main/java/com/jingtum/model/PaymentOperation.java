@@ -90,9 +90,9 @@ public class PaymentOperation extends OperationClass{
      * @return client_resource_id
      */
     public void setClientID(String in_id){this.client_resource_id = in_id;};
-    public void setPrefix(String in_id){this.prefix = in_id;};
+    public void setClientId(String in_id){this.client_resource_id = in_id;};
 
-    public void setClientId(String id){};
+    public void setPrefix(String in_id){this.prefix = in_id;};
 
     public void setAmount(Amount in_amt)throws InvalidParameterException{
         if(!Utility.isValidAmount(in_amt)){
@@ -119,13 +119,6 @@ public class PaymentOperation extends OperationClass{
             throws AuthenticationException, InvalidRequestException,
             APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
 
-//        try{
-//            if(!isActivated()){
-//                throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-//            }
-//        }catch(InvalidRequestException e){
-//            throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-//        }
 
         if(!Utility.isValidAddress(this.dest_address)){
             throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,this.dest_address,null);
@@ -142,7 +135,8 @@ public class PaymentOperation extends OperationClass{
             //Generate an uid if the user didn't set it.
             this.client_resource_id = "paymentid"+Long.toString(System.currentTimeMillis() ); //获得唯一单号payment_id// generate a resouce ID
 
-        }
+        }else
+            System.out.println("Send with id:"+this.client_resource_id);
 
         HashMap<String, String> destination_amount = new HashMap<String, String>();
         destination_amount.put("currency", source_amount.getCurrency());

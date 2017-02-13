@@ -2,7 +2,7 @@ package com.jingtum;
 
 import static org.junit.Assert.*;
 
-import com.jingtum.net.JingtumFingate;
+import com.jingtum.net.FinGate;
 import org.junit.Test;
 
 import com.jingtum.exception.APIConnectionException;
@@ -20,10 +20,16 @@ public class WalletTest {
 	* No parameters
 	*/
 	@Test
-	public void testWallet() throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException {
+	public void testWallet() throws AuthenticationException, InvalidRequestException,
+			InvalidParameterException, APIConnectionException, APIException, ChannelException {
 		
 		//正常创建钱包
-		Wallet wallet = JingtumFingate.getTestInstance().createWallet();
+		FinGate.getInstance().setMode(1);
+
+		FinGate.getInstance().setAccount("snqFcHzRe22JTM8j7iZVpQYzxEEbW"); //FinGate地址密码
+
+		//正常情况    钱包尚未激活且地址正确时
+		Wallet wallet = FinGate.getInstance().createWallet();
 		assertEquals("j", (wallet.getAddress()).substring(0, 1));
 		assertEquals("s", (wallet.getSecret()).substring(0, 1));
 	}
@@ -37,7 +43,7 @@ public class WalletTest {
 	public void testParametersWallet() throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, InvalidParameterException {
 		
 		//正常创建钱包
-		Wallet wallet2 = new Wallet("js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa","snqFcHzRe22JTM8j7iZVpQYzxEEbW");
+		Wallet wallet2 = new Wallet("snqFcHzRe22JTM8j7iZVpQYzxEEbW", "js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa");
 		assertEquals("js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa", wallet2.getAddress());
 		assertEquals("snqFcHzRe22JTM8j7iZVpQYzxEEbW", wallet2.getSecret());
 		

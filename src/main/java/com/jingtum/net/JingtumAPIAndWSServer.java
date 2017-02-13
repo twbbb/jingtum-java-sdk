@@ -42,7 +42,7 @@ import com.jingtum.util.Config;
  * @author jzhao
  * @version 1.0 JingtumAPIAndWSServer class
  */
-public class JingtumAPIAndWSServer extends BaseWallet {
+public class JingtumAPIAndWSServer extends AccountClass {
     private static final String PROPERTY_FILE = "src/main/java/com/jingtum/conf/prod.config.yaml"; // property file for prod
     private static final String DEV_PROPERTY_FILE = "src/test/java/com/jingtum/conf/test.config.yaml"; // property file for testing
 

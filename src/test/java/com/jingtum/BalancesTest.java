@@ -79,7 +79,7 @@ public class BalancesTest {
 		    bl = (Balance)it.next();
 		    //判断获取账户余额信息是否正确
 		    assertEquals("SWT",bl.getCurrency());
-		    assertEquals("", bl.getCounterparty());
+		    assertEquals("", bl.getIssuer());
 		}
 		
 		//正常情况2   货币为SWT，银关为janxMdrWE2SUzTqRUtfycH4UGewMMeHa9f时
@@ -92,7 +92,7 @@ public class BalancesTest {
 		    //判断获取账户余额信息是否正确
 		    assertEquals("",String.valueOf(bl2.getValue()));
 		    assertEquals("",bl2.getCurrency());
-		    assertEquals("", bl2.getCounterparty());
+		    assertEquals("", bl2.getIssuer());
 		    assertEquals("",String.valueOf(bl2.getFreezed()));
 		}
 		
@@ -105,7 +105,7 @@ public class BalancesTest {
 		    bl3 = (Balance)it3.next();
 		    //判断获取账户余额信息是否正确
 		    assertEquals("CNY",bl3.getCurrency());
-		    assertEquals("janxMdrWE2SUzTqRUtfycH4UGewMMeHa9f", bl3.getCounterparty());
+		    assertEquals("janxMdrWE2SUzTqRUtfycH4UGewMMeHa9f", bl3.getIssuer());
 		}
 		
 		//正常情况4   货币为CNY，银关为空时

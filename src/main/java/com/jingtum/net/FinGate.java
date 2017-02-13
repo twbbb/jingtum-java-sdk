@@ -61,7 +61,7 @@ public class FinGate extends AccountClass {
     private static final String QUERY_ISSUE = "/currency/queryIssue";
     private static final String CURRENCY_STATUS = "/currency/status";
 
-    private double activateAmount; // default amout of SWT to activate wallet
+    private double activateAmount; // default amount of SWT to activate wallet, this may be larger than the MIN_ACTIVATED_AMOUNT
     //private double trustLimit;
     private double pathRate;
 
@@ -119,7 +119,11 @@ public class FinGate extends AccountClass {
 
         try {
             Config config = Config.loadConfig(configFile);
+            //need to check and make sure the input is larger than
+            //the MIN_ACTIVATED_AMOUNT
             this.activateAmount = config.getActivateAmount();
+            if (this.activateAmount < MIN_ACTIVATED_AMOUNT)
+
 
             this.pathRate = config.getPaymentPathRate();
 
@@ -532,7 +536,10 @@ public class FinGate extends AccountClass {
             content.put("payment", active_payment);
 
             String params = APIServer.GSON.toJson(content);
-            payment = APIServer.request(APIServer.RequestMethod.POST, APIServer.formatURL(Payment.class, this.address, "?VALIDATED=true"), params, RequestResult.class);
+            payment = APIServer.request(APIServer.RequestMethod.POST,
+                    APIServer.formatURL(Payment.class, this.address, "?VALIDATED=true"),
+                    params,
+                    RequestResult.class);
 
              //= submitPayment(address, jtc, true, JingtumAPIAndWSServer.getInstance().getNextUUID());
         } catch (FailedException e) {
@@ -567,5 +574,85 @@ public class FinGate extends AccountClass {
     //
     public void setMode(int in_mode) {
         init(in_mode);
+    }
+
+    /*
+     *
+     */
+    public OrderBookResult getOrderBook(String in_pair) throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException,
+    ChannelException, InvalidParameterException, FailedException {
+        Amount base_amount = new Amount();
+        Amount counter_amount = new Amount();
+        //split the pair to get the base and counter tum
+        String tum_codes[] = in_pair.split("/");
+
+        for (int i = 0; i<tum_codes.length; i ++)
+            System.out.println("Tumcodes:"+tum_codes[i]);
+
+        if ( tum_codes.length != 2)
+            throw new InvalidParameterException(JingtumMessage.INVALID_TUM_PAIR,in_pair,null);
+
+
+        String[] base_tum = tum_codes[0].split(":");;
+        String[] counter_tum = tum_codes[1].split(":");
+
+
+        //Set the source_amount and destination amount with pair, price and amount value
+        base_amount.setCurrency(base_tum[0]);
+        if (base_tum.length < 2) {
+            if (base_tum[0] != "SWT")
+                throw new InvalidParameterException(JingtumMessage.INVALID_TUM_PAIR,in_pair,null);
+
+            base_amount.setCounterparty("");
+        }
+        else
+            base_amount.setCounterparty(base_tum[1]);
+
+        counter_amount.setCurrency(counter_tum[0]);
+
+        if (counter_tum.length < 2){
+            if (counter_tum[0] != "SWT")
+                throw new InvalidParameterException(JingtumMessage.INVALID_TUM_PAIR,in_pair,null);
+
+            counter_amount.setCounterparty("");
+        }
+        else
+            counter_amount.setCounterparty(counter_tum[1]);
+
+
+        try {
+            return getOrderBook(base_amount, counter_amount);
+        } catch (InvalidParameterException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public OrderBookResult getOrderBook(Amount base, Amount counter)
+            throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException,
+            ChannelException, InvalidParameterException, FailedException {
+
+        if (!Utility.isValidAmount(base) || !Utility.isValidAmount(counter)) {
+            throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_AMOUNT, null, null);
+        }
+        StringBuffer sb = new StringBuffer();
+        sb.append("/");
+        sb.append(base.getCurrency());
+        sb.append("%2B");
+        sb.append(base.getCounterparty());
+        sb.append("/");
+        sb.append(counter.getCurrency());
+        sb.append("%2B");
+        sb.append(counter.getCounterparty());
+
+        if (this.secret == null) {
+            this.secret = Seed.generateSecret();
+            this.address = Seed.computeAddress(secret);
+        }
+
+        return APIServer.request(APIServer.RequestMethod.GET,
+                APIServer.formatURL(OrderBook.class, this.address, sb.toString()),
+                null,
+                OrderBookResult.class);
     }
 }

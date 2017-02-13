@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.Iterator;
 
 import com.jingtum.model.*;
+import com.jingtum.net.FinGate;
 import com.jingtum.net.JingtumAPIAndWSServer;
 import org.junit.Test;
 
@@ -26,10 +27,20 @@ public class TransactionTest {
 	*/
 	@Test
 	public void testGetTransactions() throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, FailedException {
-		Wallet wallet = new Wallet("js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa","snqFcHzRe22JTM8j7iZVpQYzxEEbW");
+
+		//设置测试环境
+		FinGate.getInstance().setMode(1);
+		Wallet wallet = new Wallet("snqFcHzRe22JTM8j7iZVpQYzxEEbW","js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa");
 		Transaction tran;
+		Options ops = new Options();
+
+
 		//正常情况1  接收方地址为null,excludeFailed为true
-		TransactionCollection tc = wallet.getTransactionList(null,true,Transaction.DirectionType.outgoing,5,2); //参数为：支付交易的接收方地址，是否移除失败的交易历史，支付交易的方向->incoming或outgoing,每页数据量,第几页
+		TransactionCollection tc = wallet.getTransactionList(ops);
+		ops.setDestinationAccount("");
+		ops.setPage(2);
+		ops.setResultsPerPage(5);
+		//null,true,Transaction.DirectionType.outgoing,5,2); //参数为：支付交易的接收方地址，是否移除失败的交易历史，支付交易的方向->incoming或outgoing,每页数据量,第几页
 		//测试对象tc是否为null
 		assertNotNull(tc);
 		
@@ -65,14 +76,14 @@ public class TransactionTest {
 		}
 		
 		//正常情况2  excludeFailed为true时
-		Wallet wallet2 = new Wallet("jfCiWtSt4juFbS3NaXvYV9xNYxakm5yP9S","snwjtucx9vEP7hCazriMbVz8hFiK9");
+		Wallet wallet2 = new Wallet("snwjtucx9vEP7hCazriMbVz8hFiK9","jfCiWtSt4juFbS3NaXvYV9xNYxakm5yP9S");
 		//正常情况1  接收方地址为null,excludeFailed为false
 		TransactionCollection tc2 = wallet2.getTransactionList(null,true,Transaction.DirectionType.outgoing,10,1); //参数为：支付交易的接收方地址，是否移除失败的交易历史，支付交易的方向->incoming或outgoing,每页数据量,第几页
 		//测试对象tc是否为null
 		assertNotNull(tc2);
         
 		//正常情况3  excludeFailed为false时
-		Wallet wallet3 = new Wallet("jfCiWtSt4juFbS3NaXvYV9xNYxakm5yP9S","snwjtucx9vEP7hCazriMbVz8hFiK9");
+		Wallet wallet3 = new Wallet("snwjtucx9vEP7hCazriMbVz8hFiK9","jfCiWtSt4juFbS3NaXvYV9xNYxakm5yP9S");
 		//正常情况1  接收方地址为null,excludeFailed为false
 		TransactionCollection tc3 = wallet3.getTransactionList(null,false,null,0,0); //参数为：支付交易的接收方地址，是否移除失败的交易历史，支付交易的方向->incoming或outgoing,每页数据量,第几页
 		//测试对象tc是否为null
@@ -114,7 +125,7 @@ public class TransactionTest {
 		}
 		
 		//异常情况1    钱包未激活时
-		Wallet wallet01 = new Wallet("jhoitsF8aPz6tzxFW4JmiNWoxsHtsnds5z","saadV1p5vQeh4N1YdPGo3N3NS7dZo");
+		Wallet wallet01 = new Wallet("saadV1p5vQeh4N1YdPGo3N3NS7dZo","jhoitsF8aPz6tzxFW4JmiNWoxsHtsnds5z");
 		//捕获异常
 		try {
 			@SuppressWarnings("unused")
@@ -124,7 +135,7 @@ public class TransactionTest {
 	    }
 		
 		//异常情况2  resultPerPage为负数时
-		Wallet wallet02 = new Wallet("jfCiWtSt4juFbS3NaXvYV9xNYxakm5yP9S","snwjtucx9vEP7hCazriMbVz8hFiK9");
+		Wallet wallet02 = new Wallet("snwjtucx9vEP7hCazriMbVz8hFiK9","jfCiWtSt4juFbS3NaXvYV9xNYxakm5yP9S");
 		//捕获异常
 		try {
 			@SuppressWarnings("unused")
@@ -134,7 +145,7 @@ public class TransactionTest {
 	    }
         
 		//异常情况3  page为负数时
-		Wallet wallet03 = new Wallet("jfCiWtSt4juFbS3NaXvYV9xNYxakm5yP9S","snwjtucx9vEP7hCazriMbVz8hFiK9");
+		Wallet wallet03 = new Wallet("snwjtucx9vEP7hCazriMbVz8hFiK9","jfCiWtSt4juFbS3NaXvYV9xNYxakm5yP9S");;
 		//捕获异常
 		try {
 			@SuppressWarnings("unused")
@@ -144,7 +155,7 @@ public class TransactionTest {
 	    }
 		
 		//异常情况4  destinationAccount为无效时
-		Wallet wallet04 = new Wallet("jfCiWtSt4juFbS3NaXvYV9xNYxakm5yP9S","snwjtucx9vEP7hCazriMbVz8hFiK9");
+		Wallet wallet04 = new Wallet("snwjtucx9vEP7hCazriMbVz8hFiK9","jfCiWtSt4juFbS3NaXvYV9xNYxakm5yP9S");;
 		//捕获异常
 		try {
 			@SuppressWarnings("unused")
@@ -161,16 +172,28 @@ public class TransactionTest {
 	*/
 	@Test
 	public void testGetTransactionByHash() throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, FailedException {
-		Wallet wallet = new Wallet("js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa","snqFcHzRe22JTM8j7iZVpQYzxEEbW");
+		//设置测试环境
+		FinGate.getInstance().setMode(1);
+
+		Wallet wallet = new Wallet("snqFcHzRe22JTM8j7iZVpQYzxEEbW","js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa");
 		Transaction tran;
 
         //首先提交一个payment
         Amount jtc = new Amount(); //构建支付的货币
         jtc.setCounterparty(""); //货币发行方
         jtc.setCurrency("SWT"); //货币单位
-        jtc.setValue(18); //金额
-        String next_uuid = JingtumAPIAndWSServer.getTestInstance().getNextUUID();
-        RequestResult payment01 = wallet.submitPayment("jfCiWtSt4juFbS3NaXvYV9xNYxakm5yP9S", jtc, true, next_uuid); //支付，参数为：获取方地址，货币，是否等待支付结果，和资源号（选填）
+        jtc.setValue(0.8); //金额
+
+		PaymentOperation op = new PaymentOperation(wallet);
+		op.setDestAddress("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ");
+		op.setAmount(jtc);
+		op.setValidate(true);
+		String payment_id = "paymenttest"+Long.toString(System.currentTimeMillis());
+		op.setClientID(payment_id);//optional
+// 3. submit payment
+		RequestResult payment01 = op.submit();
+        //String next_uuid = JingtumAPIAndWSServer.getTestInstance().getNextUUID();
+        //RequestResult payment01 = wallet.submitPayment("jfCiWtSt4juFbS3NaXvYV9xNYxakm5yP9S", jtc, true, next_uuid); //支付，参数为：获取方地址，货币，是否等待支付结果，和资源号（选填）
         assertEquals(true,payment01.getSuccess()); //交易是否成功
         assertEquals("validated",payment01.getState()); //交易状态
         assertEquals("tesSUCCESS",payment01.getResult()); //支付服务器结果
@@ -181,7 +204,7 @@ public class TransactionTest {
 		//判断获取数据是否成功
 		assertEquals("tesSUCCESS",tran.getResult()); //交易结果
 		assertEquals(TranType.sent, tran.getType()); //交易类型
-		assertEquals(next_uuid,tran.getClient_resource_id()); //交易资源号
+		assertEquals(payment_id,tran.getClient_resource_id()); //交易资源号
 		assertEquals("0.000012",tran.getFee()); //交易费用，井通计价
 		assertEquals(payment_hash, tran.getHash());//交易hash值
 		

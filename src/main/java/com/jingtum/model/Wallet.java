@@ -30,11 +30,8 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.LongSerializationPolicy;
 import com.google.gson.annotations.Expose;
-import com.jingtum.net.APIProxy;
 import com.jingtum.net.APIServer;
-import com.jingtum.net.FinGate;
 import com.jingtum.net.JingtumAPIAndWSServer;
-import com.jingtum.net.JingtumFingate;
 import com.jingtum.util.Utility;
 import com.jingtum.Jingtum;
 import com.jingtum.JingtumMessage;
@@ -48,11 +45,12 @@ import com.jingtum.exception.FailedException;
 import com.jingtum.exception.InvalidParameterException;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
+
 /**
- * @author jzhao
- * @version 1.0
+ * @author zli
+ * @version 1.2
  * Wallet class, main entry point
+ * Removed
  */
 public class Wallet extends AccountClass {
 	@Expose
@@ -107,7 +105,9 @@ public class Wallet extends AccountClass {
 			
 			if(bc != null){
 				Balance bl = bc.getData().get(0);
-				if(bl != null && bl.getValue() >= JingtumFingate.getInstance().getActivateAmount()){
+				//Notice that this amount may be diff from FinGate
+				//since user can set the FinGate one.
+				if(bl != null && bl.getValue() >= this.MIN_ACTIVATED_AMOUNT){
 					__isActivated = true;
 				}
 			}
@@ -261,7 +261,7 @@ public class Wallet extends AccountClass {
     /**
      * Get balance filtered by currency/counterparty
      * @param currency
-     * @param counterparty
+     * @param issuer
      * @return BalanceCollection instance
      * @throws AuthenticationException
      * @throws InvalidRequestException
@@ -271,7 +271,7 @@ public class Wallet extends AccountClass {
      * @throws InvalidParameterException 
      * @throws FailedException 
      */
-    public BalanceCollection getBalance(String currency, String counterparty)
+    public BalanceCollection getBalance(String currency, String issuer)
             throws AuthenticationException, InvalidRequestException,
             APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException {
     	StringBuilder sb = new StringBuilder();
@@ -285,9 +285,9 @@ public class Wallet extends AccountClass {
     		}
     	}
     	//check counterparty is valid
-    	if(Utility.isNotEmpty(counterparty)){
-    		if(!Utility.isValidAddress(counterparty)){
-    			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,counterparty,null);
+    	if(Utility.isNotEmpty(issuer)){
+    		if(!Utility.isValidAddress(issuer)){
+    			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,issuer,null);
     		}else{
 //if only one parameter is available, use ?
 				//otherwise use & to seperate the parameters.
@@ -295,7 +295,7 @@ public class Wallet extends AccountClass {
     	    		sb.append("&counterparty=");
     			else
 					sb.append("?counterparty=");
-    	    	sb.append(counterparty);
+    	    	sb.append(issuer);
     		}
     	}
 		return APIServer.request(
@@ -307,223 +307,41 @@ public class Wallet extends AccountClass {
                 null,
                 Wallet.class).getBalances();
     }
-    /**
-     * Post a payment
-     * @param receiver payment receiver
-     * @param pay payment amount
-     * @param validate true if wait for payment result
-     * @param resourceID payment resource ID
-     * @return PostResult instance
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException 
-     * @throws FailedException 
-     */
-    public RequestResult submitPayment(String receiver, Amount pay, boolean validate, String resourceID)
-    		throws AuthenticationException, InvalidRequestException,
-            APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	try{
-        	if(!isActivated()){
-        		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-        	}     		
-    	}catch(InvalidRequestException e){
-    		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-    	}
-    	String uid = resourceID;
-    	
-    	if(!Utility.isValidAddress(receiver)){
-    		throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,receiver,null);
-    	}
-    	if(!Utility.isValidAmount(pay)){
-    		throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_AMOUNT,null,null);
-    	}
-    	if(pay.getValue() <= 0){
-    		throw new InvalidParameterException(JingtumMessage.INVALID_VALUE,String.valueOf(pay.getValue()),null);
-    	}
-    	if(Utility.isEmpty(uid)){ // if uid is null generate a resouce ID
-    		uid = JingtumAPIAndWSServer.getInstance().getNextUUID();
-    	}
-    	
-    	HashMap<String, String> destination_amount = new HashMap<String, String>();  
-    	destination_amount.put("currency", pay.getCurrency());
-    	destination_amount.put("value", Utility.doubleToString(pay.getValue()));    	
-    	destination_amount.put("issuer",pay.getCounterparty()); 
-    	
-    	HashMap<String, Object> payment = new HashMap<String, Object>();  
-    	payment.put("source_account", this.getAddress());
-    	payment.put("destination_account", receiver);
-    	payment.put("destination_amount", destination_amount);
-    	
-    	HashMap<String, Object> content = new HashMap<String, Object>();
-    	content.put("secret", this.getSecret());
-    	content.put("client_resource_id", uid);
-    	content.put("payment", payment);
-    	
-    	String params = APIProxy.GSON.toJson(content);
-    	return APIProxy.request(APIProxy.RequestMethod.POST, APIProxy.formatURL(Payment.class, this.getAddress(), VALIDATED + Boolean.toString(validate)), params, RequestResult.class);
-    }     
-    /**
-     * Pay synchronously, waiting for the request result
-     * @param receiver receiver wallet address
-     * @param pay pay info in JingtumAmount
-     * @param resourceID 
-     * @return PostResult
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException
-     * @throws FailedException 
-     */
-    public RequestResult syncSubmitPayment(String receiver, Amount pay,String resourceID) 
-    		throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	return submitPayment(receiver, pay, true, resourceID);    	
-    }    
-    /**
-     * Pay Asynchronously, not waiting for the request result
-     * @param receiver receiver wallet address
-     * @param pay pay info in JingtumAmount
-     * @param resourceID
-     * @return PostResult
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException
-     * @throws FailedException 
-     */
-    public RequestResult asyncSubmitPayment(String receiver, Amount pay,String resourceID) 
-    		throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	return submitPayment(receiver, pay, false, resourceID);    	
-    }
-    /**
-     * Pay with payment path
-     * @param paymentPath payment path, can obtain by calling getPaymentPath
-     * @param validate sync/async
-     * @param resourceID
-     * @return RequestResult instance
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException
-     * @throws FailedException 
-     */
-    public RequestResult submitPayment(Payment paymentPath, boolean validate, String resourceID)
-    		throws AuthenticationException, InvalidRequestException,
-            APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	try{
-        	if(!isActivated()){
-        		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-        	}     		
-    	}catch(InvalidRequestException e){
-    		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-    	}
-    	String uid = resourceID;
 
-    	if(Utility.isEmpty(uid)){
-    		uid = JingtumAPIAndWSServer.getInstance().getNextUUID();
-    	}
-    	HashMap<String, String> source_amount = new HashMap<String, String>();  
-    	source_amount.put("currency", paymentPath.getSourceAmount().getCurrency());
-    	source_amount.put("value", Utility.doubleToString(paymentPath.getSourceAmount().getValue() * JingtumFingate.getInstance().getPathRate()));
-    	source_amount.put("issuer",paymentPath.getSourceAmount().getIssuer()); 
-    	
-    	HashMap<String, String> destination_amount = new HashMap<String, String>();  
-    	destination_amount.put("currency", paymentPath.getDestinationAmount().getCurrency());
-    	destination_amount.put("value", Utility.doubleToString(paymentPath.getDestinationAmount().getValue()));    	
-    	destination_amount.put("issuer",paymentPath.getDestinationAmount().getIssuer()); 
-    	
-    	HashMap<String, Object> payment = new HashMap<String, Object>();  
-    	payment.put("source_account", this.getAddress());
-    	payment.put("source_amount", source_amount);
-    	payment.put("source_slippage", Utility.doubleToString(paymentPath.getSourceSlippage()));
-    	payment.put("destination_account", paymentPath.getDestinationAccount());
-    	payment.put("destination_amount", destination_amount);    	
-    	payment.put("paths", paymentPath.getPaths());
-    	
-    	HashMap<String, Object> content = new HashMap<String, Object>();
-    	content.put("secret", this.getSecret());
-    	content.put("client_resource_id", uid);
-    	content.put("payment", payment);
-    	
-    	String params = APIProxy.GSON.toJson(content);
-    	return APIProxy.request(APIProxy.RequestMethod.POST, APIProxy.formatURL(Payment.class,this.getAddress(),VALIDATED + Boolean.toString(validate)), params, RequestResult.class);
-    } 
-    /**
-     * Pay synchronously, waiting for the request result
-     * @param paymentPath payment path, can obtain by calling getPaymentPath
-     * @param resourceID
-     * @return RequestResult
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException
-     * @throws FailedException 
-     */
-    public RequestResult syncSubmitPayment(Payment paymentPath, String resourceID) 
-    		throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	return submitPayment(paymentPath, true, resourceID);
-    }
-    /**
-     * Pay Asynchronously, not waiting for the request result
-     * @param paymentPath payment path, can obtain by calling getPaymentPath
-     * @param resourceID
-     * @return RequestResult
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException
-     * @throws FailedException 
-     */
-    public RequestResult asyncSubmitPayment(Payment paymentPath, String resourceID) 
-    		throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	return submitPayment(paymentPath, false, resourceID);
-    }
-    /**
-     * Take hash number or resource ID to get payment information 
-     * @param id 
-     * @return Payment instance
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException 
-     * @throws FailedException 
-     */
-    public Payment getPayment(String id)throws AuthenticationException, InvalidRequestException,
-            APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	try{
-        	if(!isActivated()){
-        		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-        	}     		
-    	}catch(InvalidRequestException e){
-    		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-    	}
-    	if(Utility.isEmpty(id)){
-    		throw new InvalidParameterException(JingtumMessage.INVALID_ID,id,null);
-    	}
+	/**
+	 * Get order by ID
+	 * @param payment_id
+	 * @return Order instance
+	 * @throws AuthenticationException
+	 * @throws InvalidRequestException
+	 * @throws APIConnectionException
+	 * @throws APIException
+	 * @throws ChannelException
+	 * @throws InvalidParameterException
+	 * @throws FailedException
+	 */
+	public Payment getPayment(String payment_id)throws AuthenticationException, InvalidRequestException,
+			APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
+		try{
+			if(!isActivated()){
+				throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
+			}
+		}catch(InvalidRequestException e){
+			throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
+		}
+		if(Utility.isEmpty(payment_id)){
+			throw new InvalidParameterException(JingtumMessage.INVALID_ID,payment_id,null);
+		}
 
 		return APIServer.request(
 				APIServer.RequestMethod.GET,
 				APIServer.formatURL(
 						Payment.class,
-						this.getAddress()),
-				"/" + id,
+						this.getAddress(),"/" + payment_id),
+				null,
 				Payment.class);
+	}
 
-    }  
     /**
      * @return PaymentCollection
      * @throws AuthenticationException
@@ -533,10 +351,11 @@ public class Wallet extends AccountClass {
      * @throws ChannelException
      * @throws FailedException 
      */
-    public PaymentCollection getPaymentList() throws AuthenticationException, InvalidRequestException, 
+    public PaymentCollection getPaymentList() throws AuthenticationException, InvalidRequestException,
     APIConnectionException, APIException, ChannelException, FailedException{
+    	Options ops = new Options();
     	try {
-			return getPaymentList(null, null, false, Payment.Direction.all, 0, 0);
+			return getPaymentList(ops);
 		} catch (InvalidParameterException e) {
 			e.printStackTrace();
 		}
@@ -558,8 +377,9 @@ public class Wallet extends AccountClass {
      * @throws InvalidParameterException
      * @throws FailedException 
      */
-    public PaymentCollection getPaymentList(String sourceAccount, String destinationAccount, boolean excludeFailed, Payment.Direction direction, int resultPerPage, int page)
-    		throws AuthenticationException, InvalidRequestException,
+	//public PaymentCollection getPaymentList(String sourceAccount, String destinationAccount, boolean excludeFailed, Payment.Direction direction, int resultPerPage, int page)
+	public PaymentCollection getPaymentList(Options in_ops)
+			throws AuthenticationException, InvalidRequestException,
     		APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
     	try{
         	if(!isActivated()){
@@ -569,205 +389,65 @@ public class Wallet extends AccountClass {
     		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
     	}
     	StringBuilder param = new StringBuilder();
-    	if(Utility.isNotEmpty(sourceAccount)){
-    		if(!Utility.isValidAddress(sourceAccount)){
-    			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,sourceAccount,null);
+    	if(Utility.isNotEmpty(in_ops.getSourceAccount())){
+    		if(!Utility.isValidAddress(in_ops.getSourceAccount())){
+    			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,in_ops.getSourceAccount(),null);
     		}else{
     			param.append("&");
     			param.append("source_account=");
-    			param.append(sourceAccount);
+    			param.append(in_ops.getSourceAccount());
     		}
     	}
-       	if(Utility.isNotEmpty(destinationAccount)){
-    		if(!Utility.isValidAddress(destinationAccount)){
-    			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,destinationAccount,null);
+       	if(Utility.isNotEmpty(in_ops.getDestinationAccount())){
+    		if(!Utility.isValidAddress(in_ops.getDestinationAccount())){
+    			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,in_ops.getDestinationAccount(),null);
     		}else{
     			param.append("&");
     			param.append("destination_account=");
-    			param.append(destinationAccount);
+    			param.append(in_ops.getDestinationAccount());
     		}
     	}
-       	if(excludeFailed){
+       	if(in_ops.getExcludeFailed()){
        		param.append("&");
        		param.append("exclude_failed=");
-       		param.append(excludeFailed);
+       		param.append(in_ops.getExcludeFailed());
        	}
-       	if(null != direction && direction != Payment.Direction.all){
-       		param.append("&");
-       		param.append("direction=");
-       		param.append(direction);
+
+       	if(in_ops.getResultsPerPage() < 0){
+       		throw new InvalidParameterException(JingtumMessage.INVALID_PAGE_INFO,String.valueOf(in_ops.getResultsPerPage()),null);
        	}
-       	if(resultPerPage < 0){
-       		throw new InvalidParameterException(JingtumMessage.INVALID_PAGE_INFO,String.valueOf(resultPerPage),null);
-       	}
-       	if(resultPerPage > 0){
+       	if(in_ops.getResultsPerPage() > 0){
        		param.append("&");
        		param.append("results_per_page=");
-       		param.append(resultPerPage);
+       		param.append(in_ops.getResultsPerPage());
        	}
-       	if(page < 0){
-       		throw new InvalidParameterException(JingtumMessage.INVALID_PAGE_INFO,String.valueOf(page),null);
+       	if(in_ops.getPage() < 0){
+       		throw new InvalidParameterException(JingtumMessage.INVALID_PAGE_INFO,String.valueOf(in_ops.getPage()),null);
        	}
-       	if(page > 0){
+       	if(in_ops.getPage() > 0){
        		param.append("&");
        		param.append("page=");
-       		param.append(page);
+       		param.append(in_ops.getPage());
        	}
-    	return APIProxy.request(
-    	        APIProxy.RequestMethod.GET,
-                APIProxy.formatURL(
-                        Payment.class,
-                        this.getAddress(),
-                        Utility.buildSignString(this.getAddress(), this.getSecret()) + param.toString()),
-                null,
-                Wallet.class).getPaymentsCollection();
+
+		return APIServer.request(
+				APIServer.RequestMethod.GET,
+				APIServer.formatURL(
+						Payment.class,
+						this.getAddress(),param.toString()),
+				null,
+				Wallet.class).getPaymentsCollection();
+
+//    	return APIProxy.request(
+//    	        APIProxy.RequestMethod.GET,
+//                APIProxy.formatURL(
+//                        Payment.class,
+//                        this.getAddress(),
+//                        Utility.buildSignString(this.getAddress(), this.getSecret()) + param.toString()),
+//                null,
+//                Wallet.class).getPaymentsCollection();
     }    
-    /**
-     * Post a new order request
-     * @param orderType buy or sell
-     * @param pay 
-     * @param get
-     * @param validate synce/async
-     * @return PostRestul instance
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException 
-     * @throws FailedException 
-     */
-    public RequestResult createOrder(Order.OrderType orderType, Amount pay, Amount get, boolean validate)throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	try{
-        	if(!isActivated()){
-        		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-        	}     		
-    	}catch(InvalidRequestException e){
-    		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-    	}
-    	if(orderType == null){
-    		throw new InvalidParameterException(JingtumMessage.SPECIFY_ORDER_TYPE,null,null);
-    	}
-    	if(!Utility.isValidAmount(pay) ||!Utility.isValidAmount(get)){
-    		throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_AMOUNT,null,null);
-    	}
-    	
-    	HashMap<String, String> taker_pays = new HashMap<String, String>(); 
-    	taker_pays.put("currency", get.getCurrency());
-    	taker_pays.put("counterparty", get.getCounterparty());
-    	taker_pays.put("value", Utility.doubleToString(get.getValue()));
-    	
-    	HashMap<String, String> taker_gets = new HashMap<String, String>();
-    	taker_gets.put("currency", pay.getCurrency());
-    	taker_gets.put("counterparty", pay.getCounterparty());
-    	taker_gets.put("value", Utility.doubleToString(pay.getValue()));
-    	
-    	HashMap<String, Object> order = new HashMap<String, Object>();
-    	order.put("type", orderType);
-    	order.put("taker_pays", taker_pays);
-    	order.put("taker_gets", taker_gets);
-    	
-    	HashMap<String, Object> content = new HashMap<String, Object>();
-    	content.put("secret", this.getSecret());
-    	content.put("order", order);
-    	
-    	String params = APIProxy.GSON.toJson(content);
-    	return APIProxy.request(APIProxy.RequestMethod.POST, APIProxy.formatURL(Order.class,this.getAddress(),VALIDATED + Boolean.toString(validate)), params, RequestResult.class);
-    }  
-    /**
-     * Put an order synchronously. i.e. waiting for the request from server
-     * @param orderType
-     * @param pay
-     * @param get
-     * @return RequestResult
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException
-     * @throws FailedException 
-     */
-    public RequestResult syncCreateOrder(Order.OrderType orderType, Amount pay, Amount get) 
-    		throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	 return createOrder(orderType, pay, get, true);
-    }
-    /**
-     * Put an order asynchronously. i.e. not waiting for the request from server
-     * @param orderType
-     * @param pay
-     * @param get
-     * @return RequestResult
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException
-     * @throws FailedException 
-     */
-    public RequestResult asyncCreateOrder(Order.OrderType orderType, Amount pay, Amount get) 
-    		throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	 return createOrder(orderType, pay, get, false);
-    }
-    /**
-     * Cancel a posted order given a order sequence number
-     * @param sequence
-     * @param validate
-     * @return PostResult instance
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws FailedException 
-     */
-    public RequestResult cancelOrder(long sequence, boolean validate)throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException, ChannelException, FailedException{
-    	try{
-        	if(!isActivated()){
-        		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-        	}     		
-    	}catch(InvalidRequestException e){
-    		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-    	}
-    	HashMap<String, Object> content = new HashMap<String, Object>();
-    	content.put("secret", this.getSecret());
-    	
-    	String params = APIProxy.GSON.toJson(content);
-    	return APIProxy.request(APIProxy.RequestMethod.DELETE, APIProxy.formatURL(Order.class,this.getAddress(),"/" + Long.toString(sequence) + VALIDATED + Boolean.toString(validate)), params, RequestResult.class);
-    }    
-    /**
-     * Cancel an order synchronously
-     * @param sequence
-     * @return RequestResult
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws FailedException 
-     */
-    public RequestResult syncCancelOrder(long sequence) 
-    		throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, FailedException{
-    	 return cancelOrder(sequence, true);
-    }
-    /**
-     * Cancel an order asynchronously
-     * @param sequence
-     * @return RequestResult
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws FailedException 
-     */
-    public RequestResult asyncCancelOrder(long sequence) 
-    		throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, FailedException{
-    	 return cancelOrder(sequence, false);
-    }
+
     /**
      * Get all orders of a wallet
      * @return OrderCollection instance
@@ -796,14 +476,6 @@ public class Wallet extends AccountClass {
 				null,
 				Wallet.class).getOrdersCollection();
 
-//    	return APIProxy.request(
-//    	        APIProxy.RequestMethod.GET,
-//                APIProxy.formatURL(
-//                        Order.class,
-//                        this.getAddress(),
-//                        Utility.buildSignString(this.getAddress(), this.getSecret())),
-//                null,
-//                Wallet.class).getOrdersCollection();
     }    
     /**
      * Get order by ID
@@ -899,179 +571,25 @@ public class Wallet extends AccountClass {
     			param.append(counterparty);
     		}
     	}
-    	return APIProxy.request(
-    	        APIProxy.RequestMethod.GET,
-                APIProxy.formatURL(
-                        TrustLine.class,
-                        this.getAddress(),
-                        Utility.buildSignString(this.getAddress(), this.getSecret()) + param.toString()),
-                null,
-                Wallet.class).getTrustLinesCollection();
+
+		return APIServer.request(
+				APIServer.RequestMethod.GET,
+				APIServer.formatURL(
+						TrustLine.class,
+						this.getAddress()),
+				null,
+				Wallet.class).getTrustLinesCollection();
+
+//    	return APIProxy.request(
+//    	        APIProxy.RequestMethod.GET,
+//                APIProxy.formatURL(
+//                        TrustLine.class,
+//                        this.getAddress(),
+//                        Utility.buildSignString(this.getAddress(), this.getSecret()) + param.toString()),
+//                null,
+//                Wallet.class).getTrustLinesCollection();
     }    
-    /**
-     * Add a new trust line
-     * @param trustLine
-     * @param validate
-     * @return PostResult instance
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException 
-     * @throws FailedException 
-     */
-    public RequestResult addTrustLine(TrustLine trustLine, boolean validate)throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	try{
-        	if(!isActivated()){
-        		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-        	}     		
-    	}catch(InvalidRequestException e){
-    		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-    	}
-    	if(!Utility.isValidTrustline(trustLine)){
-    		throw new InvalidParameterException(JingtumMessage.INVALID_TRUST_LINE,null,null);
-    	}
-    	HashMap<String, String> trustline = new HashMap<String, String>();
-    	trustline.put("limit", Utility.doubleToString(trustLine.getLimit()));
-    	trustline.put("currency", trustLine.getCurrency());
-    	trustline.put("counterparty", trustLine.getCounterparty());
-    	
-    	HashMap<String, Object> content = new HashMap<String, Object>();
-    	content.put("secret", this.getSecret());
-    	content.put("trustline", trustline);
-    	
-    	String params = APIProxy.GSON.toJson(content);
-    	return APIProxy.request(APIProxy.RequestMethod.POST, APIProxy.formatURL(TrustLine.class,this.getAddress(),VALIDATED + Boolean.toString(validate)), params, RequestResult.class);
-    } 
-    /**
-     * Add a trustline synchronously
-     * @param trustLine
-     * @return RequestResult
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException
-     * @throws FailedException 
-     */
-    public RequestResult syncAddTrustLine(TrustLine trustLine) 
-    		throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	return addTrustLine(trustLine, true);
-    }    
-    /**
-     * Add a trustline asynchronously
-     * @param trustLine
-     * @return RequestResult
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException
-     * @throws FailedException 
-     */
-    public RequestResult asyncAddTrustLine(TrustLine trustLine) 
-    		throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	return addTrustLine(trustLine, false);
-    }
-    /**
-     * Remove a trust line
-     * @param trustLine
-     * @param validate
-     * @return RequestResult
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException 
-     * @throws FailedException 
-     */
-    public RequestResult removeTrustLine(TrustLine trustLine, boolean validate)throws AuthenticationException, InvalidRequestException,
-	APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	try{
-        	if(!isActivated()){
-        		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-        	}     		
-    	}catch(InvalidRequestException e){
-    		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-    	}
-    	if(!Utility.isValidTrustline(trustLine)){
-    		throw new InvalidParameterException(JingtumMessage.INVALID_TRUST_LINE,null,null);
-    	}
-    	trustLine.setLimit(0);
-		return addTrustLine(trustLine,validate);
-    }
-    /**
-     * Remove a trustline synchronously
-     * @param trustLine
-     * @return RequestResult
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException
-     * @throws FailedException 
-     */
-    public RequestResult synRemoveTrustLine(TrustLine trustLine) 
-    		throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	return removeTrustLine(trustLine, true);
-    }
-    /**
-     * Remove a trustline asynchronously
-     * @param trustLine
-     * @return RequestResult
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException
-     * @throws FailedException 
-     */
-    public RequestResult asynRemoveTrustLine(TrustLine trustLine) 
-    		throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	return removeTrustLine(trustLine, false);
-    }
-    /**
-     * Get notification
-     * @param ID
-     * @return Notification instance
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException 
-     * @throws FailedException 
-     */
-    public Notification getNotification(String ID)throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	try{
-        	if(!isActivated()){
-        		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-        	}     		
-    	}catch(InvalidRequestException e){
-    		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-    	}
-    	
-    	if(Utility.isEmpty(ID)){
-    		throw new InvalidParameterException(JingtumMessage.INVALID_ID,ID,null);
-    	}
-    	return APIProxy.request(
-    	        APIProxy.RequestMethod.GET,
-                APIProxy.formatURL(
-                        Notification.class,
-                        this.getAddress(),
-                        "/" + ID + Utility.buildSignString(this.getAddress(), this.getSecret())),
-                null,
-                Wallet.class
-        ).getMyNotification();
-    } 
+
     
     /**
      * @return TransactionCollection
@@ -1150,16 +668,90 @@ public class Wallet extends AccountClass {
 			param.append(direction);
 		}
 
-    	return APIProxy.request(
-    	        APIProxy.RequestMethod.GET,
-                APIProxy.formatURL(
-                        Transaction.class,
-                        this.getAddress(),
-                        "?" + param.toString()),
-                null,
-                Wallet.class).getMyTransactionCollection();
-    }    
-    /**
+		return APIServer.request(
+				APIServer.RequestMethod.GET,
+				APIServer.formatURL(
+						Transaction.class,
+						this.getAddress(),
+				"?" + param.toString()),
+				null,
+				Wallet.class).getMyTransactionCollection();
+
+    }
+
+	/**
+	 * @param Options
+	 * @return TransactionCollection
+	 * @throws AuthenticationException
+	 * @throws InvalidRequestException
+	 * @throws APIConnectionException
+	 * @throws APIException
+	 * @throws ChannelException
+	 * @throws FailedException
+	 */
+	public TransactionCollection getTransactionList(Options in_ops)
+			throws AuthenticationException, InvalidRequestException,
+			APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
+		try{
+			if(!isActivated()){
+				throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
+			}
+		}catch(InvalidRequestException e){
+			throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
+		}
+		StringBuilder param = new StringBuilder();
+		if(Utility.isNotEmpty(in_ops.getSourceAccount())){
+			if(!Utility.isValidAddress(in_ops.getSourceAccount())){
+				throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,in_ops.getSourceAccount(),null);
+			}else{
+				param.append("&");
+				param.append("source_account=");
+				param.append(in_ops.getSourceAccount());
+			}
+		}
+		if(Utility.isNotEmpty(in_ops.getDestinationAccount())){
+			if(!Utility.isValidAddress(in_ops.getDestinationAccount())){
+				throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,in_ops.getDestinationAccount(),null);
+			}else{
+				param.append("&");
+				param.append("destination_account=");
+				param.append(in_ops.getDestinationAccount());
+			}
+		}
+		if(in_ops.getExcludeFailed()){
+			param.append("&");
+			param.append("exclude_failed=");
+			param.append(in_ops.getExcludeFailed());
+		}
+
+		if(in_ops.getResultsPerPage() < 0){
+			throw new InvalidParameterException(JingtumMessage.INVALID_PAGE_INFO,String.valueOf(in_ops.getResultsPerPage()),null);
+		}
+		if(in_ops.getResultsPerPage() > 0){
+			param.append("&");
+			param.append("results_per_page=");
+			param.append(in_ops.getResultsPerPage());
+		}
+		if(in_ops.getPage() < 0){
+			throw new InvalidParameterException(JingtumMessage.INVALID_PAGE_INFO,String.valueOf(in_ops.getPage()),null);
+		}
+		if(in_ops.getPage() > 0){
+			param.append("&");
+			param.append("page=");
+			param.append(in_ops.getPage());
+		}
+
+		return APIServer.request(
+				APIServer.RequestMethod.GET,
+				APIServer.formatURL(
+						Transaction.class,
+						this.getAddress(),
+						"?" + param.toString()),
+				null,
+				Wallet.class).getMyTransactionCollection();
+	}
+
+	/**
      * Get transaction by hash number
      * @param id
      * @return Transaction instance
@@ -1183,175 +775,26 @@ public class Wallet extends AccountClass {
     	if(Utility.isEmpty(id)){
     		throw new InvalidParameterException(JingtumMessage.INVALID_ID,id,null);
     	}
-    	return APIProxy.request(
-    	        APIProxy.RequestMethod.GET,
-                APIProxy.formatURL(
-                        Transaction.class,
-                        this.getAddress(),
-                        "/" + id + Utility.buildSignString(this.getAddress(), this.getSecret())),
-                null,
-                Wallet.class).getTransaction();
+
+		return APIServer.request(
+				APIServer.RequestMethod.GET,
+				APIServer.formatURL(
+						Transaction.class,
+						this.getAddress(),
+						"/" + id),
+				null,
+				Wallet.class).getTransaction();
+
+//    	return APIProxy.request(
+//    	        APIProxy.RequestMethod.GET,
+//                APIProxy.formatURL(
+//                        Transaction.class,
+//                        this.getAddress(),
+//                        "/" + id + Utility.buildSignString(this.getAddress(), this.getSecret())),
+//                null,
+//                Wallet.class).getTransaction();
     }
-    /**
-     * Add relation
-     * @param type relation type
-     * @param counterParty
-     * @param amount optional, only apply when type is authorize
-     * @param validate
-     * @return PostResult
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException 
-     * @throws FailedException 
-     */
-    public RequestResult addRelation(Relation.RelationType type, String counterParty, RelationAmount amount, boolean validate)throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	try{
-        	if(!isActivated()){
-        		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-        	}     		
-    	}catch(InvalidRequestException e){
-    		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-    	}
-    	if(amount != null && amount.getCurrency().equals(Jingtum.getCurrencySWT())){
-    		throw new InvalidParameterException(JingtumMessage.CURRENCY_OTHER_THAN_SWT + Jingtum.getCurrencySWT(),null,null);
-    	}
-    	if(!Utility.isValidAddress(counterParty)){
-    		throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,counterParty,null);
-    	}
-    	if(null == type || type.equals(Relation.RelationType.all)){
-    		throw new InvalidParameterException(JingtumMessage.INVALID_RELATION_TYPE,type.toString(),null);
-    	}
-    	if(!Utility.isValidRelationAmount(amount)){
-    		throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_AMOUNT,null,null);
-    	}
-    	HashMap<String, Object> content = new HashMap<String, Object>();
-    	content.put("secret", this.getSecret());
-    	content.put("type", type);
-    	content.put("counterparty", counterParty);
-    	content.put("amount", amount); 	
-    	String params = APIProxy.GSON.toJson(content);
-    	return APIProxy.request(APIProxy.RequestMethod.POST, APIProxy.formatURL(Relation.class,this.getAddress(),VALIDATED + Boolean.toString(validate)), params, RequestResult.class);
-    } 
-    /**
-     * Add a relation synchronously
-     * @param type relation type
-     * @param counterParty
-     * @param amount
-     * @return RequestResult
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException
-     * @throws FailedException 
-     */
-    public RequestResult syncAddRelation(Relation.RelationType type, String counterParty, RelationAmount amount) 
-    		throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	return addRelation(type, counterParty, amount, true);
-    }
-    /**
-     * Add a relation asynchronously
-     * @param type relation type
-     * @param counterParty
-     * @param amount
-     * @return RequestResult
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException
-     * @throws FailedException 
-     */
-    public RequestResult asyncAddRelation(Relation.RelationType type, String counterParty, RelationAmount amount) 
-    		throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	return addRelation(type, counterParty, amount, false);
-    }
-    /**
-     * Delete relation
-     * @param type relation type
-     * @param counterParty
-     * @param amount
-     * @param validate
-     * @return PostResult
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException 
-     * @throws FailedException 
-     */
-    public RequestResult removeRelation(Relation.RelationType type, String counterParty, RelationAmount amount, boolean validate)throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	try{
-        	if(!isActivated()){
-        		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-        	}     		
-    	}catch(InvalidRequestException e){
-    		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
-    	}
-    	if(amount != null && amount.getCurrency().equals(Jingtum.getCurrencySWT())){
-    		throw new InvalidParameterException(JingtumMessage.CURRENCY_OTHER_THAN_SWT + Jingtum.getCurrencySWT(),null,null);
-    	}
-    	if(!Utility.isValidAddress(counterParty)){
-    		throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,counterParty,null);
-    	}
-    	if(null == type || type.equals(Relation.RelationType.all )){
-    		throw new InvalidParameterException(JingtumMessage.INVALID_RELATION_TYPE,type.toString(),null);
-    	}
-    	if(!Utility.isValidRelationAmount(amount)){
-    		throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_AMOUNT,null,null);
-    	}
-    	HashMap<String, Object> content = new HashMap<String, Object>();
-    	content.put("secret", this.getSecret());
-    	content.put("type", type);
-    	content.put("counterparty", counterParty);
-    	content.put("amount", amount);
-    	String params = APIProxy.GSON.toJson(content);
-    	return APIProxy.request(APIProxy.RequestMethod.DELETE, APIProxy.formatURL(Relation.class,this.getAddress(),VALIDATED + Boolean.toString(validate)), params, RequestResult.class);
-    } 
-    /**
-     * Delete a relation synchronously
-     * @param type relation type
-     * @param counterParty
-     * @param amount
-     * @return RequestResult
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException
-     * @throws FailedException 
-     */
-    public RequestResult syncRemoveRelation(Relation.RelationType type, String counterParty, RelationAmount amount) 
-    		throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	return removeRelation(type, counterParty, amount, true);
-    }
-    /**
-     * Delete a relation asynchronously
-     * @param type relation type
-     * @param counterParty
-     * @param amount
-     * @return RequestResult
-     * @throws AuthenticationException
-     * @throws InvalidRequestException
-     * @throws APIConnectionException
-     * @throws APIException
-     * @throws ChannelException
-     * @throws InvalidParameterException
-     * @throws FailedException 
-     */
-    public RequestResult asyncRemoveRelation(Relation.RelationType type, String counterParty, RelationAmount amount) 
-    		throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	return removeRelation(type, counterParty, amount, false);
-    }
+
     /**
      * Get all relations
      * @return RelationCollection
@@ -1430,14 +873,24 @@ public class Wallet extends AccountClass {
     			param.append(amount.getIssuer());
     		}
     	}
-    	return APIProxy.request(
-    	        APIProxy.RequestMethod.GET,
-                APIProxy.formatURL(
-                        Relation.class,
-                        this.getAddress(),
-                        Utility.buildSignString(this.getAddress(), this.getSecret()) + param.toString()),
-                null,
-                Wallet.class).getMyRelations();
+
+		return APIServer.request(
+				APIServer.RequestMethod.GET,
+				APIServer.formatURL(
+						Relation.class,
+						this.getAddress(),
+						"?"+param.toString()),
+				null,
+				Wallet.class).getMyRelations();
+
+//    	return APIProxy.request(
+//    	        APIProxy.RequestMethod.GET,
+//                APIProxy.formatURL(
+//                        Relation.class,
+//                        this.getAddress(),
+//                        Utility.buildSignString(this.getAddress(), this.getSecret()) + param.toString()),
+//                null,
+//                Wallet.class).getMyRelations();
     } 
     /**
      * Get all counter party relations
@@ -1523,7 +976,14 @@ public class Wallet extends AccountClass {
     	request.append("/relations");
     	request.append(Utility.buildSignString(this.getAddress(), this.getSecret()));
     	request.append(param.toString());
-    	return APIProxy.request(APIProxy.RequestMethod.GET, APIProxy.formatURL(request.toString()), null, Wallet.class).getMyRelations();
+
+		return APIServer.request(
+				APIServer.RequestMethod.GET,
+				APIServer.formatURL(request.toString()),
+				null,
+				Wallet.class).getMyRelations();
+
+    //	return APIProxy.request(APIProxy.RequestMethod.GET, APIProxy.formatURL(request.toString()), null, Wallet.class).getMyRelations();
     }    
     /**
      * Subscribe to web socket connection
@@ -1600,13 +1060,22 @@ public class Wallet extends AccountClass {
     	sb.append("%2B" + amount.getCurrency().toString() + "%2B");
     	sb.append(amount.getCounterparty());
 
-    	return APIProxy.request(
-    	        APIProxy.RequestMethod.GET,
-                APIProxy.formatURL(
-                        Payment.class,
-                        this.getAddress(),
-                        sb.toString()),
-                null,
-                Wallet.class).getPaymentsCollection();
+		return APIServer.request(
+				APIServer.RequestMethod.GET,
+				APIServer.formatURL(
+						Payment.class,
+						this.getAddress(),
+						sb.toString()),
+				null,
+				Wallet.class).getPaymentsCollection();
+
+//    	return APIProxy.request(
+//    	        APIProxy.RequestMethod.GET,
+//                APIProxy.formatURL(
+//                        Payment.class,
+//                        this.getAddress(),
+//                        sb.toString()),
+//                null,
+//                Wallet.class).getPaymentsCollection();
     }
 }

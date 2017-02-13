@@ -55,7 +55,7 @@ public class TumTest {
 		while (it.hasNext()) {
 			bl = (Balance) it.next();
 			System.out.println(bl.getCurrency());
-			System.out.println(bl.getCounterparty());
+			System.out.println(bl.getIssuer());
 			System.out.println(bl.getValue());
 		}
 

@@ -20,6 +20,11 @@
  */
 
 package com.jingtum.model;
+
+import com.jingtum.JingtumMessage;
+import com.jingtum.exception.InvalidParameterException;
+import com.jingtum.util.Utility;
+
 /**
  * Order model class
  * @author jzhao
@@ -104,7 +109,73 @@ public class Order extends JingtumObject{
 			return order.getAccount();
 		}
 		return null;
-	}	
+	}
+
+	/*
+ * Get the Tum string
+ * currency:issuer
+ */
+	private String getTumString(Amount in_amt){
+		if ( in_amt.getCurrency() == "SWT"){
+			return in_amt.getCurrency();
+		}else{
+			return in_amt.getCurrency()+":"+in_amt.getIssuer();
+		}
+	}
+	/*
+	 * Get the Tum pair
+	 * base currency/counter currency
+	 */
+	public String getPair(){
+
+		if ( order.getType() == OrderType.sell)
+		    return getTumString(this.taker_gets)+
+				"/"+getTumString(this.taker_pays);
+		else
+			return getTumString(this.taker_pays)+
+					"/"+getTumString(this.taker_gets);
+
+	}
+
+	/*
+	 * return the base currency amount
+	 * sell
+	 * return the taker_gets
+	 * buy
+	 * return the taker_pays
+	 */
+	public Double getAmount(){
+		if ( order.getType() == OrderType.sell)
+			return this.taker_gets.getValue();
+		else
+			return this.taker_pays.getValue();
+	}
+
+	/*
+	 * return the base currency price
+	 * sell
+	 * return the taker_pays/taker_gets
+	 * buy
+	 * return the taker_gets/taker_pays
+	 */
+
+	public Double getPrice() throws InvalidParameterException {
+
+		if ( order.getType() == OrderType.sell) {
+			if (order.taker_gets.getValue() > 0)
+			  return order.taker_pays.getValue()/order.taker_gets.getValue();
+			else
+				throw new InvalidParameterException(JingtumMessage.INVALID_VALUE, String.valueOf(order.taker_gets.getValue()),null);
+		}
+		else{
+			if (order.taker_pays.getValue() > 0)
+				return order.taker_gets.getValue()/order.taker_pays.getValue();
+			else
+				throw new InvalidParameterException(JingtumMessage.INVALID_VALUE, String.valueOf(order.taker_pays.getValue()),null);
+		}
+
+	}
+
 	/**
 	 * Get order type
 	 * @return type
