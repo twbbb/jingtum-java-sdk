@@ -41,6 +41,7 @@ public class PaymentTest {
 //		op.setValidate(true);
 		String payment_id = "paymenttest"+Long.toString(System.currentTimeMillis());
 		op.setClientID(payment_id);//optional
+		op.setMemo("Java test memo");
 // 3. submit payment
 		RequestResult payment01 = op.submit();
 		
@@ -57,6 +58,7 @@ public class PaymentTest {
 		assertEquals(true,payment1.getSuccess());
 		assertEquals("tesSUCCESS",payment1.getResult());
 		assertEquals("sent",payment1.getType());
+		assertEquals("Java test memo",payment1.getMemo());
 
 	}
 	

@@ -113,7 +113,7 @@ public class PaymentOperation extends OperationClass{
      * Set the payment Memo info.
      */
     public void setMemo(Memo in_memo)throws InvalidParameterException{
-        if(!Utility.isValidAmount(in_memo)){
+        if(!Utility.isValidMemo(in_memo)){
             throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_AMOUNT,null,null);
         }
         this.memo = in_memo;
@@ -134,8 +134,11 @@ public class PaymentOperation extends OperationClass{
 
     };
 
+    /*
+     * Set the payment path
+     */
     public void setChoice(String in_str){
-        this.paths = this.src_wallet.getPathList();
+        //this.paths = this.src_wallet.getPathList();
     }
 
     /**

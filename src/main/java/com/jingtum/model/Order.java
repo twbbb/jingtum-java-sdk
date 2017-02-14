@@ -116,7 +116,7 @@ public class Order extends JingtumObject{
 	 * Get the Tum pair
 	 * base currency/counter currency
 	 */
-	public String getPair(){
+	public String getPair() throws InvalidParameterException{
 
 		if ( order.getType() == OrderType.sell)
 		    return Utility.getTumPair(this.taker_gets, this.taker_pays);

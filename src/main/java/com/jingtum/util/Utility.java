@@ -36,6 +36,7 @@ import com.jingtum.core.crypto.ecdsa.Seed;
 
 import com.jingtum.exception.InvalidParameterException;
 import com.jingtum.model.Amount;
+import com.jingtum.model.Memo;
 import com.jingtum.model.RelationAmount;
 import com.jingtum.model.TrustLine;
 
@@ -246,6 +247,16 @@ public class Utility {
     	return (amount != null) && isValidCurrency(amount.getCurrency()) && isValidAddress(amount.getCounterparty())
     			|| ((amount != null) && Jingtum.getCurrencySWT().equals(amount.getCurrency()) && "".equals(amount.getCounterparty()));
     }
+	/**
+	 * Check if the Memo is valid
+	 * @param Memo
+	 * @return true if the JingtumAmount is valid
+	 */
+	public static boolean isValidMemo(Memo in_memo){
+		return (in_memo != null);
+		//TO DO:make better check
+	}
+
     /**
      * Check if the RelationAmount is valid
      * @param amount
@@ -289,7 +300,7 @@ public class Utility {
 	 * @param counter_amt
 	 * @return String of Tum as currency:issuer
 	 */
-	public static String getTumPair throws InvalidParameterException (Amount base_amt, Amount counter_amt){
+	public static String getTumPair (Amount base_amt, Amount counter_amt) throws InvalidParameterException {
 
 		return getTumString(base_amt)+"/"+getTumString(counter_amt);
 

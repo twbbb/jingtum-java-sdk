@@ -43,6 +43,7 @@ public class Payment extends JingtumObject{
 	private Amount source_amount;
 	private double source_slippage;
 	private Amount destination_amount;
+	private MemoCollection memos;
 	/**
 	 * Server state:
 	 * validated or failed
@@ -63,6 +64,10 @@ public class Payment extends JingtumObject{
 	 */
 	public String getPaths() {
 		return paths;
+	}
+
+	public MemoCollection getMemos() {
+		return memos;
 	}
 	/**
 	 * Get source account in finding payment path
