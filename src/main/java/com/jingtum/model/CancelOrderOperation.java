@@ -103,51 +103,5 @@ public class CancelOrderOperation extends OperationClass{
         return APIServer.request(APIServer.RequestMethod.DELETE, url, params, RequestResult.class);
     }
 
-    /*
-     * Submit with asyn method
-     */
-    public void submit(CancelOrderOperation.CancelOrderListener listener)throws AuthenticationException, InvalidRequestException,
-            APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	//Later all operators in one ExecutorService?
-    	ExecutorService exec = Executors.newCachedThreadPool();
-    	exec.execute(new CancelOrderRunnable(this, listener));
-    	exec.shutdown();
-    }
-    
-    private class CancelOrderRunnable implements Runnable {
-        private CancelOrderOperation operator;
-        private CancelOrderListener listener;
-        
-        private CancelOrderRunnable(CancelOrderOperation operator, CancelOrderListener listener){
-            this.operator = operator;
-            this.listener = listener;
-        }
-        public void run() {
-            try {
-				RequestResult result = this.operator.submit();
-				System.out.println("cancel order:" + result.toString());
-				this.listener.onComplete(result);
-			} catch (AuthenticationException e) {
-				e.printStackTrace();
-			} catch (InvalidRequestException e) {
-				e.printStackTrace();
-			} catch (APIConnectionException e) {
-				e.printStackTrace();
-			} catch (APIException e) {
-				e.printStackTrace();
-			} catch (ChannelException e) {
-				e.printStackTrace();
-			} catch (InvalidParameterException e) {
-				e.printStackTrace();
-			} catch (FailedException e) {
-				e.printStackTrace();
-			}
-        }
-    }
-
-    public interface CancelOrderListener {
-        public void onComplete(RequestResult result);
-    }
-
 }
 

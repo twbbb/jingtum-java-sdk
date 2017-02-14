@@ -192,49 +192,4 @@ for (int i = 0; i<tum_codes.length; i ++)
 
         return APIServer.request(APIServer.RequestMethod.POST, url, params, RequestResult.class);
     }
-
-    /*
-     * Submit with asyn method
-     */
-    public void submit(OrderOperation.OrderListener listener)throws AuthenticationException, InvalidRequestException,
-            APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-    	//Later all operators in one ExecutorService?
-    	ExecutorService exec = Executors.newCachedThreadPool();
-    	exec.execute(new OrderRunnable(this, listener));
-    	exec.shutdown();
-    }
-    
-    private class OrderRunnable implements Runnable {
-        private OrderOperation operator;
-        private OrderListener listener;
-        
-        private OrderRunnable(OrderOperation operator, OrderListener listener){
-            this.operator = operator;
-            this.listener = listener;
-        }
-        public void run() {
-            try {
-				RequestResult result = this.operator.submit();
-				this.listener.onComplete(result);
-			} catch (AuthenticationException e) {
-				e.printStackTrace();
-			} catch (InvalidRequestException e) {
-				e.printStackTrace();
-			} catch (APIConnectionException e) {
-				e.printStackTrace();
-			} catch (APIException e) {
-				e.printStackTrace();
-			} catch (ChannelException e) {
-				e.printStackTrace();
-			} catch (InvalidParameterException e) {
-				e.printStackTrace();
-			} catch (FailedException e) {
-				e.printStackTrace();
-			}
-        }
-    }
-
-    public interface OrderListener {
-        public void onComplete(RequestResult result);
-    }
 }

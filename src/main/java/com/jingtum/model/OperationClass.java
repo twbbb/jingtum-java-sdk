@@ -15,6 +15,17 @@
  */
 package com.jingtum.model;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import com.jingtum.exception.APIConnectionException;
+import com.jingtum.exception.APIException;
+import com.jingtum.exception.AuthenticationException;
+import com.jingtum.exception.ChannelException;
+import com.jingtum.exception.FailedException;
+import com.jingtum.exception.InvalidParameterException;
+import com.jingtum.exception.InvalidRequestException;
+
 /**
  *
  * @author zpli
@@ -22,7 +33,7 @@ package com.jingtum.model;
 //import com.jingtum.net.APIServer;
 //import com.jingtum.net.FinGate;
 
-public class OperationClass extends JingtumObject{
+public abstract class OperationClass extends JingtumObject{
 
 
 	private String src_address;
@@ -62,4 +73,50 @@ public class OperationClass extends JingtumObject{
 	public void setSrcSecret(String in_secret){src_secret = in_secret;}
 
 	public void setValidate(Boolean in_bool){validate = in_bool;}
+	
+	public abstract RequestResult submit()
+            throws AuthenticationException, InvalidRequestException,
+            APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException;
+	
+	public void submit(OperationListener listener)throws AuthenticationException, InvalidRequestException,
+    APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
+		//Later all operators in one ExecutorService?
+		ExecutorService exec = Executors.newCachedThreadPool();
+		exec.execute(new OperationRunnable(this, listener));
+		exec.shutdown();
+	}
+	
+	private class OperationRunnable implements Runnable {
+        private OperationClass operator;
+        private OperationListener listener;
+        
+        private OperationRunnable(OperationClass operator, OperationListener listener){
+            this.operator = operator;
+            this.listener = listener;
+        }
+        public void run() {
+            try {
+				RequestResult result = this.operator.submit();
+				this.listener.onComplete(result);
+			} catch (AuthenticationException e) {
+				e.printStackTrace();
+			} catch (InvalidRequestException e) {
+				e.printStackTrace();
+			} catch (APIConnectionException e) {
+				e.printStackTrace();
+			} catch (APIException e) {
+				e.printStackTrace();
+			} catch (ChannelException e) {
+				e.printStackTrace();
+			} catch (InvalidParameterException e) {
+				e.printStackTrace();
+			} catch (FailedException e) {
+				e.printStackTrace();
+			}
+        }
+    }
+
+    public interface OperationListener {
+        public void onComplete(RequestResult result);
+    }
 }

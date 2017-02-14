@@ -159,47 +159,4 @@ public class PaymentOperation extends OperationClass{
 
         return APIServer.request(APIServer.RequestMethod.POST, url, params, RequestResult.class);
     }
-    
-    public void submit(PaymentListener listener)throws AuthenticationException, InvalidRequestException,
-    			APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException {
-    	//Later all operators in one ExecutorService?
-    	ExecutorService exec = Executors.newCachedThreadPool();
-    	exec.execute(new PaymentRunnable(this, listener));
-    	exec.shutdown();
-    }
-    
-    private class PaymentRunnable implements Runnable {
-        private PaymentOperation operator;
-        private PaymentListener listener;
-        
-        private PaymentRunnable(PaymentOperation operator, PaymentListener listener){
-            this.operator = operator;
-            this.listener = listener;
-        }
-        public void run() {
-            try {
-				RequestResult result = this.operator.submit();
-				System.out.println("payment:" + result.toString());
-				this.listener.onComplete(result);
-			} catch (AuthenticationException e) {
-				e.printStackTrace();
-			} catch (InvalidRequestException e) {
-				e.printStackTrace();
-			} catch (APIConnectionException e) {
-				e.printStackTrace();
-			} catch (APIException e) {
-				e.printStackTrace();
-			} catch (ChannelException e) {
-				e.printStackTrace();
-			} catch (InvalidParameterException e) {
-				e.printStackTrace();
-			} catch (FailedException e) {
-				e.printStackTrace();
-			}
-        }
-    }
-    
-    public interface PaymentListener {
-    	public void onComplete(RequestResult result);
-    }
 }
