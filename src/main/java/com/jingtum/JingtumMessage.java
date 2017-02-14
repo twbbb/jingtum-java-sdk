@@ -36,7 +36,7 @@ public abstract class JingtumMessage {
 	public static final String ACCOUNT_NOT_FOUND = "Account not found.";
 	public static final String INACTIVATED_ACCOUNT = "Inactivated Account;";
 	public static final String INVALID_SECRET = "Invalid Jingtum account secret!";
-	public static final String INVALID_JINGTUM_AMOUNT = "Invalid JingtumAmount! Please make sure Currency and Counterparty are all valid.";
+	public static final String INVALID_JINGTUM_AMOUNT = "Invalid JingtumAmount! Please make sure Currency and issuer are all valid.";
 	public static final String INVALID_TRUST_LINE = "Invalid trust line! Please make sure Currency and Counterparty are all valid.";
 	public static final String INVALID_JINGTUM_ADDRESS_OR_SECRET = "Invalid address or secret!";
 	public static final String INVALID_ID = "Invalid ID!";

@@ -28,6 +28,7 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 
 import com.jingtum.Jingtum;
+import com.jingtum.JingtumMessage;
 import com.jingtum.core.crypto.ecdsa.IKeyPair;
 import com.jingtum.core.crypto.ecdsa.KeyPair;
 import com.jingtum.core.crypto.ecdsa.Seed;
@@ -263,4 +264,35 @@ public class Utility {
     	return ((trustline != null) && isValidCurrency(trustline.getCurrency()) && isValidAddress(trustline.getCounterparty())) 
     			|| ((trustline != null) && Jingtum.getCurrencySWT().equals(trustline.getCurrency()) && "".equals(trustline.getCounterparty()));
     }
+
+	/**
+	 * Return the Tum string from the input Amount object
+	 * @param in_amt
+	 * @return String of Tum as currency:issuer
+	 */
+
+	public static String getTumString(Amount in_amt) throws InvalidParameterException {
+
+		if (isValidAmount(in_amt)){
+		if ( in_amt.getCurrency() == "SWT"){
+			return in_amt.getCurrency();
+		}else{
+			return in_amt.getCurrency()+":"+in_amt.getIssuer();
+		}
+		}else
+			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_AMOUNT, in_amt.getCurrency()+":"+in_amt.getIssuer(), null);
+	}
+
+	/**
+	 * Return the Tum pair string from the input base and counter Amount objects
+	 * @param base_amt
+	 * @param counter_amt
+	 * @return String of Tum as currency:issuer
+	 */
+	public static String getTumPair throws InvalidParameterException (Amount base_amt, Amount counter_amt){
+
+		return getTumString(base_amt)+"/"+getTumString(counter_amt);
+
+	}
+
 }

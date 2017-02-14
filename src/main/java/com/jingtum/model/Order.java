@@ -111,17 +111,7 @@ public class Order extends JingtumObject{
 		return null;
 	}
 
-	/*
- * Get the Tum string
- * currency:issuer
- */
-	private String getTumString(Amount in_amt){
-		if ( in_amt.getCurrency() == "SWT"){
-			return in_amt.getCurrency();
-		}else{
-			return in_amt.getCurrency()+":"+in_amt.getIssuer();
-		}
-	}
+
 	/*
 	 * Get the Tum pair
 	 * base currency/counter currency
@@ -129,12 +119,9 @@ public class Order extends JingtumObject{
 	public String getPair(){
 
 		if ( order.getType() == OrderType.sell)
-		    return getTumString(this.taker_gets)+
-				"/"+getTumString(this.taker_pays);
+		    return Utility.getTumPair(this.taker_gets, this.taker_pays);
 		else
-			return getTumString(this.taker_pays)+
-					"/"+getTumString(this.taker_gets);
-
+			return Utility.getTumPair(this.taker_pays, this.taker_gets);
 	}
 
 	/*

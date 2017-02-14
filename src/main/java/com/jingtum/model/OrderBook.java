@@ -45,6 +45,7 @@ public class OrderBook extends JingtumObject {
 	/**
 	 * Get actual amount get
 	 * @return taker_gets_funded
+	 * obsoleted
 	 */
 	public Amount getTaker_gets_funded() {
 		return taker_gets_funded;
@@ -97,5 +98,13 @@ public class OrderBook extends JingtumObject {
 	 */
 	public boolean getSell() {
 		return sell;
-	}	
+	}
+	/**
+	 * Get base and countr Tum pair from the order
+	 * @return tum_pair
+	 */
+	public String getPair() {
+
+		return order_maker;
+	}
 }

@@ -29,7 +29,10 @@ package com.jingtum.model;
 public class Memo extends JingtumObject {
 	private String memo_type;
 	private String memo_data;
-	
+
+	public void setMemoType(String in_str){ memo_type = in_str;}
+	public void setMemoData(String in_str){ memo_data = in_str;}
+
 	public String getMemoType() {
 		return memo_type;
 	}

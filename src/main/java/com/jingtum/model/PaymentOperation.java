@@ -24,6 +24,7 @@ package com.jingtum.model;
 
 /**
  * Created by zpli on 2/8/17.
+ *
  */
 import com.jingtum.JingtumMessage;
 import com.jingtum.exception.*;
@@ -47,15 +48,20 @@ public class PaymentOperation extends OperationClass{
     private String paths;
     private String dest_address;
     private Amount source_amount;
+    private  Memo memo;
     private double source_slippage;
     private Amount destination_amount;
+
+    private Wallet src_wallet;
 
     private String client_resource_id;
     private String prefix;
 
-    public PaymentOperation(Wallet src_wallet){
+    public PaymentOperation(Wallet in_src_wallet){
         //check if the wallet if an active one, this may delay the process of Operation
         //
+        this.src_wallet = in_src_wallet;
+
         this.setSrcAddress(src_wallet.getAddress());
         this.setSrcSecret(src_wallet.getSecret());
 
@@ -101,10 +107,40 @@ public class PaymentOperation extends OperationClass{
         this.source_amount = in_amt;
     };
 
+
+
+    /*
+     * Set the payment Memo info.
+     */
+    public void setMemo(Memo in_memo)throws InvalidParameterException{
+        if(!Utility.isValidAmount(in_memo)){
+            throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_AMOUNT,null,null);
+        }
+        this.memo = in_memo;
+    };
+
+    public void setMemo(String in_str)throws InvalidParameterException{
+        this.memo.setMemoType("String");
+        this.memo.setMemoData(in_str);
+    };
+
     public void setDestAddress(String in_address){dest_address = in_address;};
 
+    /*
+     * Set the payment path
+     */
+    public void setPath(String in_str){
+        this.paths = in_str;
+
+    };
+
+    public void setChoice(String in_str){
+        this.paths = this.src_wallet.getPathList();
+    }
+
     /**
-     * Submit a payment by orgnazing the
+     * Submit a payment by orgnazing the parameters
+     *
      *
      * @return PostResult instance
      * @throws AuthenticationException
