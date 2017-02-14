@@ -4,7 +4,7 @@ import com.jingtum.exception.*;
 import com.jingtum.model.*;
 import com.jingtum.net.FinGate;
 import com.jingtum.net.JingtumAPIAndWSServer;
-import com.jingtum.model.PaymentOperation.PaymentListener;
+import com.jingtum.model.OperationClass.OperationListener;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -89,7 +89,7 @@ public class PaymentTest {
 //		op.setClientId("20611171957");//can be set by user
 
 // 3. submit payment
-		op.submit(new PaymentListener() {
+		op.submit(new OperationListener() {
 			public void onComplete(RequestResult result) {
 				//正常情况1  是否等待结果为true时
 				assertNotNull(result);
