@@ -26,6 +26,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.jingtum.Jingtum;
 import com.jingtum.core.crypto.ecdsa.IKeyPair;
@@ -37,6 +39,7 @@ import com.jingtum.exception.InvalidParameterException;
 import com.jingtum.model.Amount;
 import com.jingtum.model.RelationAmount;
 import com.jingtum.model.TrustLine;
+import com.jingtum.model.OperationClass.OperationRunnable;
 
 import static com.jingtum.core.config.Config.getB58IdentiferCodecs;
 /**
@@ -262,5 +265,15 @@ public class Utility {
     public static boolean isValidTrustline(TrustLine trustline){
     	return ((trustline != null) && isValidCurrency(trustline.getCurrency()) && isValidAddress(trustline.getCounterparty())) 
     			|| ((trustline != null) && Jingtum.getCurrencySWT().equals(trustline.getCurrency()) && "".equals(trustline.getCounterparty()));
+    }
+    
+    /**
+     * sync call
+     */
+    public static void callback(Runnable runnable){
+    	//Later all runnables in one ExecutorService?
+		ExecutorService exec = Executors.newCachedThreadPool();
+		exec.execute(runnable);
+		exec.shutdown();
     }
 }

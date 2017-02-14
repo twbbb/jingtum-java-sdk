@@ -26,6 +26,8 @@ package com.jingtum.net;
         import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.jingtum.Jingtum;
 import com.jingtum.JingtumMessage;
@@ -39,7 +41,9 @@ import com.jingtum.exception.InvalidParameterException;
 import com.jingtum.exception.InvalidRequestException;
 import com.jingtum.exception.JingtumException;
         import com.jingtum.model.*;
-        import com.jingtum.util.Config;
+import com.jingtum.model.OperationClass.OperationListener;
+import com.jingtum.model.OperationClass.OperationRunnable;
+import com.jingtum.util.Config;
 import com.jingtum.util.Utility;
 
 /**
@@ -576,14 +580,8 @@ public class FinGate extends AccountClass {
         init(in_mode);
     }
 
-    /*
-     *
-     */
-    public OrderBookResult getOrderBook(String in_pair) throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException,
-    ChannelException, InvalidParameterException, FailedException {
-        Amount base_amount = new Amount();
-        Amount counter_amount = new Amount();
-        //split the pair to get the base and counter tum
+    private void fillAmountfromPair(String in_pair, Amount base_amount, Amount counter_amount){
+    	//split the pair to get the base and counter tum
         String tum_codes[] = in_pair.split("/");
 
         for (int i = 0; i<tum_codes.length; i ++)
@@ -618,14 +616,33 @@ public class FinGate extends AccountClass {
         }
         else
             counter_amount.setCounterparty(counter_tum[1]);
-
-
+    }
+    /*
+     *
+     */
+    public OrderBookResult getOrderBook(String in_pair) throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException,
+    ChannelException, InvalidParameterException, FailedException {
+        Amount base_amount = new Amount();
+        Amount counter_amount = new Amount();
+        fillAmountfromPair(in_pair, base_amount, counter_amount);
         try {
             return getOrderBook(base_amount, counter_amount);
         } catch (InvalidParameterException e) {
             e.printStackTrace();
         }
         return null;
+    }
+    
+    public void getOrderBook(String in_pair, RequestListener<OrderBookResult> listener) throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException,
+    ChannelException, InvalidParameterException, FailedException {
+        Amount base_amount = new Amount();
+        Amount counter_amount = new Amount();
+        fillAmountfromPair(in_pair, base_amount, counter_amount);
+        try {
+            getOrderBook(base_amount, counter_amount, listener);
+        } catch (InvalidParameterException e) {
+            e.printStackTrace();
+        }
     }
 
     public OrderBookResult getOrderBook(Amount base, Amount counter)
@@ -654,5 +671,33 @@ public class FinGate extends AccountClass {
                 APIServer.formatURL(OrderBook.class, this.address, sb.toString()),
                 null,
                 OrderBookResult.class);
+    }
+    
+    public void getOrderBook(Amount base, Amount counter, RequestListener<OrderBookResult> listener)
+            throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException,
+            ChannelException, InvalidParameterException, FailedException {
+		Utility.callback(new OrderBookRunnable(this, base, counter, listener));
+    }
+    
+    private class OrderBookRunnable implements Runnable {
+        private FinGate gate;
+        private Amount base;
+        private Amount counter;
+        private RequestListener<OrderBookResult> listener;
+        
+        private OrderBookRunnable(FinGate gate, Amount base, Amount counter, RequestListener<OrderBookResult> listener){
+            this.gate = gate;
+            this.base = base;
+            this.counter = counter;
+            this.listener = listener;
+        }
+        public void run() {
+            try {
+				OrderBookResult result = this.gate.getOrderBook(this.base, this.counter);
+				this.listener.onComplete(result);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        }
     }
 }

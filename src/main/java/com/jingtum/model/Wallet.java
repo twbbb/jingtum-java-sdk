@@ -32,6 +32,7 @@ import com.google.gson.LongSerializationPolicy;
 import com.google.gson.annotations.Expose;
 import com.jingtum.net.APIServer;
 import com.jingtum.net.JingtumAPIAndWSServer;
+import com.jingtum.net.RequestListener;
 import com.jingtum.util.Utility;
 import com.jingtum.Jingtum;
 import com.jingtum.JingtumMessage;
@@ -361,6 +362,15 @@ public class Wallet extends AccountClass {
 		}
 		return null;
     }
+    public void getPaymentList(RequestListener<PaymentCollection> listener) throws AuthenticationException, InvalidRequestException,
+    APIConnectionException, APIException, ChannelException, FailedException{
+    	Options ops = new Options();
+    	try {
+			getPaymentList(ops, listener);
+		} catch (InvalidParameterException e) {
+			e.printStackTrace();
+		}
+    }
     /**
      * @param sourceAccount
      * @param destinationAccount
@@ -447,6 +457,12 @@ public class Wallet extends AccountClass {
 //                null,
 //                Wallet.class).getPaymentsCollection();
     }    
+	
+	public void getPaymentList(Options in_ops, RequestListener<PaymentCollection> listener)
+			throws AuthenticationException, InvalidRequestException,
+    		APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException {
+		Utility.callback(new PaymentRunnable(this, in_ops, listener));
+	}
 
     /**
      * Get all orders of a wallet
@@ -749,6 +765,11 @@ public class Wallet extends AccountClass {
 						"?" + param.toString()),
 				null,
 				Wallet.class).getMyTransactionCollection();
+	}
+	public void getTransactionList(Options in_ops, RequestListener<TransactionCollection> listener)
+			throws AuthenticationException, InvalidRequestException,
+			APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
+		Utility.callback(new TransactionRunnable(this, in_ops, listener));
 	}
 
 	/**
@@ -1077,5 +1098,47 @@ public class Wallet extends AccountClass {
 //                        sb.toString()),
 //                null,
 //                Wallet.class).getPaymentsCollection();
+    }
+    
+    private class PaymentRunnable implements Runnable {
+    	private Wallet wallet;
+    	private Options option;
+    	private RequestListener<PaymentCollection> listener;
+    	
+    	private PaymentRunnable(Wallet wallet, Options option, RequestListener<PaymentCollection> listener) {
+    		this.wallet = wallet;
+    		this.option = option;
+    		this.listener = listener;
+		}
+    	
+    	public void run() {
+    		try{
+	    		PaymentCollection list = this.wallet.getPaymentList(this.option);
+	    		this.listener.onComplete(list);
+    		}catch(Exception e){
+    			e.printStackTrace();
+    		}
+    	}
+    }
+    
+    private class TransactionRunnable implements Runnable {
+    	private Wallet wallet;
+    	private Options option;
+    	private RequestListener<TransactionCollection> listener;
+    	
+    	private TransactionRunnable(Wallet wallet, Options option, RequestListener<TransactionCollection> listener) {
+    		this.wallet = wallet;
+    		this.option = option;
+    		this.listener = listener;
+		}
+    	
+    	public void run() {
+    		try{
+	    		TransactionCollection list = this.wallet.getTransactionList(this.option);
+	    		this.listener.onComplete(list);
+    		}catch(Exception e){
+    			e.printStackTrace();
+    		}
+    	}
     }
 }
