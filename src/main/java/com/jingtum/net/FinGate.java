@@ -24,23 +24,23 @@ package com.jingtum.net;
 
 
         import java.io.FileNotFoundException;
-import java.text.DecimalFormat;
-import java.util.HashMap;
+        import java.text.DecimalFormat;
+        import java.util.HashMap;
 
-import com.jingtum.Jingtum;
-import com.jingtum.JingtumMessage;
-import com.jingtum.core.crypto.ecdsa.Seed;
-import com.jingtum.exception.APIConnectionException;
-import com.jingtum.exception.APIException;
-import com.jingtum.exception.AuthenticationException;
-import com.jingtum.exception.ChannelException;
-import com.jingtum.exception.FailedException;
-import com.jingtum.exception.InvalidParameterException;
-import com.jingtum.exception.InvalidRequestException;
-import com.jingtum.exception.JingtumException;
-        import com.jingtum.model.*;
+        import com.jingtum.Jingtum;
+        import com.jingtum.JingtumMessage;
+        import com.jingtum.core.crypto.ecdsa.Seed;
+        import com.jingtum.exception.APIConnectionException;
+        import com.jingtum.exception.APIException;
+        import com.jingtum.exception.AuthenticationException;
+        import com.jingtum.exception.ChannelException;
+        import com.jingtum.exception.FailedException;
+        import com.jingtum.exception.InvalidParameterException;
+        import com.jingtum.exception.InvalidRequestException;
+        import com.jingtum.exception.JingtumException;
+                import com.jingtum.model.*;
         import com.jingtum.util.Config;
-import com.jingtum.util.Utility;
+        import com.jingtum.util.Utility;
 
 /**
  * Created by yifan on 11/15/16.
@@ -76,6 +76,9 @@ public class FinGate extends AccountClass {
     private TumServer tum_server = null;
     
     private static FinGate instance = null;
+
+    public static int DEVELOPMENT = 1;
+    public static int PRODUCTION = 0;
     /**
      * Singleton mode
      *
@@ -85,7 +88,7 @@ public class FinGate extends AccountClass {
 
         //default is production  mode 0
         if (instance == null) {
-            instance = new FinGate(0);
+            instance = new FinGate(this.PRODUCTION);
         }
         return instance;
     }
@@ -106,9 +109,9 @@ public class FinGate extends AccountClass {
     private void init(int in_mode) {
         String configFile = null;
         try {
-            if ( in_mode == 0) {
+            if ( in_mode == this.PRODUCTION) {
                 configFile = PROPERTY_FILE;
-            }else if( in_mode == 1){
+            }else if( in_mode == this.DEVELOPMENT){
                 configFile = DEV_PROPERTY_FILE;
             }else {
                 throw new InvalidParameterException(JingtumMessage.UNKNOWN_MODE, null, null);

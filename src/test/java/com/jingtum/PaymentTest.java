@@ -58,7 +58,7 @@ public class PaymentTest {
 		assertEquals(true,payment1.getSuccess());
 		assertEquals("tesSUCCESS",payment1.getResult());
 		assertEquals("sent",payment1.getType());
-		assertEquals("Java test memo",payment1.getMemo());
+		assertEquals("Java test memo",payment1.getMemos().toString());
 
 	}
 	
@@ -102,4 +102,41 @@ public class PaymentTest {
 		});
 	}
 
+
+	/**
+	 *
+	 * Pay with path
+	 * @throws FailedException
+	 *
+	 */
+	@Test
+	public void testPathPay() throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, FailedException {
+
+
+		FinGate.getInstance().setMode(FinGate.getInstance().DEVELOPMENT);
+
+		//已有钱包1余额充足  作为支付方
+		Wallet wallet1 = new Wallet("ssHC71HCbhp6FVLLcK2oyyUVjcAY4"); //如进行支付，密钥为必须参数
+		Amount jtc = new Amount(); //构建支付的货币
+		jtc.setCounterparty(""); //货币发行方
+		jtc.setCurrency("SWT"); //货币单位
+		jtc.setValue(0.1); //金额
+
+		//Init the payment operation
+		//PaymentOperation op = new PaymentOperation(wallet1);
+
+		//op.setDestAddress();
+		// 2. construct payment operation
+		PaymentOperation op = new PaymentOperation(wallet1);
+		op.setDestAddress("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ");
+		op.setAmount(jtc);
+//		op.setValidate(true);
+		String payment_id = "paymenttest"+Long.toString(System.currentTimeMillis());
+		op.setClientID(payment_id);//optional
+		op.setMemo("Java test memo");
+// 3. submit payment
+		RequestResult payment01 = op.submit();
+			}
+		});
+	}
 }

@@ -1022,6 +1022,7 @@ public class Wallet extends AccountClass {
     	}
 		return JingtumAPIAndWSServer.getInstance().getJtWebSocket().unsubscribe(this.getAddress());
     }
+
     /**
      * Get payment available payment path
      * @param receiver
