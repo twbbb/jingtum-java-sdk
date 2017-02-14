@@ -28,6 +28,8 @@ import com.jingtum.net.APIServer;
 import com.jingtum.util.Utility;
 
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by zpli on 2/8/17.
@@ -104,31 +106,43 @@ public class CancelOrderOperation extends OperationClass{
     /*
      * Submit with asyn method
      */
-    public void submit(OrderOperation.OrderListener listener)throws AuthenticationException, InvalidRequestException,
+    public void submit(CancelOrderOperation.CancelOrderListener listener)throws AuthenticationException, InvalidRequestException,
             APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-        RequestResult order01 = this.submit();
-        System.out.println("Cancel order result:" + order01.toString());
-        if(order01.getSuccess()){
-            try {
-                Thread.sleep(5000);
-                RequestResult order02 = this.queryResult();
-                System.out.println("result02:" + order01.toString());
-                listener.onComplete(order02);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }else{
-            listener.onComplete(order01);
-        }
+    	//Later all operators in one ExecutorService?
+    	ExecutorService exec = Executors.newCachedThreadPool();
+    	exec.execute(new CancelOrderRunnable(this, listener));
+    	exec.shutdown();
     }
-
-    public RequestResult queryResult()
-            throws AuthenticationException, InvalidRequestException,
-            APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-        String url = APIServer.formatURL(Order.class, this.getSrcAddress(), VALIDATED + Boolean.toString(this.validate));
-        System.out.println("CancelOrder URL:" + url);
-
-        return APIServer.request(APIServer.RequestMethod.GET, url, null, RequestResult.class);
+    
+    private class CancelOrderRunnable implements Runnable {
+        private CancelOrderOperation operator;
+        private CancelOrderListener listener;
+        
+        private CancelOrderRunnable(CancelOrderOperation operator, CancelOrderListener listener){
+            this.operator = operator;
+            this.listener = listener;
+        }
+        public void run() {
+            try {
+				RequestResult result = this.operator.submit();
+				System.out.println("cancel order:" + result.toString());
+				this.listener.onComplete(result);
+			} catch (AuthenticationException e) {
+				e.printStackTrace();
+			} catch (InvalidRequestException e) {
+				e.printStackTrace();
+			} catch (APIConnectionException e) {
+				e.printStackTrace();
+			} catch (APIException e) {
+				e.printStackTrace();
+			} catch (ChannelException e) {
+				e.printStackTrace();
+			} catch (InvalidParameterException e) {
+				e.printStackTrace();
+			} catch (FailedException e) {
+				e.printStackTrace();
+			}
+        }
     }
 
     public interface CancelOrderListener {

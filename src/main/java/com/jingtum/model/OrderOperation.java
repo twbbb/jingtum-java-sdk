@@ -215,7 +215,6 @@ for (int i = 0; i<tum_codes.length; i ++)
         public void run() {
             try {
 				RequestResult result = this.operator.submit();
-				System.out.println("payment:" + result.toString());
 				this.listener.onComplete(result);
 			} catch (AuthenticationException e) {
 				e.printStackTrace();
