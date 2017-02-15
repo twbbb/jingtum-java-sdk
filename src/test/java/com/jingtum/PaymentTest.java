@@ -110,7 +110,8 @@ public class PaymentTest {
 	 *
 	 */
 	@Test
-	public void testPathPay() throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, FailedException {
+	public void testPathPay() throws InvalidParameterException, AuthenticationException,
+			InvalidRequestException, APIConnectionException, APIException, ChannelException, FailedException {
 
 
 		FinGate.getInstance().setMode(FinGate.getInstance().DEVELOPMENT);
@@ -136,7 +137,6 @@ public class PaymentTest {
 		op.setMemo("Java test memo");
 // 3. submit payment
 		RequestResult payment01 = op.submit();
-			}
-		});
+
 	}
 }

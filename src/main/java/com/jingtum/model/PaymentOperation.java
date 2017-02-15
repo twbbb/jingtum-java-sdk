@@ -24,13 +24,13 @@ package com.jingtum.model;
 
 /**
  * Created by zpli on 2/8/17.
- *
  */
 import com.jingtum.JingtumMessage;
 import com.jingtum.exception.*;
 import com.jingtum.model.Amount;
 import com.jingtum.model.Wallet;
 import com.jingtum.model.Payment;
+import com.jingtum.model.Memo;
 import com.jingtum.model.OperationClass;
 import com.jingtum.net.APIServer;
 import com.jingtum.net.FinGate;
@@ -144,7 +144,6 @@ public class PaymentOperation extends OperationClass{
     /**
      * Submit a payment by orgnazing the parameters
      *
-     *
      * @return PostResult instance
      * @throws AuthenticationException
      * @throws InvalidRequestException
@@ -197,5 +196,48 @@ public class PaymentOperation extends OperationClass{
         System.out.println("Payment URL:" + url);
 
         return APIServer.request(APIServer.RequestMethod.POST, url, params, RequestResult.class);
+    }
+
+    public void submit(PaymentListener listener)throws AuthenticationException, InvalidRequestException,
+    			APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException {
+    	//Later all operators in one ExecutorService?
+    	ExecutorService exec = Executors.newCachedThreadPool();
+    	exec.execute(new PaymentRunnable(this, listener));
+    	exec.shutdown();
+    }
+
+    private class PaymentRunnable implements Runnable {
+        private PaymentOperation operator;
+        private PaymentListener listener;
+
+        private PaymentRunnable(PaymentOperation operator, PaymentListener listener){
+            this.operator = operator;
+            this.listener = listener;
+        }
+        public void run() {
+            try {
+				RequestResult result = this.operator.submit();
+				System.out.println("payment:" + result.toString());
+				this.listener.onComplete(result);
+			} catch (AuthenticationException e) {
+				e.printStackTrace();
+			} catch (InvalidRequestException e) {
+				e.printStackTrace();
+			} catch (APIConnectionException e) {
+				e.printStackTrace();
+			} catch (APIException e) {
+				e.printStackTrace();
+			} catch (ChannelException e) {
+				e.printStackTrace();
+			} catch (InvalidParameterException e) {
+				e.printStackTrace();
+			} catch (FailedException e) {
+				e.printStackTrace();
+			}
+        }
+    }
+
+    public interface PaymentListener {
+    	public void onComplete(RequestResult result);
     }
 }

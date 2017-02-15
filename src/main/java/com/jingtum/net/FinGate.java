@@ -579,7 +579,11 @@ public class FinGate extends AccountClass {
         init(in_mode);
     }
 
-    private void fillAmountfromPair(String in_pair, Amount base_amount, Amount counter_amount){
+    /*
+     * Convert the Tum pair string to
+     * amount value
+     */
+    private void fillAmountfromPair(String in_pair, Amount base_amount, Amount counter_amount) throws InvalidParameterException{
     	//split the pair to get the base and counter tum
         String tum_codes[] = in_pair.split("/");
 
@@ -597,8 +601,10 @@ public class FinGate extends AccountClass {
         //Set the source_amount and destination amount with pair, price and amount value
         base_amount.setCurrency(base_tum[0]);
         if (base_tum.length < 2) {
-            if (base_tum[0] != "SWT")
-                throw new InvalidParameterException(JingtumMessage.INVALID_TUM_PAIR,in_pair,null);
+            if (!base_tum[0].equals("SWT")) {
+             System.out.println(base_tum[0]);
+                throw new InvalidParameterException(JingtumMessage.INVALID_TUM_PAIR, in_pair, null);
+            }
 
             base_amount.setCounterparty("");
         }

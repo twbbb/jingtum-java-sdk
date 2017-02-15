@@ -41,7 +41,7 @@ import com.jingtum.model.Amount;
 import com.jingtum.model.Memo;
 import com.jingtum.model.RelationAmount;
 import com.jingtum.model.TrustLine;
-import com.jingtum.model.OperationClass.OperationRunnable;
+//mport com.jingtum.model.OperationClass.OperationRunnable;
 
 import static com.jingtum.core.config.Config.getB58IdentiferCodecs;
 /**

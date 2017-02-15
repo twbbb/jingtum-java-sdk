@@ -72,8 +72,8 @@ public class UtilityTest {
 			//System.out.println(ob.getOrder_maker());
 			assertEquals(false,ob.getPassive());
 			//assertEquals(true,ob.getSell());
-			assertEquals("USD",ob.getPrice().getCurrency());
-			assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",ob.getPrice().getCounterparty());
+			assertEquals("USD",ob.getAmountPrice().getCurrency());
+			assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",ob.getAmountPrice().getCounterparty());
 			assertEquals("CNY",ob.getTaker_gets_funded().getCurrency());
 			assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",ob.getTaker_gets_funded().getCounterparty());
 			assertEquals("CNY",ob.getTaker_gets_total().getCurrency());
@@ -96,8 +96,8 @@ public class UtilityTest {
 			
 			assertEquals(false,ob.getPassive());
 			assertEquals(true,ob.getSell());
-			assertEquals("USD",ob.getPrice().getCurrency());
-			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT",ob.getPrice().getCounterparty());
+			assertEquals("USD",ob.getAmountPrice().getCurrency());
+			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT",ob.getAmountPrice().getCounterparty());
 			assertEquals("USD",ob.getTaker_gets_funded().getCurrency());
 			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT",ob.getTaker_gets_funded().getCounterparty());
 			assertEquals("USD",ob.getTaker_gets_total().getCurrency());

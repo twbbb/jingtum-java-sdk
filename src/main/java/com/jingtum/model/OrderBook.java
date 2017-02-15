@@ -24,6 +24,46 @@ package com.jingtum.model;
  * @author jzhao
  * @version 1.0
  * Order book class
+ * changed to new format by simplifing the inputs
+ * "price": {
+"currency": "USD",
+"counterparty": "jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",
+"value": "0.88"
+},
+"taker_gets_funded": {
+"currency": "CNY",
+"counterparty": "jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",
+"value": "93"
+},
+"taker_gets_total": {
+"currency": "CNY",
+"counterparty": "jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",
+"value": "93"
+},
+"taker_pays_funded": {
+"currency": "USD",
+"counterparty": "jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",
+"value": "81.84"
+},
+"taker_pays_total": {
+"currency": "USD",
+"counterparty": "jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",
+"value": "81.84"
+},
+"order_maker": "js46SK8GtxSeGRR6hszxozFxftEnwEK8my",
+"sequence": 12,
+"passive": false,
+"sell": true
+}
+ to
+{ price: '6',
+order_maker: 'js46SK8GtxSeGRR6hszxozFxftEnwEK8my',
+sequence: 5,
+funded: '3',
+total: '3' }
+
+ *
+ *
  */
 public class OrderBook extends JingtumObject {	
 	private Amount price;
@@ -36,12 +76,45 @@ public class OrderBook extends JingtumObject {
 	private boolean passive;
 	private boolean sell;	
 	/**
-	 * Get current price
+	 * Get  base currency price as Amount object
 	 * @return price
+	 *
 	 */
-	public Amount getPrice() {
+	public Amount getAmountPrice() {
 		return price;
 	}
+
+	/**
+	 * Get  base currency price
+	 * @return price
+	 *
+	 */
+	public String getPrice() {
+		return String.valueOf(price.getValue());
+	}
+
+	/**
+	* Get funded value of the base currency
+	* asks(sell = true)
+	 * Funded
+	* bids(sell = false)
+	 *
+	 *
+	 */
+	public String getFunded() {
+		if (sell)
+		  return String.valueOf(taker_gets_funded.getValue());
+		else
+			return String.valueOf(taker_pays_funded.getValue());
+	}
+
+	public String getTotal() {
+		if (sell)
+			return String.valueOf(taker_gets_total.getValue());
+		else
+			return String.valueOf(taker_pays_total.getValue());
+	}
+
 	/**
 	 * Get actual amount get
 	 * @return taker_gets_funded
