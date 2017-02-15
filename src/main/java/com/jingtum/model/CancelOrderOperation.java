@@ -28,6 +28,8 @@ import com.jingtum.net.APIServer;
 import com.jingtum.util.Utility;
 
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by zpli on 2/8/17.
@@ -99,40 +101,6 @@ public class CancelOrderOperation extends OperationClass{
         System.out.println("Cancel Order URL:" + url);
 
         return APIServer.request(APIServer.RequestMethod.DELETE, url, params, RequestResult.class);
-    }
-
-    /*
-     * Submit with asyn method
-     */
-    public void submit(OrderOperation.OrderListener listener)throws AuthenticationException, InvalidRequestException,
-            APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-        RequestResult order01 = this.submit();
-        System.out.println("Cancel order result:" + order01.toString());
-        if(order01.getSuccess()){
-            try {
-                Thread.sleep(5000);
-                RequestResult order02 = this.queryResult();
-                System.out.println("result02:" + order01.toString());
-                listener.onComplete(order02);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }else{
-            listener.onComplete(order01);
-        }
-    }
-
-    public RequestResult queryResult()
-            throws AuthenticationException, InvalidRequestException,
-            APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-        String url = APIServer.formatURL(Order.class, this.getSrcAddress(), VALIDATED + Boolean.toString(this.validate));
-        System.out.println("CancelOrder URL:" + url);
-
-        return APIServer.request(APIServer.RequestMethod.GET, url, null, RequestResult.class);
-    }
-
-    public interface CancelOrderListener {
-        public void onComplete(RequestResult result);
     }
 
 }
