@@ -594,7 +594,7 @@ public class FinGate extends AccountClass {
             throw new InvalidParameterException(JingtumMessage.INVALID_TUM_PAIR,in_pair,null);
 
 
-        String[] base_tum = tum_codes[0].split(":", 2);;
+        String[] base_tum = tum_codes[0].split(":", 2);
         String[] counter_tum = tum_codes[1].split(":", 2);
 
 

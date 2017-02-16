@@ -20,6 +20,10 @@
  */
 
 package com.jingtum.model;
+
+import com.jingtum.JingtumMessage;
+import com.jingtum.exception.InvalidParameterException;
+
 /**
  * Order book result class, used in getOrdeBook method
  * @author jzhao
@@ -27,6 +31,7 @@ package com.jingtum.model;
  */
 public class OrderBookResult extends JingtumObject{
 	private String order_book;
+	private String pair;
 	private boolean success;
 	private boolean validated;
 	private OrderBookCollection bids;
@@ -37,6 +42,28 @@ public class OrderBookResult extends JingtumObject{
 	 */
 	public String getOrderbook() {
 		return order_book;
+	}
+	public String getPair() throws InvalidParameterException{
+		if (pair==null){
+			//If the pair is not set yet, create it from the order_maker String
+			//
+
+			if (order_book.length() < 1)
+				throw new InvalidParameterException(JingtumMessage.INVALID_TUM_PAIR, "Empty tum pair in order book", null);
+//			String[] temp_str = order_book.split("+");
+//			StringBuffer new_pair = new StringBuffer();
+//			for ( int i = 0; i < temp_str.length; i ++ ) {
+//				new_pair.append(temp_str[i]);
+//				if (i < temp_str.length -1)
+//					new_pair.append(":");
+//			}
+			System.out.println("Init pair");
+			this.pair = order_book.replace("+",":");//new_pair.toString();
+			System.out.println(order_book);
+			System.out.println(pair);
+
+		}
+		return pair;
 	}
 	/**
 	 * Return true if the request is successful

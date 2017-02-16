@@ -20,6 +20,10 @@
  */
 
 package com.jingtum.model;
+
+import com.jingtum.JingtumMessage;
+import com.jingtum.exception.InvalidParameterException;
+
 /**
  * @author jzhao
  * @version 1.0
@@ -71,7 +75,7 @@ public class OrderBook extends JingtumObject {
 	private Amount taker_gets_total;
 	private Amount taker_pays_funded;
 	private Amount taker_pays_total;
-	private String order_maker;
+	private String order_maker; //Orderbook format:
 	private long sequence;
 	private boolean passive;
 	private boolean sell;	
@@ -148,7 +152,7 @@ public class OrderBook extends JingtumObject {
 	 * Get order maker
 	 * @return order_maker
 	 */
-	public String getOrder_maker() {
+	public String getOrderMaker() {
 		return order_maker;
 	}
 	/**
@@ -176,8 +180,23 @@ public class OrderBook extends JingtumObject {
 	 * Get base and countr Tum pair from the order
 	 * @return tum_pair
 	 */
-	public String getPair() {
+/*	public String getPair() throws InvalidParameterException {
 
-		return order_maker;
-	}
+		if (pair.length() < 1) {
+			//If the pair is not set yet, create it from the order_maker String
+			//
+			if (order_maker.length() < 1)
+				throw new InvalidParameterException(JingtumMessage.INVALID_TUM_PAIR, "Empty tum pair in order book", null);
+			String[] temp_str = order_maker.split("+");
+StringBuffer new_pair = new StringBuffer();
+for ( int i = 0; i < temp_str.length; i ++ ) {
+	new_pair.append(temp_str[i]);
+	if (i < temp_str.length -1)
+		new_pair.append(":");
+}
+pair = new_pair.toString();
+
+		}
+			return pair;
+	}*/
 }

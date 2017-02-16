@@ -21,23 +21,26 @@
 package com.jingtum.model;
 
 /**
- * Momo class
+ * PaymentChoice class
  * @author zpli
  * @version 1.0
  */
 
-public class Memo extends JingtumObject {
-	private String memo_type;
-	private String memo_data;
+public class PaymentChoice extends JingtumObject {
+	private Amount choice;
+	private String key;
+	private String path;
 
-	public void setMemoType(String in_str){ memo_type = in_str;}
-	public void setMemoData(String in_str){ memo_data = in_str;}
+	public void setChoice(Amount in_amt){ choice = in_amt;}
+	public void setKey(String in_str){ key = in_str;}
+	public void setPath(String in_str){ path = in_str;}
 
-	public String getMemoType() {
-		return memo_type;
+	public Amount getChoice() {
+		return choice;
 	}
-	public String getMemoData() {
-		return memo_data;
+	public String getKey() {
+		return key;
 	}
+	public String getPath(){return  path;}
 	
 }

@@ -63,6 +63,8 @@ public class Wallet extends AccountClass {
 	@Expose
 	private BalanceCollection balances;
 	@Expose
+	private PaymentChoiceCollection payment_choices;
+	@Expose
 	private PaymentCollection payments;
 	@Expose
 	private OrderCollection orders;
@@ -372,8 +374,7 @@ public class Wallet extends AccountClass {
 		}
     }
     /**
-     * @param sourceAccount
-     * @param destinationAccount
+     * @param in_ops: contains options with sourceAccount, destinationAccount
      * @param excludeFailed
      * @param direction incoming/outgoing/all
      * @param resultPerPage result per page
@@ -399,26 +400,42 @@ public class Wallet extends AccountClass {
     		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
     	}
     	StringBuilder param = new StringBuilder();
+    	//Note, the 1st option needs to be "?", not "&"
+		int op_num = 0;
+
     	if(Utility.isNotEmpty(in_ops.getSourceAccount())){
     		if(!Utility.isValidAddress(in_ops.getSourceAccount())){
     			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,in_ops.getSourceAccount(),null);
     		}else{
-    			param.append("&");
+    			if(op_num > 0)
+    			    param.append("&");
+    			else
+    				param.append("?");
+				op_num ++;
     			param.append("source_account=");
     			param.append(in_ops.getSourceAccount());
+
     		}
     	}
        	if(Utility.isNotEmpty(in_ops.getDestinationAccount())){
     		if(!Utility.isValidAddress(in_ops.getDestinationAccount())){
     			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,in_ops.getDestinationAccount(),null);
     		}else{
-    			param.append("&");
+				if(op_num > 0)
+					param.append("&");
+				else
+					param.append("?");
+				op_num ++;
     			param.append("destination_account=");
     			param.append(in_ops.getDestinationAccount());
     		}
     	}
        	if(in_ops.getExcludeFailed()){
-       		param.append("&");
+			if(op_num > 0)
+				param.append("&");
+			else
+				param.append("?");
+			op_num ++;
        		param.append("exclude_failed=");
        		param.append(in_ops.getExcludeFailed());
        	}
@@ -427,7 +444,11 @@ public class Wallet extends AccountClass {
        		throw new InvalidParameterException(JingtumMessage.INVALID_PAGE_INFO,String.valueOf(in_ops.getResultsPerPage()),null);
        	}
        	if(in_ops.getResultsPerPage() > 0){
-       		param.append("&");
+			if(op_num > 0)
+				param.append("&");
+			else
+				param.append("?");
+			op_num ++;
        		param.append("results_per_page=");
        		param.append(in_ops.getResultsPerPage());
        	}
@@ -435,7 +456,11 @@ public class Wallet extends AccountClass {
        		throw new InvalidParameterException(JingtumMessage.INVALID_PAGE_INFO,String.valueOf(in_ops.getPage()),null);
        	}
        	if(in_ops.getPage() > 0){
-       		param.append("&");
+			if(op_num > 0)
+				param.append("&");
+			else
+				param.append("?");
+			op_num ++;
        		param.append("page=");
        		param.append(in_ops.getPage());
        	}
@@ -448,14 +473,6 @@ public class Wallet extends AccountClass {
 				null,
 				Wallet.class).getPaymentsCollection();
 
-//    	return APIProxy.request(
-//    	        APIProxy.RequestMethod.GET,
-//                APIProxy.formatURL(
-//                        Payment.class,
-//                        this.getAddress(),
-//                        Utility.buildSignString(this.getAddress(), this.getSecret()) + param.toString()),
-//                null,
-//                Wallet.class).getPaymentsCollection();
     }    
 	
 	public void getPaymentList(Options in_ops, RequestListener<PaymentCollection> listener)
@@ -640,6 +657,7 @@ public class Wallet extends AccountClass {
      * @throws FailedException 
      */
     public TransactionCollection getTransactionList(String destinationAccount, boolean excludeFailed, Transaction.DirectionType direction, int resultPerPage, int page)
+	//public TransactionCollection getTransactionList(Options in_ops)
     		throws AuthenticationException, InvalidRequestException,
 			APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
     	try{
@@ -650,7 +668,10 @@ public class Wallet extends AccountClass {
     		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
     	}
     	StringBuffer param = new StringBuffer();
-    	
+
+    	//Option number setup in the list
+    	int op_num = 0;
+
     	if(Utility.isNotEmpty(destinationAccount)){
     		if(!Utility.isValidAddress(destinationAccount)){
     			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,destinationAccount,null);
@@ -664,22 +685,39 @@ public class Wallet extends AccountClass {
     		throw new InvalidParameterException(JingtumMessage.INVALID_PAGE_INFO,destinationAccount,null);
     	}
 		if(resultPerPage != 0){
-			param.append("&");
+
+			if(op_num > 0)
+				param.append("&");
+			else
+				param.append("?");
+			op_num ++;
 			param.append("results_per_page=");
 			param.append(resultPerPage);
 		}
 		if(page != 0){
-			param.append("&");
+			if(op_num > 0)
+				param.append("&");
+			else
+				param.append("?");
+			op_num ++;
 			param.append("page=");
 			param.append(page);
 		}
 		if(excludeFailed){
-			param.append("&");
+			if(op_num > 0)
+				param.append("&");
+			else
+				param.append("?");
+			op_num ++;
 			param.append("exclude_failed=");
 			param.append(excludeFailed);
 		} 
 		if(direction != null && direction != Transaction.DirectionType.all){
-			param.append("&");
+			if(op_num > 0)
+				param.append("&");
+			else
+				param.append("?");
+			op_num ++;
 			param.append("direction=");
 			param.append(direction);
 		}
@@ -715,11 +753,14 @@ public class Wallet extends AccountClass {
 		}catch(InvalidRequestException e){
 			throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
 		}
+
 		StringBuilder param = new StringBuilder();
+
 		if(Utility.isNotEmpty(in_ops.getSourceAccount())){
 			if(!Utility.isValidAddress(in_ops.getSourceAccount())){
 				throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,in_ops.getSourceAccount(),null);
 			}else{
+
 				param.append("&");
 				param.append("source_account=");
 				param.append(in_ops.getSourceAccount());
@@ -1091,16 +1132,42 @@ public class Wallet extends AccountClass {
 				null,
 				Wallet.class).getPaymentsCollection();
 
-//    	return APIProxy.request(
-//    	        APIProxy.RequestMethod.GET,
-//                APIProxy.formatURL(
-//                        Payment.class,
-//                        this.getAddress(),
-//                        sb.toString()),
-//                null,
-//                Wallet.class).getPaymentsCollection();
     }
-    
+
+    /*
+     * Form the choices array with input path list
+     */
+	public PaymentChoiceCollection getChoicesFromPathList(PaymentCollection in_path_list) throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException, ChannelException, APIException, FailedException{
+		// create an empty array list with an initial capacity
+		PaymentChoice choice = new PaymentChoice();
+
+
+		if (! payment_choices.getData().isEmpty()){
+			//clean up the old data for each new get operation
+			payment_choices.getData().clear();
+			System.out.println("Clean the old paths");
+		}
+		int path_num = in_path_list.getData().size();
+//		PaymentChoiceCollection pc = new PaymentChoiceCollection(1);
+//
+for (int i = 0; i < path_num; i ++){
+	System.out.println(in_path_list.getData().get(i).getPaths());
+	choice.setChoice(in_path_list.getData().get(i).getSourceAmount());
+}
+//payment_choices.setData(pc);
+		//return getChoicesFromPathList(getPathList(receiver,amount));
+        return payment_choices;
+	}
+    /*
+    *
+     */
+	public PaymentChoiceCollection getChoices(String receiver, Amount amount) throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException, ChannelException, APIException, FailedException{
+
+
+		return getChoicesFromPathList(getPathList(receiver,amount));
+
+	}
+
     private class PaymentRunnable implements Runnable {
     	private Wallet wallet;
     	private Options option;

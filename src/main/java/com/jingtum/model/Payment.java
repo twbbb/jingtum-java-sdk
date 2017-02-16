@@ -44,6 +44,7 @@ public class Payment extends JingtumObject{
 	private double source_slippage;
 	private Amount destination_amount;
 	private MemoCollection memos;
+
 	/**
 	 * Server state:
 	 * validated or failed

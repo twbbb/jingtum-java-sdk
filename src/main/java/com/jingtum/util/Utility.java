@@ -41,7 +41,7 @@ import com.jingtum.model.Amount;
 import com.jingtum.model.Memo;
 import com.jingtum.model.RelationAmount;
 import com.jingtum.model.TrustLine;
-//mport com.jingtum.model.OperationClass.OperationRunnable;
+
 
 import static com.jingtum.core.config.Config.getB58IdentiferCodecs;
 /**
@@ -252,7 +252,7 @@ public class Utility {
     }
 	/**
 	 * Check if the Memo is valid
-	 * @param Memo
+	 * @param in_memo
 	 * @return true if the JingtumAmount is valid
 	 */
 	public static boolean isValidMemo(Memo in_memo){

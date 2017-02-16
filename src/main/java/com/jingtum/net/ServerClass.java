@@ -35,6 +35,8 @@ import com.jingtum.model.OrderBookCollection;
 import com.jingtum.model.TransactionCollection;
 import com.jingtum.model.JingtumObject;
 import com.jingtum.model.MemoCollection;
+import com.jingtum.model.PaymentCollection;
+import com.jingtum.model.PaymentChoiceCollection;
 
 /**
  * @author zp li.
@@ -65,6 +67,10 @@ public class ServerClass extends JingtumObject {
     
     /**
      * Gson object use to transform json string to Jingtum object
+     * Added Memo
+     *            discard the
+     *            .registerTypeAdapter(PaymentChoiceCollection.class, new PaymentChoiceCollectionDeserializer())
+     *                        .registerTypeAdapter(PaymentCollection.class, new PaymentCollectionDeserializer())
      */
     public static final Gson GSON = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)

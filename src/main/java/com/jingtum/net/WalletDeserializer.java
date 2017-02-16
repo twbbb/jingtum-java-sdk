@@ -39,11 +39,14 @@ import com.jingtum.model.TransactionCollection;
 import com.jingtum.model.TrustLineCollection;
 import com.jingtum.model.OrderCollection;
 import com.jingtum.model.OrderBookCollection;
+import com.jingtum.model.PaymentChoiceCollection;
 
 import java.lang.reflect.Type;
 /**
  * @author jzhao
  * @version 1.0
+ * Updated by zpli
+ * Added Memo, PaymentChoice
  */
 public class WalletDeserializer implements JsonDeserializer<Wallet> {
     public Wallet deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -60,6 +63,7 @@ public class WalletDeserializer implements JsonDeserializer<Wallet> {
                 .registerTypeAdapter(MemoCollection.class, new MemoCollectionDeserializer())
                 .registerTypeAdapter(RelationCollection.class, new RelationCollectionDeserializer())
                 .registerTypeAdapter(Notification.class, new NotificationDeserializer())
+                .registerTypeAdapter(PaymentChoiceCollection.class, new PaymentChoiceCollectionDeserializer())
                 .create();
         Wallet wallet = gson.fromJson(json, Wallet.class);
         return wallet;

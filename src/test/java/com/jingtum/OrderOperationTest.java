@@ -23,9 +23,10 @@ public class OrderOperationTest {
 	public void testGetOrderBook() throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException, APIException, ChannelException, FailedException {
 		//设置测试环境
 		FinGate.getInstance().setMode(1);
+		FinGate.getInstance().setAccount("snqFcHzRe22JTM8j7iZVpQYzxEEbW");
 
 		//正常情况1,同步调用
-		String cur_pair = "SWT/CNY:jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT";
+		String cur_pair = "USD:jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT/CNY:jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT";
 		OrderBookResult order01 = FinGate.getInstance().getOrderBook(cur_pair);
 
 
@@ -34,7 +35,7 @@ public class OrderOperationTest {
 		//正常情况1  是否等待结果为true时
 		assertEquals(true, order01.getSuccess()); //返回是否成功
 		assertEquals(true, order01.getValidated()); //返回方式
-		assertEquals(cur_pair, order01.getOrderbook()); //返回方式
+		assertEquals(cur_pair, order01.getPair()); //返回方式
 		//
 
 //		if(order01.getBids() > 0){

@@ -21,23 +21,10 @@
 package com.jingtum.model;
 
 /**
- * Momo class
+ * PaymentChoice collection
  * @author zpli
  * @version 1.0
  */
+public class PaymentChoiceCollection extends JingtumCollection<PaymentChoice> {
 
-public class Memo extends JingtumObject {
-	private String memo_type;
-	private String memo_data;
-
-	public void setMemoType(String in_str){ memo_type = in_str;}
-	public void setMemoData(String in_str){ memo_data = in_str;}
-
-	public String getMemoType() {
-		return memo_type;
-	}
-	public String getMemoData() {
-		return memo_data;
-	}
-	
 }

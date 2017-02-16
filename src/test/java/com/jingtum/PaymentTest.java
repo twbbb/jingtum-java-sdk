@@ -2,6 +2,7 @@ package com.jingtum;
 
 import static org.junit.Assert.assertEquals;
 
+import com.jingtum.model.*;
 import org.junit.Test;
 
 import com.jingtum.exception.APIConnectionException;
@@ -11,12 +12,7 @@ import com.jingtum.exception.ChannelException;
 import com.jingtum.exception.FailedException;
 import com.jingtum.exception.InvalidParameterException;
 import com.jingtum.exception.InvalidRequestException;
-import com.jingtum.model.Amount;
 import com.jingtum.model.OperationClass.OperationListener;
-import com.jingtum.model.Payment;
-import com.jingtum.model.PaymentOperation;
-import com.jingtum.model.RequestResult;
-import com.jingtum.model.Wallet;
 import com.jingtum.net.FinGate;
 
 import net.jodah.concurrentunit.Waiter;
@@ -35,13 +31,24 @@ public class PaymentTest {
 
 		//已有钱包1余额充足  作为支付方
 		Wallet wallet1 = new Wallet("ssHC71HCbhp6FVLLcK2oyyUVjcAY4"); //如进行支付，密钥为必须参数
+		Options pop = new Options();//
 		Amount jtc = new Amount(); //构建支付的货币
 		jtc.setCounterparty(""); //货币发行方
 		jtc.setCurrency("SWT"); //货币单位
 		jtc.setValue(0.1); //金额
 
 		//Init the payment operation
-		//PaymentOperation op = new PaymentOperation(wallet1);
+		// 1. Get the payment list by using options
+		int payment_num = 5;
+		pop.setResultsPerPage(payment_num);
+		pop.setPage(1);
+
+		//System.out.println("Payment found ");
+		assertEquals(payment_num,wallet1.getPaymentList(pop).getData().size());
+        //change the number
+		payment_num = 3;
+		pop.setResultsPerPage(payment_num);
+		assertEquals(payment_num,wallet1.getPaymentList(pop).getData().size());
 
 		//op.setDestAddress();
 		// 2. construct payment operation
@@ -86,26 +93,33 @@ public class PaymentTest {
 		FinGate.getInstance().setMode(FinGate.getInstance().DEVELOPMENT);
 
 		//已有钱包1余额充足  作为支付方
+
 		Wallet wallet1 = new Wallet("ssHC71HCbhp6FVLLcK2oyyUVjcAY4"); //如进行支付，密钥为必须参数
 		Amount jtc = new Amount(); //构建支付的货币
-		jtc.setCounterparty(""); //货币发行方
-		jtc.setCurrency("SWT"); //货币单位
-		jtc.setValue(0.1); //金额
+		jtc.setCounterparty("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT"); //货币发行方
+		jtc.setCurrency("CNY"); //货币单位
+		jtc.setValue(0.5); //金额
 
 		//Init the payment operation
 		//PaymentOperation op = new PaymentOperation(wallet1);
+		PaymentChoiceCollection pcc = wallet1.getChoices("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ", jtc);
+
 
 		//op.setDestAddress();
-		// 2. construct payment operation
-		PaymentOperation op = new PaymentOperation(wallet1);
-		op.setDestAddress("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ");
-		op.setAmount(jtc);
+		if (pcc.getData().size() < 0) {
+			// 2. construct payment operation
+			PaymentOperation op = new PaymentOperation(wallet1);
+			op.setDestAddress("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ");
+			op.setAmount(jtc);
 //		op.setValidate(true);
-		String payment_id = "paymenttest"+Long.toString(System.currentTimeMillis());
-		op.setClientID(payment_id);//optional
-		op.setMemo("Java test memo");
+			String payment_id = "paymenttest" + Long.toString(System.currentTimeMillis());
+			op.setClientID(payment_id);//optional
+			op.setPath("Java test memo");
 // 3. submit payment
-		RequestResult payment01 = op.submit();
+			RequestResult payment01 = op.submit();
+		}else
+			System.out.println("path found "+pcc.getData().size());
+
 	}
 	
 	@Test 
