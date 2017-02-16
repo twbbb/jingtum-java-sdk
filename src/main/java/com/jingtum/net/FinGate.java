@@ -594,8 +594,8 @@ public class FinGate extends AccountClass {
             throw new InvalidParameterException(JingtumMessage.INVALID_TUM_PAIR,in_pair,null);
 
 
-        String[] base_tum = tum_codes[0].split(":");;
-        String[] counter_tum = tum_codes[1].split(":");
+        String[] base_tum = tum_codes[0].split(":", 2);;
+        String[] counter_tum = tum_codes[1].split(":", 2);
 
 
         //Set the source_amount and destination amount with pair, price and amount value
@@ -668,8 +668,7 @@ public class FinGate extends AccountClass {
         sb.append(counter.getCounterparty());
 
         if (this.secret == null) {
-            this.secret = Seed.generateSecret();
-            this.address = Seed.computeAddress(secret);
+            throw new InvalidParameterException(JingtumMessage.INACTIVATED_ACCOUNT, null, null);
         }
 
         return APIServer.request(APIServer.RequestMethod.GET,
