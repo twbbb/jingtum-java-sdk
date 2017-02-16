@@ -34,6 +34,7 @@ import com.jingtum.model.OrderCollection;
 import com.jingtum.model.OrderBookCollection;
 import com.jingtum.model.TransactionCollection;
 import com.jingtum.model.JingtumObject;
+import com.jingtum.model.MemoCollection;
 
 /**
  * @author zp li.
@@ -72,5 +73,6 @@ public class ServerClass extends JingtumObject {
             .registerTypeAdapter(OrderCollection.class, new OrderCollectionDeserializer())
             .registerTypeAdapter(OrderBookCollection.class, new OrderBookCollectionDeserializer())
             .registerTypeAdapter(TransactionCollection.class, new TransactionCollectionDeserializer())
+            .registerTypeAdapter(MemoCollection.class, new MemoCollectionDeserializer())
             .create();
 }

@@ -15,9 +15,6 @@
  */
 package com.jingtum.model;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import com.jingtum.exception.APIConnectionException;
 import com.jingtum.exception.APIException;
 import com.jingtum.exception.AuthenticationException;
@@ -25,6 +22,7 @@ import com.jingtum.exception.ChannelException;
 import com.jingtum.exception.FailedException;
 import com.jingtum.exception.InvalidParameterException;
 import com.jingtum.exception.InvalidRequestException;
+import com.jingtum.util.Utility;
 
 /**
  *
@@ -80,10 +78,7 @@ public abstract class OperationClass extends JingtumObject{
 	
 	public void submit(OperationListener listener)throws AuthenticationException, InvalidRequestException,
     APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
-		//Later all operators in one ExecutorService?
-		ExecutorService exec = Executors.newCachedThreadPool();
-		exec.execute(new OperationRunnable(this, listener));
-		exec.shutdown();
+		Utility.callback(new OperationRunnable(this, listener));
 	}
 	
 	private class OperationRunnable implements Runnable {

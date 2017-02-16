@@ -48,7 +48,7 @@ public class PaymentOperation extends OperationClass{
     private String paths;
     private String dest_address;
     private Amount source_amount;
-    private  Memo memo;
+    private Memo memo;
     private double source_slippage;
     private Amount destination_amount;
 
@@ -120,6 +120,9 @@ public class PaymentOperation extends OperationClass{
     };
 
     public void setMemo(String in_str)throws InvalidParameterException{
+        if(this.memo == null){
+            this.memo = new Memo();
+        }
         this.memo.setMemoType("String");
         this.memo.setMemoData(in_str);
     };
