@@ -97,7 +97,23 @@
             <artifactId>json</artifactId>
             <version>20140107</version>
         </dependency>
+        <dependency>
+		    <groupId>net.jodah</groupId>
+		    <artifactId>concurrentunit</artifactId>
+		    <version>0.4.2</version>
+		</dependency>
+        <dependency>
+		    <groupId>net.sourceforge.groboutils</groupId>
+		    <artifactId>groboutils-core</artifactId>
+		    <version>5</version>
+		</dependency>
     </dependencies>
+    <repositories>
+    	<repository>
+	      <id>Opensymphony Releases</id>
+	      <url>https://oss.sonatype.org/content/repositories/opensymphony-releases</url>
+	    </repository>
+    </repositories>
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
