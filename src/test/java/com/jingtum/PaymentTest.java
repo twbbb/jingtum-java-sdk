@@ -58,7 +58,7 @@ public class PaymentTest {
 		assertEquals(true,payment1.getSuccess());
 		assertEquals("tesSUCCESS",payment1.getResult());
 		assertEquals("sent",payment1.getType());
-		assertEquals("Java test memo",payment1.getMemos().toString());
+		assertEquals("Java test memo",payment1.getMemos().getData().get(0).getMemoData().toString());
 
 	}
 	

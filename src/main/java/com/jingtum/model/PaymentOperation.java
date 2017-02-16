@@ -145,7 +145,7 @@ public class PaymentOperation extends OperationClass{
     }
 
     /**
-     * Submit a payment by orgnazing the parameters
+     * Submit a payment by organizing the parameters
      *
      * @return PostResult instance
      * @throws AuthenticationException
@@ -189,12 +189,25 @@ public class PaymentOperation extends OperationClass{
         payment.put("destination_account", this.dest_address);
         payment.put("destination_amount", destination_amount);
 
+        if ( this.memo != null) {
+            HashMap [] payment_memos = new HashMap[1];
+            HashMap<String, String> payment_memo = new HashMap<String, String>();
+            payment_memo.put("memo_type", this.memo.getMemoType());
+            payment_memo.put("memo_data", this.memo.getMemoData());
+            payment_memos[0] = payment_memo;
+            payment.put("memos", payment_memos);
+        }
+
+        //payment.put("paths", this.src_wallet.getPathList());
+
         HashMap<String, Object> content = new HashMap<String, Object>();
         content.put("secret", this.getSrcSecret());
         content.put("client_resource_id", this.client_resource_id);
         content.put("payment", payment);
 
         String params = APIServer.GSON.toJson(content);
+        System.out.println(params);
+
         String url = APIServer.formatURL(Payment.class, this.dest_address, VALIDATED + Boolean.toString(this.validate));
         System.out.println("Payment URL:" + url);
 
