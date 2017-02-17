@@ -298,9 +298,9 @@ public class APIServer extends ServerClass {
         HttpResponse<JsonNode> jsonResponse = null;
         Unirest.setTimeouts(30 * 1000, 80 * 1000);
 
-        System.out.println("-------URL send---------------");
+        System.out.println("-------URL------------");
         System.out.println(url);
-        System.out.println("----------------------");
+        System.out.println("----------------------"+method);
         try {
             switch (method) {
                 case GET:
@@ -350,7 +350,7 @@ public class APIServer extends ServerClass {
         JingtumResponse response;
 
 
-        System.out.println("Req url:"+url);
+        //System.out.println("Req url:"+url);
         try {
             response = makeRequest(method, url, params);
         } catch (ClassCastException ce) {

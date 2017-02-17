@@ -39,8 +39,8 @@ public class Amount extends JingtumObject{
 	private String currency;
 	@Expose
 	private String issuer; //used in trust line related methods
-	@Expose
-	private String counterparty;	
+	//@Expose
+	//private String counterparty;
 	/**
 	 * Set JingtumCurrency
 	 * @param jtc
@@ -51,7 +51,14 @@ public class Amount extends JingtumObject{
 			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_CURRENCY,currency,null);
 		}
 		this.currency = jtc.getCurrency();
-		this.counterparty = jtc.getCounterparty();
+		this.issuer = jtc.getIssuer();
+	}
+
+	public boolean isSWT(){
+		if (currency.compareTo("SWT") == 0)
+			return true;
+		else
+			return false;
 	}
 	/**
 	 * Get value
@@ -108,22 +115,22 @@ public class Amount extends JingtumObject{
 		this.issuer = issuer;
 	}		
 	/**
-	 * Get counterparty
-	 * @return counterparty
+	 * Get issuer
+	 * @return issuer
 	 */
-	public String getCounterparty() {
-		return counterparty;
-	}
+//	public String getIssuer() {
+//		return issuer;
+//	}
 	/**
 	 * Set counter party
-	 * @param counterparty
+	 * @param issuer
 	 * @throws InvalidParameterException 
 	 */
-	public void setCounterparty(String counterparty) throws InvalidParameterException{
-		if(!"".equals(counterparty) && !Utility.isValidAddress(counterparty)){
-			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,counterparty,null);
-		}
-		this.counterparty = counterparty;
-	}
+//	public void setCounterparty(String counterparty) throws InvalidParameterException{
+//		if(!"".equals(counterparty) && !Utility.isValidAddress(counterparty)){
+//			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,counterparty,null);
+//		}
+//		this.counterparty = counterparty;
+//	}
 }
 

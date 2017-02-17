@@ -46,6 +46,7 @@ import com.jingtum.exception.FailedException;
 import com.jingtum.exception.InvalidParameterException;
 
 import java.lang.reflect.Type;
+import java.util.Iterator;
 
 /**
  * @author zli
@@ -727,7 +728,7 @@ public class Wallet extends AccountClass {
 				APIServer.formatURL(
 						Transaction.class,
 						this.getAddress(),
-				"?" + param.toString()),
+				param.toString()),
 				null,
 				Wallet.class).getMyTransactionCollection();
 
@@ -803,7 +804,7 @@ public class Wallet extends AccountClass {
 				APIServer.formatURL(
 						Transaction.class,
 						this.getAddress(),
-						"?" + param.toString()),
+						param.toString()),
 				null,
 				Wallet.class).getMyTransactionCollection();
 	}
@@ -1119,9 +1120,10 @@ public class Wallet extends AccountClass {
     	sb.append("/paths/");
     	sb.append(receiver);
         sb.append("/");
-    	sb.append(amount.getValue());
-    	sb.append("%2B" + amount.getCurrency().toString() + "%2B");
-    	sb.append(amount.getCounterparty());
+    	sb.append(String.valueOf(amount.getValue()));
+		//sb.append(amount.getValue());
+    	sb.append("+" + amount.getCurrency());
+    	sb.append("+" + amount.getIssuer());
 
 		return APIServer.request(
 				APIServer.RequestMethod.GET,
@@ -1140,20 +1142,32 @@ public class Wallet extends AccountClass {
 	public PaymentChoiceCollection getChoicesFromPathList(PaymentCollection in_path_list) throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException, ChannelException, APIException, FailedException{
 		// create an empty array list with an initial capacity
 		PaymentChoice choice = new PaymentChoice();
+//List<PaymentChoice> clist = new List<PaymentChoice>
+		if(this.payment_choices == null)
+			this.payment_choices = new PaymentChoiceCollection();
 
 
-		if (! payment_choices.getData().isEmpty()){
-			//clean up the old data for each new get operation
-			payment_choices.getData().clear();
-			System.out.println("Clean the old paths");
-		}
+
 		int path_num = in_path_list.getData().size();
+		for (int i = 0; i < path_num; i ++){
+
+//		if (! payment_choices.getData().isEmpty()){
+//			//clean up the old data for each new get operation
+//			payment_choices.getData().clear();
+//			System.out.println("Clean the old paths");
+//		}
+
+
+		//Payment one = in_path_list.getData().iterator();
+		//Iterator<Payment> it_pay = in_path_list.getData().iterator();
+
 //		PaymentChoiceCollection pc = new PaymentChoiceCollection(1);
 //
-for (int i = 0; i < path_num; i ++){
+
 	System.out.println(in_path_list.getData().get(i).getPaths());
 	choice.setChoice(in_path_list.getData().get(i).getSourceAmount());
 }
+		System.out.println("Number of Path:"+path_num);
 //payment_choices.setData(pc);
 		//return getChoicesFromPathList(getPathList(receiver,amount));
         return payment_choices;

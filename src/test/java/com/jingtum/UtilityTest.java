@@ -42,13 +42,13 @@ public class UtilityTest {
 		//Wallet wallet = new Wallet("js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa","snqFcHzRe22JTM8j7iZVpQYzxEEbW"); 
 		Amount base = new Amount(); //基准货币（currency+counterparty）
 		base.setCurrency(Jingtum.getCurrencyCNY());
-		base.setCounterparty("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT");
+		base.setIssuer("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT");
 		//base.setCounterparty("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
 		
 		Amount counter = new Amount(); //目标货币（currency+counterparty）
 		counter.setCurrency(Jingtum.getCurrencyUSD());
 		//counter.setCounterparty("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
-		counter.setCounterparty("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT");
+		counter.setIssuer("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT");
 		
 		//正常情况 
 		OrderBookResult oBR = JingtumAPIAndWSServer.getTestInstance().getOrderBook(base, counter);
@@ -73,15 +73,15 @@ public class UtilityTest {
 			assertEquals(false,ob.getPassive());
 			//assertEquals(true,ob.getSell());
 			assertEquals("USD",ob.getAmountPrice().getCurrency());
-			assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",ob.getAmountPrice().getCounterparty());
+			assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",ob.getAmountPrice().getIssuer());
 			assertEquals("CNY",ob.getTaker_gets_funded().getCurrency());
-			assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",ob.getTaker_gets_funded().getCounterparty());
+			assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",ob.getTaker_gets_funded().getIssuer());
 			assertEquals("CNY",ob.getTaker_gets_total().getCurrency());
-			assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",ob.getTaker_gets_total().getCounterparty());
+			assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",ob.getTaker_gets_total().getIssuer());
 			assertEquals("USD",ob.getTaker_pays_funded().getCurrency());
-			assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",ob.getTaker_pays_funded().getCounterparty());
+			assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",ob.getTaker_pays_funded().getIssuer());
 			assertEquals("USD",ob.getTaker_pays_total().getCurrency());
-			assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",ob.getTaker_pays_total().getCounterparty());
+			assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",ob.getTaker_pays_total().getIssuer());
 		}
 		
 		//获取Bids
@@ -97,15 +97,15 @@ public class UtilityTest {
 			assertEquals(false,ob.getPassive());
 			assertEquals(true,ob.getSell());
 			assertEquals("USD",ob.getAmountPrice().getCurrency());
-			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT",ob.getAmountPrice().getCounterparty());
+			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT",ob.getAmountPrice().getIssuer());
 			assertEquals("USD",ob.getTaker_gets_funded().getCurrency());
-			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT",ob.getTaker_gets_funded().getCounterparty());
+			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT",ob.getTaker_gets_funded().getIssuer());
 			assertEquals("USD",ob.getTaker_gets_total().getCurrency());
-			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT",ob.getTaker_gets_total().getCounterparty());
+			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT",ob.getTaker_gets_total().getIssuer());
 			assertEquals("CNY",ob.getTaker_pays_funded().getCurrency());
-			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT",ob.getTaker_pays_funded().getCounterparty());
+			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT",ob.getTaker_pays_funded().getIssuer());
 			assertEquals("CNY",ob.getTaker_pays_total().getCurrency());
-			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT",ob.getTaker_pays_total().getCounterparty());
+			assertEquals("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT",ob.getTaker_pays_total().getIssuer());
 		}
 		
 		//异常情况1  base为null时
@@ -128,11 +128,11 @@ public class UtilityTest {
 		//Wallet wallet03 = new Wallet("js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa","snqFcHzRe22JTM8j7iZVpQYzxEEbW"); 
 		Amount base03 = new Amount(); //基准货币（currency+counterparty）
 		//base03.setCurrency(Jingtum.getCurrencyCNY());
-		base03.setCounterparty("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
+		base03.setIssuer("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
 		
 		Amount counter03 = new Amount(); //目标货币（currency+counterparty）
 		counter03.setCurrency(Jingtum.getCurrencyUSD());
-		counter03.setCounterparty("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
+		counter03.setIssuer("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
 		//捕获异常信息
 		try {
 			@SuppressWarnings("unused")
@@ -149,7 +149,7 @@ public class UtilityTest {
 		
 		Amount counter04 = new Amount(); //目标货币（currency+counterparty）
 		counter04.setCurrency(Jingtum.getCurrencyUSD());
-		counter04.setCounterparty("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
+		counter04.setIssuer("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
 		//捕获异常信息
 		try {
 			@SuppressWarnings("unused")
@@ -162,11 +162,11 @@ public class UtilityTest {
 		//Wallet wallet05 = new Wallet("js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa","snqFcHzRe22JTM8j7iZVpQYzxEEbW"); 
 		Amount base05 = new Amount(); //基准货币（currency+counterparty）
 		base05.setCurrency(Jingtum.getCurrencyCNY());
-		base05.setCounterparty("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
+		base05.setIssuer("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
 		
 		Amount counter05 = new Amount(); //目标货币（currency+counterparty）
 		//counter05.setCurrency(Jingtum.getCurrencyUSD());
-		counter05.setCounterparty("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
+		counter05.setIssuer("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
 		//捕获异常信息
 		try {
 			@SuppressWarnings("unused")
@@ -179,7 +179,7 @@ public class UtilityTest {
 		//Wallet wallet06 = new Wallet("js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa","snqFcHzRe22JTM8j7iZVpQYzxEEbW"); 
 		Amount base06 = new Amount(); //基准货币（currency+counterparty）
 		base06.setCurrency(Jingtum.getCurrencyCNY());
-		base06.setCounterparty("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
+		base06.setIssuer("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
 		
 		Amount counter06 = new Amount(); //目标货币（currency+counterparty）
 		counter06.setCurrency(Jingtum.getCurrencyUSD());
@@ -196,11 +196,11 @@ public class UtilityTest {
 		//Wallet wallet07 = new Wallet("jhoitsF8aPz6tzxFW4JmiNWoxsHtsnds5z","saadV1p5vQeh4N1YdPGo3N3NS7dZo"); 
 		Amount base07 = new Amount(); //基准货币（currency+counterparty）
 		base07.setCurrency(Jingtum.getCurrencyCNY());
-		base07.setCounterparty("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
+		base07.setIssuer("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
 		
 		Amount counter07 = new Amount(); //目标货币（currency+counterparty）
 		counter07.setCurrency(Jingtum.getCurrencyUSD());
-		counter07.setCounterparty("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
+		counter07.setIssuer("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS");
 		//捕获异常
 		try {
 			@SuppressWarnings("unused")

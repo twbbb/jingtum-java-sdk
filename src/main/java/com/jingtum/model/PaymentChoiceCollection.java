@@ -26,5 +26,14 @@ package com.jingtum.model;
  * @version 1.0
  */
 public class PaymentChoiceCollection extends JingtumCollection<PaymentChoice> {
+    //public contrusctor to make available choices
+//    public PaymentChoiceCollection(int i){
+//        //
+//        if ( i > 0 ) {
+//            PaymentChoice ch = new PaymentChoice();
+//            this.setData(ch);
+//        }
+//
+//    }
 
 }

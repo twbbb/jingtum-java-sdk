@@ -247,8 +247,8 @@ public class Utility {
      * @return true if the JingtumAmount is valid
      */
     public static boolean isValidAmount(Amount amount){
-    	return (amount != null) && isValidCurrency(amount.getCurrency()) && isValidAddress(amount.getCounterparty())
-    			|| ((amount != null) && Jingtum.getCurrencySWT().equals(amount.getCurrency()) && "".equals(amount.getCounterparty()));
+    	return (amount != null) && isValidCurrency(amount.getCurrency()) && isValidAddress(amount.getIssuer())
+    			|| ((amount != null) && Jingtum.getCurrencySWT().equals(amount.getCurrency()) && "".equals(amount.getIssuer()));
     }
 	/**
 	 * Check if the Memo is valid

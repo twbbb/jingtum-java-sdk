@@ -182,7 +182,7 @@ public class PaymentOperation extends OperationClass{
         HashMap<String, String> destination_amount = new HashMap<String, String>();
         destination_amount.put("currency", source_amount.getCurrency());
         destination_amount.put("value", Utility.doubleToString(source_amount.getValue()));
-        destination_amount.put("issuer",source_amount.getCounterparty());
+        destination_amount.put("issuer",source_amount.getIssuer());
 
         HashMap<String, Object> payment = new HashMap<String, Object>();
         payment.put("source_account", this.getSrcAddress());

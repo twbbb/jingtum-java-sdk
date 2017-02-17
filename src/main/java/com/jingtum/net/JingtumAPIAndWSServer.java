@@ -294,11 +294,11 @@ public class JingtumAPIAndWSServer extends AccountClass {
         sb.append("/");
         sb.append(base.getCurrency());
         sb.append("%2B");
-        sb.append(base.getCounterparty());
+        sb.append(base.getIssuer());
         sb.append("/");
         sb.append(counter.getCurrency());
         sb.append("%2B");
-        sb.append(counter.getCounterparty());
+        sb.append(counter.getIssuer());
 
         if (this.secret == null) {
             this.secret = Seed.generateSecret();

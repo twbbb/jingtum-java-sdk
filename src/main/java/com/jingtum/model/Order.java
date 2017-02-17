@@ -77,7 +77,58 @@ public class Order extends JingtumObject{
 		}
 		public long getSequence() {
 			return sequence;
-		}		
+		}
+
+		public Double getPrice(){
+
+			if (type == OrderType.sell) {
+				return taker_pays.getValue()/taker_gets.getValue();
+			}
+			else
+				return taker_gets.getValue()/taker_pays.getValue();
+		}
+
+		//Return the value of the base currency
+		public Double getAmount(){
+			if (type == OrderType.sell) {
+				return taker_gets.getValue();
+			}
+			else
+				return taker_pays.getValue();
+		}
+
+		//Added new returns and disable the old ones
+		public String getPair(){
+			StringBuilder sb = new StringBuilder();
+
+			if (type == OrderType.sell) {
+				//Base currency is taker get
+				sb.append(taker_gets.getCurrency());
+				if ( !taker_gets.isSWT()) {
+					sb.append(":" + taker_gets.getIssuer());
+				}
+				sb.append("/");
+				sb.append(taker_pays.getCurrency());
+				if ( !taker_pays.isSWT()) {
+					sb.append(":" + taker_pays.getIssuer());
+				}
+
+			}else{
+				//buy
+				//Base currency is taker pays
+				sb.append(taker_pays.getCurrency());
+				if ( !taker_pays.isSWT()) {
+					sb.append(":" + taker_pays.getIssuer());
+				}
+				sb.append("/");
+				sb.append(taker_gets.getCurrency());
+				if ( !taker_gets.isSWT()) {
+					sb.append(":" + taker_gets.getIssuer());
+				}
+
+			}
+			return sb.toString();
+		}
 	}		
 	/**
 	 * Get server state

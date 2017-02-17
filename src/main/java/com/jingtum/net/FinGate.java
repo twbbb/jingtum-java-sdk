@@ -606,10 +606,10 @@ public class FinGate extends AccountClass {
                 throw new InvalidParameterException(JingtumMessage.INVALID_TUM_PAIR, in_pair, null);
             }
 
-            base_amount.setCounterparty("");
+            base_amount.setIssuer("");
         }
         else
-            base_amount.setCounterparty(base_tum[1]);
+            base_amount.setIssuer(base_tum[1]);
 
         counter_amount.setCurrency(counter_tum[0]);
 
@@ -617,10 +617,10 @@ public class FinGate extends AccountClass {
             if (counter_tum[0] != "SWT")
                 throw new InvalidParameterException(JingtumMessage.INVALID_TUM_PAIR,in_pair,null);
 
-            counter_amount.setCounterparty("");
+            counter_amount.setIssuer("");
         }
         else
-            counter_amount.setCounterparty(counter_tum[1]);
+            counter_amount.setIssuer(counter_tum[1]);
     }
     /*
      *
@@ -661,11 +661,11 @@ public class FinGate extends AccountClass {
         sb.append("/");
         sb.append(base.getCurrency());
         sb.append("%2B");
-        sb.append(base.getCounterparty());
+        sb.append(base.getIssuer());
         sb.append("/");
         sb.append(counter.getCurrency());
         sb.append("%2B");
-        sb.append(counter.getCounterparty());
+        sb.append(counter.getIssuer());
 
         if (this.secret == null) {
             throw new InvalidParameterException(JingtumMessage.INACTIVATED_ACCOUNT, null, null);

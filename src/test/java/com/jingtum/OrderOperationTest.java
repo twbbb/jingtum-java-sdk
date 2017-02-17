@@ -132,16 +132,6 @@ public class OrderOperationTest {
 
 		//正常情况2,异步调用
 
-//		op.submit(new OrderListener() {
-//			public void onComplete(RequestResult result) {
-//				//正常情况1  是否等待结果为true时
-//				assertNotNull(result);
-//				assertEquals(true, result.getSuccess()); //交易是否成功
-//				assertEquals("validated", result.getState()); //交易状态
-//				assertEquals("tesSUCCESS", result.getResult()); //支付服务器结果
-//			}
-//		});
-
 
 	}
 
@@ -168,9 +158,9 @@ public class OrderOperationTest {
 		    assertEquals(Order.OrderType.sell,od_3.getType()); //挂单类型:sell
 		    assertEquals(false,od_3.getPassive()); //是否被动交易
 		    assertEquals("CNY",od_3.getReceive().getCurrency()); //获得的货币单位
-		    assertEquals("janxMdrWE2SUzTqRUtfycH4UGewMMeHa9f",od_3.getReceive().getCounterparty()); //获得货币的发行方
+		    assertEquals("janxMdrWE2SUzTqRUtfycH4UGewMMeHa9f",od_3.getReceive().getIssuer()); //获得货币的发行方
 		    assertEquals("SWT",od_3.getPay().getCurrency()); //支付的货币单位
-		    assertEquals("",od_3.getPay().getCounterparty()); //支付货币的发行方
+		    assertEquals("",od_3.getPay().getIssuer()); //支付货币的发行方
 		}
 		
 		//异常情况1    钱包未激活时
@@ -215,10 +205,10 @@ System.out.println("OD 5 returns:"+od_5.toString());
 		assertEquals("true",od_5.getValidated()); //交易服务器状态
 		assertEquals(DirectionType.outgoing,od_5.getDirection()); //交易方向，incoming或outgoing
 		assertEquals("js4UaG1pjyCEi9f867QHJbWwD3eo6C5xsa",od_5.getAccount()); //交易帐号
-		assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",od_5.getPay().getCounterparty());
+		assertEquals("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",od_5.getPay().getIssuer());
 		assertEquals("USD",od_5.getPay().getCurrency());
 		assertEquals("1.1",String.valueOf(od_5.getPay().getValue()));
-		assertEquals("janxMdrWE2SUzTqRUtfycH4UGewMMeHa9f",od_5.getReceive().getCounterparty());
+		assertEquals("janxMdrWE2SUzTqRUtfycH4UGewMMeHa9f",od_5.getReceive().getIssuer());
 		assertEquals("CNY",od_5.getReceive().getCurrency());
 		assertEquals("5.5",String.valueOf(od_5.getReceive().getValue()));
 		assertEquals(false,od_5.getPassive()); //交易是否是被动交易

@@ -54,7 +54,7 @@ public class Currency extends JingtumObject{
 	/**
 	 * @return counterParty
 	 */
-	public String getCounterparty() {
+	public String getIssuer() {
 		return counterparty;
 	}
 }

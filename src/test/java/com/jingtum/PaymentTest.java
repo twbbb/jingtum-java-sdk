@@ -33,7 +33,7 @@ public class PaymentTest {
 		Wallet wallet1 = new Wallet("ssHC71HCbhp6FVLLcK2oyyUVjcAY4"); //如进行支付，密钥为必须参数
 		Options pop = new Options();//
 		Amount jtc = new Amount(); //构建支付的货币
-		jtc.setCounterparty(""); //货币发行方
+		jtc.setIssuer(""); //货币发行方
 		jtc.setCurrency("SWT"); //货币单位
 		jtc.setValue(0.1); //金额
 
@@ -96,9 +96,9 @@ public class PaymentTest {
 
 		Wallet wallet1 = new Wallet("ssHC71HCbhp6FVLLcK2oyyUVjcAY4"); //如进行支付，密钥为必须参数
 		Amount jtc = new Amount(); //构建支付的货币
-		jtc.setCounterparty("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT"); //货币发行方
+		jtc.setIssuer("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT"); //货币发行方
 		jtc.setCurrency("CNY"); //货币单位
-		jtc.setValue(0.5); //金额
+		jtc.setValue(0.05); //金额
 
 		//Init the payment operation
 		//PaymentOperation op = new PaymentOperation(wallet1);
@@ -114,7 +114,7 @@ public class PaymentTest {
 //		op.setValidate(true);
 			String payment_id = "paymenttest" + Long.toString(System.currentTimeMillis());
 			op.setClientID(payment_id);//optional
-			op.setPath("Java test memo");
+			op.setPath(pcc.getData().get(0).getPath());
 // 3. submit payment
 			RequestResult payment01 = op.submit();
 		}else
@@ -128,7 +128,7 @@ public class PaymentTest {
 		//已有钱包1余额充足  作为支付方
 		Wallet wallet1 = new Wallet("ssHC71HCbhp6FVLLcK2oyyUVjcAY4"); //如进行支付，密钥为必须参数
 		Amount jtc = new Amount(); //构建支付的货币
-		jtc.setCounterparty(""); //货币发行方
+		jtc.setIssuer(""); //货币发行方
 		jtc.setCurrency("SWT"); //货币单位
 		jtc.setValue(0.1); //金额
 

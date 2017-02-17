@@ -180,7 +180,7 @@ public class TransactionTest {
 
         //首先提交一个payment
         Amount jtc = new Amount(); //构建支付的货币
-        jtc.setCounterparty(""); //货币发行方
+        jtc.setIssuer(""); //货币发行方
         jtc.setCurrency("SWT"); //货币单位
         jtc.setValue(0.8); //金额
 
@@ -244,7 +244,7 @@ public class TransactionTest {
 	    }
         
 		//异常情况1   钱包未激活时
-		Wallet wallet01 = new Wallet("jhoitsF8aPz6tzxFW4JmiNWoxsHtsnds5z","saadV1p5vQeh4N1YdPGo3N3NS7dZo");
+		Wallet wallet01 = new Wallet("saadV1p5vQeh4N1YdPGo3N3NS7dZo","jhoitsF8aPz6tzxFW4JmiNWoxsHtsnds5z");
 		//捕获异常
 		try {
 			@SuppressWarnings("unused")
