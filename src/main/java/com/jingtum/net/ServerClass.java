@@ -80,5 +80,6 @@ public class ServerClass extends JingtumObject {
             .registerTypeAdapter(OrderBookCollection.class, new OrderBookCollectionDeserializer())
             .registerTypeAdapter(TransactionCollection.class, new TransactionCollectionDeserializer())
             .registerTypeAdapter(MemoCollection.class, new MemoCollectionDeserializer())
+            .registerTypeAdapter(PaymentCollection.class, new PaymentCollectionDeserializer())
             .create();
 }
