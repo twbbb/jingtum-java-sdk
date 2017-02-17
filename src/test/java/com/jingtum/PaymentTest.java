@@ -101,7 +101,6 @@ public class PaymentTest {
 		jtc.setValue(0.05); //金额
 
 		//Init the payment operation
-		//PaymentOperation op = new PaymentOperation(wallet1);
 		PaymentChoiceCollection pcc = wallet1.getChoices("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ", jtc);
 
 
@@ -111,11 +110,11 @@ public class PaymentTest {
 			PaymentOperation op = new PaymentOperation(wallet1);
 			op.setDestAddress("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ");
 			op.setAmount(jtc);
-//		op.setValidate(true);
-			String payment_id = "paymenttest" + Long.toString(System.currentTimeMillis());
+			String payment_id = "paymentWithPath" + Long.toString(System.currentTimeMillis());
 			op.setClientID(payment_id);//optional
 			op.setPath(pcc.getData().get(0).getPath());
-// 3. submit payment
+
+			// 3. submit payment
 			RequestResult payment01 = op.submit();
 		}else
 			System.out.println("path found "+pcc.getData().size());

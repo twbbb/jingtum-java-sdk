@@ -45,7 +45,9 @@ import com.jingtum.exception.ChannelException;
 import com.jingtum.exception.FailedException;
 import com.jingtum.exception.InvalidParameterException;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.net.URLEncoder;
 import java.util.Iterator;
 
 /**
@@ -1124,13 +1126,20 @@ public class Wallet extends AccountClass {
 		//sb.append(amount.getValue());
     	sb.append("+" + amount.getCurrency());
     	sb.append("+" + amount.getIssuer());
+        String urlsb = new String();
+    	try {
+            urlsb = URLEncoder.encode(sb.toString(), "UTF-8");
+        }catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            System.out.println("UTF-8 not supported");
+        }
 
 		return APIServer.request(
 				APIServer.RequestMethod.GET,
 				APIServer.formatURL(
 						Payment.class,
 						this.getAddress(),
-						sb.toString()),
+                        urlsb),
 				null,
 				Wallet.class).getPaymentsCollection();
 
@@ -1142,6 +1151,8 @@ public class Wallet extends AccountClass {
 	public PaymentChoiceCollection getChoicesFromPathList(PaymentCollection in_path_list) throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException, ChannelException, APIException, FailedException{
 		// create an empty array list with an initial capacity
 		PaymentChoice choice = new PaymentChoice();
+		List<PaymentChoice> choiceList;// = new List<PaymentChoice>();
+
 //List<PaymentChoice> clist = new List<PaymentChoice>
 		if(this.payment_choices == null)
 			this.payment_choices = new PaymentChoiceCollection();
@@ -1149,6 +1160,7 @@ public class Wallet extends AccountClass {
 
 
 		int path_num = in_path_list.getData().size();
+		//Conver the input path to the
 		for (int i = 0; i < path_num; i ++){
 
 //		if (! payment_choices.getData().isEmpty()){
@@ -1164,8 +1176,9 @@ public class Wallet extends AccountClass {
 //		PaymentChoiceCollection pc = new PaymentChoiceCollection(1);
 //
 
-	System.out.println(in_path_list.getData().get(i).getPaths());
+	System.out.println("Path "+i+" "+in_path_list.getData().get(i).getPaths());
 	choice.setChoice(in_path_list.getData().get(i).getSourceAmount());
+
 }
 		System.out.println("Number of Path:"+path_num);
 //payment_choices.setData(pc);
