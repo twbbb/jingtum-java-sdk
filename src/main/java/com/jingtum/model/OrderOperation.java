@@ -188,7 +188,7 @@ for (int i = 0; i<tum_codes.length; i ++)
         String params = APIServer.GSON.toJson(content);
         String url = APIServer.formatURL(Order.class, this.getSrcAddress(), VALIDATED + Boolean.toString(this.validate));
 //        System.out.println("Order URL:" + url);
-//        System.out.println("data: " + params);
+        System.out.println("data: " + params);
 
         return APIServer.request(APIServer.RequestMethod.POST, url, params, RequestResult.class);
     }

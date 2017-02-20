@@ -70,7 +70,7 @@ total: '3' }
  *
  */
 public class OrderBook extends JingtumObject {	
-	private Amount price;
+	//private Amount price;
 	private Amount taker_gets_funded;
 	private Amount taker_gets_total;
 	private Amount taker_pays_funded;
@@ -85,7 +85,10 @@ public class OrderBook extends JingtumObject {
 	 *
 	 */
 	public Amount getAmountPrice() {
-		return price;
+		if (sell)
+			return taker_gets_funded;
+		else
+			return taker_pays_funded;
 	}
 
 	/**
@@ -94,7 +97,12 @@ public class OrderBook extends JingtumObject {
 	 *
 	 */
 	public String getPrice() {
-		return String.valueOf(price.getValue());
+
+		if (sell)
+			return String.valueOf(taker_gets_funded.getValue());
+		else
+			return String.valueOf(taker_pays_funded.getValue());
+		//return String.valueOf(price.getValue());
 	}
 
 	/**

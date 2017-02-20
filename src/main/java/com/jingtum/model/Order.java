@@ -63,9 +63,11 @@ public class Order extends JingtumObject{
 		public String getAccount() {
 			return account;
 		}
+
 		public Amount getTaker_gets() {
 			return taker_gets;
 		}
+
 		public Amount getTaker_pays() {
 			return taker_pays;
 		}
@@ -224,18 +226,22 @@ public class Order extends JingtumObject{
 		}
 		return type;
 	}
+
 	/**
 	 * Get amount pays in the order
 	 * @return taker_gets
 	 */
 	public Amount getPay() {
 		if (this.taker_gets == null && order != null){
+			System.out.println("Order item :"+order.getPair());
 			return order.getTaker_gets();
 		}
 		return taker_gets;
 	}
 	/**
 	 * Get amount receive
+	 * depends on the type of order
+	 *
 	 * @return taker_pays
 	 */
 	public Amount getReceive() {

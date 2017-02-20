@@ -34,7 +34,9 @@ import java.lang.reflect.Type;
  * @author jzhao
  * @version 1.0
  */
-public class OrderDeserializer implements JsonDeserializer<Order> {    public Order deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+public class OrderDeserializer implements JsonDeserializer<Order> {
+    public Order deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+            throws JsonParseException {
         Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
         Order Order = gson.fromJson(json, Order.class);
         return Order;

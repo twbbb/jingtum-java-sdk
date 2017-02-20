@@ -30,6 +30,8 @@ import com.jingtum.util.Utility;
  * @author jzhao
  * @version 1.0
  * Currency class
+ * Updated with getIssuer()
+ * for new interface
  */
 
 public class Amount extends JingtumObject{
@@ -38,9 +40,9 @@ public class Amount extends JingtumObject{
 	@Expose
 	private String currency;
 	@Expose
-	private String issuer; //used in trust line related methods
+	//private String issuer; //new interface
 	//@Expose
-	//private String counterparty;
+	private String counterparty;
 	/**
 	 * Set JingtumCurrency
 	 * @param jtc
@@ -51,7 +53,7 @@ public class Amount extends JingtumObject{
 			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_CURRENCY,currency,null);
 		}
 		this.currency = jtc.getCurrency();
-		this.issuer = jtc.getIssuer();
+		this.counterparty = jtc.getIssuer();
 	}
 
 	public boolean isSWT(){
@@ -101,7 +103,7 @@ public class Amount extends JingtumObject{
 	 * @return issuer
 	 */
 	public String getIssuer() {
-		return issuer;
+		return counterparty;
 	}
 	/**
 	 * Set issuer
@@ -112,25 +114,20 @@ public class Amount extends JingtumObject{
 		if(issuer!="" && !Utility.isValidAddress(issuer)){
 			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,issuer,null);
 		}
-		this.issuer = issuer;
+		//this.issuer = issuer;
+		this.counterparty = issuer;
 	}		
-	/**
-	 * Get issuer
-	 * @return issuer
-	 */
-//	public String getIssuer() {
-//		return issuer;
-//	}
+
 	/**
 	 * Set counter party
-	 * @param issuer
+	 * @param counterparty
 	 * @throws InvalidParameterException 
 	 */
-//	public void setCounterparty(String counterparty) throws InvalidParameterException{
-//		if(!"".equals(counterparty) && !Utility.isValidAddress(counterparty)){
-//			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,counterparty,null);
-//		}
-//		this.counterparty = counterparty;
-//	}
+	public void setCounterparty(String counterparty) throws InvalidParameterException{
+		if(!"".equals(counterparty) && !Utility.isValidAddress(counterparty)){
+			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,counterparty,null);
+		}
+		this.counterparty = counterparty;
+	}
 }
 

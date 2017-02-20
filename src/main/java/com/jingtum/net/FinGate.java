@@ -130,8 +130,6 @@ public class FinGate extends AccountClass {
 
             this.pathRate = config.getPaymentPathRate();
 
-//            System.out.println("Tum server");
-//            System.out.println(config.getTumServer());
 
             //Setup the servers with input string from config file
             if (this.tum_server == null) {
