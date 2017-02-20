@@ -105,7 +105,7 @@ public class PaymentTest {
 
 
 		//op.setDestAddress();
-		if (pcc.getData().size() < 0) {
+		if (pcc.getData().size() > 0) {
 			// 2. construct payment operation
 			PaymentOperation op = new PaymentOperation(wallet1);
 			op.setDestAddress("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ");
@@ -116,6 +116,13 @@ public class PaymentTest {
 
 			// 3. submit payment
 			RequestResult payment01 = op.submit();
+			System.out.println("result:" + payment01.toString());
+
+			//正常情况1  是否等待结果为true时
+			assertEquals(true, payment01.getSuccess()); //交易是否成功
+			assertEquals("validated", payment01.getState()); //交易状态
+			assertEquals("tesSUCCESS", payment01.getResult()); //支付服务器结果
+
 		}else
 			System.out.println("path found "+pcc.getData().size());
 

@@ -48,7 +48,11 @@ import com.jingtum.exception.InvalidParameterException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URLEncoder;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.jingtum.core.utils.HashUtils;//for HASH function
+
 
 /**
  * @author zli
@@ -378,10 +382,6 @@ public class Wallet extends AccountClass {
     }
     /**
      * @param in_ops: contains options with sourceAccount, destinationAccount
-     * @param excludeFailed
-     * @param direction incoming/outgoing/all
-     * @param resultPerPage result per page
-     * @param page page number
      * @return PaymentCollection
      * @throws AuthenticationException
      * @throws InvalidRequestException
@@ -1148,48 +1148,45 @@ public class Wallet extends AccountClass {
     /*
      * Form the choices array with input path list
      */
-	public PaymentChoiceCollection getChoicesFromPathList(PaymentCollection in_path_list) throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException, ChannelException, APIException, FailedException{
+	public PaymentChoiceCollection getChoicesFromPathList(PaymentCollection in_path_list)
+			throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException,
+			ChannelException, APIException, FailedException{
 		// create an empty array list with an initial capacity
 		PaymentChoice choice = new PaymentChoice();
-		List<PaymentChoice> choiceList;// = new List<PaymentChoice>();
+		List<PaymentChoice> choice_list = new ArrayList<PaymentChoice>();
 
 //List<PaymentChoice> clist = new List<PaymentChoice>
 		if(this.payment_choices == null)
 			this.payment_choices = new PaymentChoiceCollection();
 
-
-
 		int path_num = in_path_list.getData().size();
 		//Conver the input path to the
-		for (int i = 0; i < path_num; i ++){
+		for (int i = 0; i < path_num; i ++) {
 
-//		if (! payment_choices.getData().isEmpty()){
-//			//clean up the old data for each new get operation
-//			payment_choices.getData().clear();
-//			System.out.println("Clean the old paths");
-//		}
+String cur_path = in_path_list.getData().get(i).getPaths().toString();
+
+			System.out.println("Path " + i + " " + cur_path);
+			choice.setChoice(in_path_list.getData().get(i).getSourceAmount());
+			choice.setPath(cur_path);
+			HashUtils path_hash = new HashUtils();
+			String key = path_hash.SHA256_RIPEMD160(cur_path.getBytes()).toString();
+			System.out.println("Path key"+key);
+			choice.setKey(key);
+			choice_list.add(choice);
+		}
 
 
-		//Payment one = in_path_list.getData().iterator();
-		//Iterator<Payment> it_pay = in_path_list.getData().iterator();
-
-//		PaymentChoiceCollection pc = new PaymentChoiceCollection(1);
-//
-
-	System.out.println("Path "+i+" "+in_path_list.getData().get(i).getPaths());
-	choice.setChoice(in_path_list.getData().get(i).getSourceAmount());
-
-}
 		System.out.println("Number of Path:"+path_num);
-//payment_choices.setData(pc);
+        payment_choices.setData(choice_list);
 		//return getChoicesFromPathList(getPathList(receiver,amount));
         return payment_choices;
 	}
     /*
     *
      */
-	public PaymentChoiceCollection getChoices(String receiver, Amount amount) throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException, ChannelException, APIException, FailedException{
-
+	public PaymentChoiceCollection getChoices(String receiver, Amount amount) throws InvalidParameterException,
+			AuthenticationException, InvalidRequestException, APIConnectionException,
+			ChannelException, APIException, FailedException{
 
 		return getChoicesFromPathList(getPathList(receiver,amount));
 
