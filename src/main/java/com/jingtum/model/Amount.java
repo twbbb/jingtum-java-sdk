@@ -40,7 +40,7 @@ public class Amount extends JingtumObject{
 	@Expose
 	private String currency;
 	@Expose
-	//private String issuer; //new interface
+	private String issuer; //new interface
 	//@Expose
 	private String counterparty;
 	/**
@@ -54,6 +54,7 @@ public class Amount extends JingtumObject{
 		}
 		this.currency = jtc.getCurrency();
 		this.counterparty = jtc.getIssuer();
+		this.issuer = jtc.getIssuer();
 	}
 
 	public boolean isSWT(){
@@ -103,6 +104,8 @@ public class Amount extends JingtumObject{
 	 * @return issuer
 	 */
 	public String getIssuer() {
+		if (issuer != null && issuer.length() > 0)
+			return issuer;
 		return counterparty;
 	}
 	/**
@@ -114,7 +117,7 @@ public class Amount extends JingtumObject{
 		if(issuer!="" && !Utility.isValidAddress(issuer)){
 			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,issuer,null);
 		}
-		//this.issuer = issuer;
+		this.issuer = issuer;
 		this.counterparty = issuer;
 	}		
 
@@ -128,6 +131,7 @@ public class Amount extends JingtumObject{
 			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,counterparty,null);
 		}
 		this.counterparty = counterparty;
+		this.issuer = counterparty;
 	}
 }
 

@@ -36,43 +36,6 @@ public class OrderOperationTest {
 		assertEquals(true, order01.getSuccess()); //返回是否成功
 		assertEquals(true, order01.getValidated()); //返回方式
 		assertEquals(cur_pair, order01.getPair()); //返回方式
-		//
-
-//		if(order01.getBids() > 0){
-//			System.out.println("Submit done, search the order!");
-//			Order order02 = wallet.getOrder(order01.getHash());
-//
-//			System.out.println("Search for:" + order02.toString());
-//			assertEquals(true, order02.getSuccess()); //挂单是否查询成功
-//			assertEquals(order01.getHash(), order02.getHash());//是否查找到正确的挂单
-//
-//
-//			System.out.println("Now canceling "+order01.getSequence());
-//
-//
-//			CancelOrderOperation cop = new CancelOrderOperation(wallet);
-//			cop.setSequence(order01.getSequence());
-//			cop.setValidate(true);
-//			RequestResult order03 = cop.submit();
-//
-//			System.out.println("Cancel:" + order03.toString());
-//			assertEquals(true, order03.getSuccess()); //挂单是否取消成功
-//
-//		}
-
-
-		//正常情况2,异步调用 getOrderBook
-
-//		op.submit(new OrderListener() {
-//			public void onComplete(RequestResult result) {
-//				//正常情况1  是否等待结果为true时
-//				assertNotNull(result);
-//				assertEquals(true, result.getSuccess()); //交易是否成功
-//				assertEquals("validated", result.getState()); //交易状态
-//				assertEquals("tesSUCCESS", result.getResult()); //支付服务器结果
-//			}
-//		});
-
 
 	}
 

@@ -113,7 +113,7 @@ public class UtilityTest {
 			@SuppressWarnings("unused")
 			OrderBookResult oBR01 = JingtumAPIAndWSServer.getTestInstance().getOrderBook(null, counter);
 	    } catch (InvalidParameterException ex) {
-	    	assertEquals("Invalid JingtumAmount! Please make sure Currency and Counterparty are all valid.",ex.getMessage());
+	    	assertEquals("Invalid JingtumAmount! Please make sure Currency and issuer are all valid.",ex.getMessage());
 	    }
 		
 		//异常情况2  counter为null时
@@ -121,7 +121,7 @@ public class UtilityTest {
 			@SuppressWarnings("unused")
 			OrderBookResult oBR02 = JingtumAPIAndWSServer.getTestInstance().getOrderBook(base, null);
 	    } catch (InvalidParameterException ex) {
-	    	assertEquals("Invalid JingtumAmount! Please make sure Currency and Counterparty are all valid.",ex.getMessage());
+	    	assertEquals("Invalid JingtumAmount! Please make sure Currency and issuer are all valid.",ex.getMessage());
 	    }
 		
 		//异常情况3  base的currency没初始化时
@@ -138,7 +138,7 @@ public class UtilityTest {
 			@SuppressWarnings("unused")
 			OrderBookResult oBR03 = JingtumAPIAndWSServer.getTestInstance().getOrderBook(base03, counter03);
 	    } catch (InvalidParameterException ex) {
-	    	assertEquals("Invalid JingtumAmount! Please make sure Currency and Counterparty are all valid.",ex.getMessage());
+	    	assertEquals("Invalid JingtumAmount! Please make sure Currency and issuer are all valid.",ex.getMessage());
 	    }
 		
 		//异常情况4  base的Counterparty没初始化时
@@ -155,7 +155,7 @@ public class UtilityTest {
 			@SuppressWarnings("unused")
 			OrderBookResult oBR04 = JingtumAPIAndWSServer.getTestInstance().getOrderBook(base04, counter04);
 	    } catch (InvalidParameterException ex) {
-	    	assertEquals("Invalid JingtumAmount! Please make sure Currency and Counterparty are all valid.",ex.getMessage());
+	    	assertEquals("Invalid JingtumAmount! Please make sure Currency and issuer are all valid.",ex.getMessage());
 	    }
 		
 		//异常情况5  counter的currency没初始化时
@@ -172,7 +172,7 @@ public class UtilityTest {
 			@SuppressWarnings("unused")
 			OrderBookResult oBR05 = JingtumAPIAndWSServer.getTestInstance().getOrderBook(base05, counter05);
 	    } catch (InvalidParameterException ex) {
-	    	assertEquals("Invalid JingtumAmount! Please make sure Currency and Counterparty are all valid.",ex.getMessage());
+	    	assertEquals("Invalid JingtumAmount! Please make sure Currency and issuer are all valid.",ex.getMessage());
 	    }
 		
 		//异常情况6  counter的Counterparty没初始化时
@@ -189,7 +189,7 @@ public class UtilityTest {
 			@SuppressWarnings("unused")
 			OrderBookResult oBR06 = JingtumAPIAndWSServer.getTestInstance().getOrderBook(base06, counter06);
 	    } catch (InvalidParameterException ex) {
-	    	assertEquals("Invalid JingtumAmount! Please make sure Currency and Counterparty are all valid.",ex.getMessage());
+	    	assertEquals("Invalid JingtumAmount! Please make sure Currency and issuer are all valid.",ex.getMessage());
 	    }
 		
 		//异常情况7    钱包未激活时
