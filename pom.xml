@@ -6,7 +6,7 @@
     <packaging>jar</packaging>
 
     <name>Jingtum SDK</name>
-    <version>1.1.0</version>
+    <version>1.1.2</version>
     <url>http://git.jingtum.com/Jingtum_Jing/JingtumSDK</url>
     <description>Jingtum SDK</description>
     <inceptionYear>2016</inceptionYear>
@@ -186,6 +186,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.10.4</version>
+                <configuration>
+                    <doctitle>JAVA doc for Jingtum SDK 1.1.1</doctitle> <!-- Used by javadoc:javadoc goal -->
+                    <windowtitle>JAVA doc for Jingtum SDK 1.1.1</windowtitle> <!-- Used by javadoc:javadoc goal -->
+
+                    <testDoctitle>JAVA doc for Jingtum SDK 1.1.1 test</testDoctitle> <!-- Used by javadoc:test-javadoc goal -->
+                    <testWindowtitle>JAVA doc for Jingtum SDK 1.1.1 test</testWindowtitle> <!-- Used by javadoc:test-javadoc goal -->
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>

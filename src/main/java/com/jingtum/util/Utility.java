@@ -56,7 +56,7 @@ public class Utility {
 
     /**
      * Convert byte to hex
-     * @param bytes
+     * @param bytes Input byte array to convert to HEX codes
      * @return String
      */
     public static String bytesToHex(byte[] bytes) {

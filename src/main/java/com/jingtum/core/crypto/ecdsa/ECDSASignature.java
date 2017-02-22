@@ -32,7 +32,10 @@ public class ECDSASignature {
     /** The two components of the signature. */
     public BigInteger r, s;
 
-    /** Constructs a signature with the given components. */
+    /** Constructs a signature with the given components.
+     *@param r
+     *@param s
+     **/
     public ECDSASignature(BigInteger r, BigInteger s) {
         this.r = r;
         this.s = s;
@@ -42,6 +45,8 @@ public class ECDSASignature {
      * DER is an international standard for serializing data structures which is widely used in cryptography.
      * It's somewhat like protocol buffers but less convenient. This method returns a standard DER encoding
      * of the signature, as recognized by OpenSSL and other libraries.
+     * @return A byte buffer as a standard DER encoding
+     * of the signature
      */
     public byte[] encodeToDER() {
         try {

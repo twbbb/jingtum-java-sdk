@@ -562,17 +562,8 @@ public class FinGate extends AccountClass {
     }
 
     /**
-     * @return wallet
-     * @throws InvalidParameterException
+     * @param in_mode input operation mode
      */
-//    private Wallet getMyWallet() throws InvalidParameterException {
-//        if (wallet == null) {
-//            wallet = new Wallet(this.address, this.secret);
-//        }
-//        return wallet;
-//    }
-
-    //
     public void setMode(int in_mode) {
         init(in_mode);
     }

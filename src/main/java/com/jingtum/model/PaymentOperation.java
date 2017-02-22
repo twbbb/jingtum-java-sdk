@@ -93,11 +93,15 @@ public class PaymentOperation extends OperationClass{
 
     /**
      * Get payment resource id
-     * @return client_resource_id
+     * @param in_id input client_resource_id
      */
     public void setClientID(String in_id){this.client_resource_id = in_id;};
     public void setClientId(String in_id){this.client_resource_id = in_id;};
 
+    /**
+     * Set the payment resource id
+     * @param in_id the prefix will be used to generate the client id internally
+     */
     public void setPrefix(String in_id){this.prefix = in_id;};
 
     public void setAmount(Amount in_amt)throws InvalidParameterException{

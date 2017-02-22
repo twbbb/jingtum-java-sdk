@@ -67,7 +67,9 @@ public class OrderOperation extends OperationClass{
     /**
      * Set the Tum pair in the order
      * split the
-     * @return
+     * @param in_str Input string to set the Order type
+     *               must be either sell or buy
+     *
      */
     public void setType(String in_str)throws InvalidParameterException {
         if (in_str == "sell" || in_str == "buy"){
@@ -80,10 +82,12 @@ public class OrderOperation extends OperationClass{
 
     /**
      * Set the Tum pair in the order
-     * split the
-     * @return
+     * @param in_pair Input string contains the pair info
+     *
+     *
      */
     public void setPair(String in_pair){
+        //TODO check the pair format
         this.pair = in_pair;
 
     }

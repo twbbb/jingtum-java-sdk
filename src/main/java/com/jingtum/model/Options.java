@@ -31,7 +31,7 @@ public class Options {
     }
     /**
      * Set the source account parameter
-     * @return void
+     * @param in_str  Input source account address
      */
     public void setSourceAccount(String in_str) {
         this.source_account = in_str;
@@ -39,7 +39,7 @@ public class Options {
 
     /**
      * Set the destination account parameter
-     * @return void
+     * @param in_str
      */
     public void setDestinationAccount(String in_str) {
         this.destination_account = in_str;
@@ -47,7 +47,7 @@ public class Options {
 
     /**
      * Set the source account parameter
-     * @return void
+     * @param in_flag A boolean flag to indicate if the records should include failed transactions.
      */
     public void setExcludeFailed(Boolean in_flag) {
         this.exclude_failed = in_flag;
@@ -55,7 +55,7 @@ public class Options {
 
     /**
      * Set the results displayed per page
-     * @return void
+     * @param in_int number of records showed in one page
      */
     public void setResultsPerPage(int in_int) {
         this.results_per_page = in_int;
@@ -63,7 +63,7 @@ public class Options {
 
     /**
      * Set the source account parameter
-     * @return void
+     * @param in_int The page number to be displayed
      */
     public void setPage(int in_int) {
         this.page = in_int;
@@ -89,10 +89,15 @@ public class Options {
         return exclude_failed;
     }
 
+
     public int getPage() {
         return page;
     }
 
+    /**
+     * Get the result per page
+     * @return the result per page
+     */
     public int getResultsPerPage() {
         return results_per_page;
     }

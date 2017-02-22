@@ -53,8 +53,8 @@ public class CancelOrderOperation extends OperationClass{
 
     /**
      * Set the sequence number of the submitted number
-     * split the
-     * @return
+     * @param in_seq Set the sequence number
+     *
      */
     public void setSequence(String in_seq)throws InvalidParameterException {
         if (in_seq.length() < 1){

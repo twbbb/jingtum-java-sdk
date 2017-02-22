@@ -737,8 +737,8 @@ public class Wallet extends AccountClass {
     }
 
 	/**
-	 * @param Options
-	 * @return TransactionCollection
+	 * @param in_ops input options to filter out the outputs
+	 * @return TransactionCollection trans records with the acount with filtered conditions
 	 * @throws AuthenticationException
 	 * @throws InvalidRequestException
 	 * @throws APIConnectionException
