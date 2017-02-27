@@ -213,7 +213,7 @@ public class PaymentOperation extends OperationClass{
         System.out.println(params);
 
         String url = APIServer.formatURL(Payment.class, this.dest_address, VALIDATED + Boolean.toString(this.validate));
-        System.out.println("Payment URL:" + url);
+       // System.out.println("Payment URL:" + url);
 
         return APIServer.request(APIServer.RequestMethod.POST, url, params, RequestResult.class);
     }

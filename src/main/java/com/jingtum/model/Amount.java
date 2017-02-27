@@ -38,11 +38,13 @@ public class Amount extends JingtumObject{
 	@Expose
 	private double value;
 	@Expose
+	private double limit;//for relation use only
+	@Expose
 	private String currency;
 	@Expose
-	private String issuer; //new interface
+	private String issuer; //for balance
 	//@Expose
-	private String counterparty;
+	private String counterparty;//for order,
 	/**
 	 * Set JingtumCurrency
 	 * @param jtc
@@ -68,8 +70,17 @@ public class Amount extends JingtumObject{
 	 * @return value
 	 */
 	public double getValue() {
-		return value;
+		return this.value;
 	}
+
+	/**
+	 * Get limit for relation class
+	 * @return limit
+	 */
+	public double getLimit() {
+		return this.limit;
+	}
+
 	/**
 	 * Set value
 	 * @param value

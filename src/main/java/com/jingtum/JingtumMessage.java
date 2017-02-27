@@ -29,7 +29,7 @@ public abstract class JingtumMessage {
 	public static final String INVALID_ORDER_NUMBER = "Order number cannot be empty!";
 	public static final String INVALID_PAGE_INFO = "Invalid paging option!";
 	public static final String INVALID_CURRENCY = "Invalid currency!";
-	public static final String INVALID_JINGTUM_CURRENCY = "Invalid Jingtum currency!";
+	public static final String INVALID_JINGTUM_CURRENCY = "Invalid Jingtum Tum code!";
 	public static final String INVALID_VALUE = "Invalid value!";
 	public static final String INVALID_LIMIT = "Invalid limit!";
 	public static final String SPECIFY_ORDER_TYPE = "Please specify an order type!";

@@ -37,6 +37,7 @@ import com.jingtum.model.JingtumObject;
 import com.jingtum.model.MemoCollection;
 import com.jingtum.model.PaymentCollection;
 import com.jingtum.model.PaymentChoiceCollection;
+import com.jingtum.model.RelationCollection;
 
 /**
  * @author zp li.
@@ -76,6 +77,7 @@ public class ServerClass extends JingtumObject {
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .registerTypeAdapter(EffectCollection.class, new EffectCollectionDeserializer())
             .registerTypeAdapter(BalanceCollection.class, new BalanceCollectionDeserializer())
+            .registerTypeAdapter(RelationCollection.class, new RelationCollectionDeserializer())
             .registerTypeAdapter(OrderCollection.class, new OrderCollectionDeserializer())
             .registerTypeAdapter(OrderBookCollection.class, new OrderBookCollectionDeserializer())
             .registerTypeAdapter(TransactionCollection.class, new TransactionCollectionDeserializer())

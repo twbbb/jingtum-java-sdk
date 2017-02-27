@@ -75,6 +75,7 @@ public class APIProxy extends JingtumObject {
             .registerTypeAdapter(OrderBookResult.class, new OrderBookResultDeserializer())
             .registerTypeAdapter(PaymentCollection.class, new PaymentCollectionDeserializer())
             .registerTypeAdapter(EffectCollection.class, new EffectCollectionDeserializer())
+            .registerTypeAdapter(RelationCollection.class, new RelationCollectionDeserializer())
             .create();
 
     /**

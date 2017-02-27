@@ -24,12 +24,19 @@ package com.jingtum.model;
  * @author jzhao
  * @version 1.0
  * Relation class
+ * Changed the input format of currency
+ *
  */
 public class Relation extends JingtumObject{
 	private String account;
 	private RelationType type;
 	private String counterparty;
-	private RelationAmount amount;	
+	private String tum_code;
+	private String tum_issuer;
+	//private RelationAmount amount;
+	private Amount amount;
+	private double limit;//currency limit
+
 	/**
 	 * Relation type:
 	 * authorize, friend, subscribe, all
@@ -58,11 +65,33 @@ public class Relation extends JingtumObject{
 	public String getCounterparty() {
 		return counterparty;
 	}
+
 	/**
-	 * Get amount
-	 * @return amount
+	 * Get currency string
+	 * @return string
 	 */
-	public RelationAmount getAmount() {
+	public Amount getAmount() {
 		return amount;
-	}	
+	}
+
+	/**
+	 * Get currency string
+	 * @return string
+	 */
+	public String getCurrency() {
+
+		if(tum_code.compareTo("SWT") == 0 )
+			return amount.getCurrency();
+		else
+			return amount.getCurrency()+":"+amount.getIssuer();
+	}
+
+	/**
+	 * Get limit
+	 * @return limit
+	 */
+	public double getLimit() {
+		return limit;
+	}
+
 }

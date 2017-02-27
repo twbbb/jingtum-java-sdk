@@ -288,7 +288,25 @@ public class Utility {
 		exec.execute(runnable);
 		exec.shutdown();
     }
+	/**
+	 * Verify if an input string is a valid Tum code
+	 * with the format
+	 * Tum code : Tum issuer
+	 * @param in_str
+	 * @return true if address is valid
+	 */
+	public static boolean isValidTumString(String in_str){
 
+		String[] str_array = in_str.split(":");
+
+		if(str_array.length == 2){
+			//check if the 2nd param is a valid Jingtum address
+			if (Utility.isValidAddress(str_array[1]))
+				return true;
+
+		}
+		return false;
+	}
 	/**
 	 * Return the Tum string from the input Amount object
 	 * @param in_amt

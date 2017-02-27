@@ -56,6 +56,9 @@ public class Transaction extends JingtumObject{
 	private EffectCollection effects;	
 	@Expose
 	private MemoCollection memos;
+	@Expose
+	private Message message;
+
 	/**
 	 * Transaction type:
 	 *  sent, received, trusted, trusting,
@@ -159,6 +162,14 @@ public class Transaction extends JingtumObject{
 	 */
 	public MemoCollection getMemos() {
 		return memos;
+	}
+
+	/**
+	 * Get transaction message
+	 * @return message
+	 */
+	public Message getMessage() {
+		return message;
 	}
 	/**
 	 * Gets offertype.

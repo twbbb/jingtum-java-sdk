@@ -70,11 +70,15 @@ public class Wallet extends AccountClass {
 	@Expose
 	private BalanceCollection balances;
 	@Expose
+	private Message message;
+	@Expose
 	private PaymentChoiceCollection payment_choices;
 	@Expose
 	private PaymentCollection payments;
 	@Expose
 	private OrderCollection orders;
+	@Expose
+	private Settings settings;
 	@Expose
 	private TrustLineCollection trustlines;
 	@Expose
@@ -138,6 +142,22 @@ public class Wallet extends AccountClass {
 		return relations;
 	}
 	/**
+	 * Get private SettingsCollection instance
+	 * @return settings
+	 */
+	private Message getMyMessage(){
+		return message;
+	}
+
+	/**
+	 * Get private RelationCollection instance
+	 * @return relations
+	 */
+	private Settings getMySettings(){
+		return settings;
+	}
+
+	/**
 	 * get private Transaction instance
 	 * @return transaction
 	 */
@@ -157,7 +177,8 @@ public class Wallet extends AccountClass {
 	 */
 	private Notification getMyNotification(){
 		return notification;
-	}	
+	}
+
 	/**
 	 * get private TrustLineCollection instance
 	 * @return trustlines
@@ -817,6 +838,25 @@ public class Wallet extends AccountClass {
 	}
 
 	/**
+	 * Get message by hash number
+	 * @param id
+	 * @return Transaction instance
+	 * @throws AuthenticationException
+	 * @throws InvalidRequestException
+	 * @throws APIConnectionException
+	 * @throws APIException
+	 * @throws ChannelException
+	 * @throws InvalidParameterException
+	 * @throws FailedException
+	 */
+	public Message getMessage(String id)throws AuthenticationException, InvalidRequestException,
+			APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException {
+	   Transaction ts = getTransaction(id);
+
+
+		return ts.getMessage();
+	}
+	/**
      * Get transaction by hash number
      * @param id
      * @return Transaction instance
@@ -870,20 +910,63 @@ public class Wallet extends AccountClass {
      * @throws ChannelException
      * @throws FailedException 
      */
-    public RelationCollection getRelationList() throws AuthenticationException, InvalidRequestException, 
+    public RelationCollection getRelation() throws AuthenticationException, InvalidRequestException,
     	APIConnectionException, APIException, ChannelException, FailedException{
     	try {
-			return getRelationList(Relation.RelationType.all,null,null,null);
+			return getRelation(Relation.RelationType.all,null,null,null);
 		} catch (InvalidParameterException e) {
 			e.printStackTrace();
 		}
 		return null;
     }
+
+	/**
+	 * Get relations fits the input filter
+	 * Input could be one of the followings
+	 * 1. authorize, friend: relation type
+	 * 2.
+	 * @return RelationCollection
+	 * @throws AuthenticationException
+	 * @throws InvalidRequestException
+	 * @throws APIConnectionException
+	 * @throws APIException
+	 * @throws ChannelException
+	 * @throws FailedException
+	 */
+	public RelationCollection getRelation(String in_str) throws AuthenticationException, InvalidRequestException,
+			InvalidParameterException, APIConnectionException, APIException, ChannelException, FailedException{
+
+		//relation filter check
+		if(in_str.compareToIgnoreCase("authorize") == 0){
+			try {
+				return getRelation(Relation.RelationType.authorize,null,null,null);
+			} catch (InvalidParameterException e) {
+				e.printStackTrace();
+			}
+		}else if(Utility.isValidAddress(in_str)){
+			//Counter party
+			try {
+				return getRelation(Relation.RelationType.all,in_str,null,null);
+			} catch (InvalidParameterException e) {
+				e.printStackTrace();
+			}
+		}else if(Utility.isValidTumString(in_str)) {
+			//Tum pair
+			try {
+				return getRelation(Relation.RelationType.all, null, in_str, null);
+			} catch (InvalidParameterException e) {
+				e.printStackTrace();
+			}
+		}else
+			throw new InvalidParameterException("Invalid getRelation condition!",in_str,null);
+		return null;
+	}
+
     /**
      * Get relations filter by relation type, counterparty, amount
      * @param type optional
      * @param counterparty optional
-     * @param amount optional
+     * @param tum_string optional
      * @return RelationCollection
      * @throws AuthenticationException
      * @throws InvalidRequestException
@@ -893,7 +976,7 @@ public class Wallet extends AccountClass {
      * @throws InvalidParameterException 
      * @throws FailedException 
      */
-    public RelationCollection getRelationList(Relation.RelationType type, String counterparty, RelationAmount amount, String marker)
+    public RelationCollection getRelation(Relation.RelationType type, String counterparty, String tum_string, String marker)
     		throws AuthenticationException, InvalidRequestException,
 			APIConnectionException, APIException, ChannelException, InvalidParameterException, FailedException{
     	try{
@@ -904,7 +987,16 @@ public class Wallet extends AccountClass {
     		throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
     	}
     	StringBuffer param = new StringBuffer();
-    	
+
+		//if(type != null && type != Relation.RelationType.all){
+//Note: the current REST-API not allow no type
+		if (type == null)
+			type = Relation.RelationType.authorize;
+		//param.append("&");
+		param.append("type=");
+		param.append(type);
+		//}
+
     	if(Utility.isNotEmpty(counterparty)){
     		if(!Utility.isValidAddress(counterparty)){
     			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,counterparty,null);
@@ -914,29 +1006,32 @@ public class Wallet extends AccountClass {
     			param.append(counterparty);
     		}
     	}
-    	if(type != null && type != Relation.RelationType.all){
-			param.append("&");
-			param.append("type=");
-			param.append(type);
-    	}
+
     	if(Utility.isNotEmpty(marker)){
  			param.append("&");
 			param.append("marker=");
 			param.append(marker);
     	}
-    	if(amount != null){
-    		if(Jingtum.getCurrencySWT().equals(amount.getCurrency())){
+    	if(tum_string != null){
+
+    		//The filter cannot used for SWT
+    		if(Jingtum.getCurrencySWT().equals(tum_string)){
     			throw new InvalidParameterException(JingtumMessage.CURRENCY_OTHER_THAN_SWT + Jingtum.getCurrencySWT(),null,null);    	    	
     		}
-    		if(!Utility.isValidRelationAmount(amount)){
-    			throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_AMOUNT,null,null);
-    		}else{
-    			param.append("&");
-    			param.append("currency=");
-    			param.append(amount.getCurrency());
-    			param.append("%2B");
-    			param.append(amount.getIssuer());
-    		}
+    		else {
+				String[] tmp_str = tum_string.split(":");
+				System.out.println("INput "+tum_string);
+				if (tmp_str.length == 2) {
+					System.out.println(tmp_str[0]);
+					param.append("&");
+					param.append("currency=");
+					param.append(tmp_str[0].toString());//amount.getCurrency());
+					param.append("%2B");//this is the "+"
+					param.append(tmp_str[1].toString());//amount.getIssuer());
+				}
+				else
+					throw new InvalidParameterException("Error in Relation currency info!",null,null);
+			}
     	}
 
 		return APIServer.request(
@@ -948,14 +1043,6 @@ public class Wallet extends AccountClass {
 				null,
 				Wallet.class).getMyRelations();
 
-//    	return APIProxy.request(
-//    	        APIProxy.RequestMethod.GET,
-//                APIProxy.formatURL(
-//                        Relation.class,
-//                        this.getAddress(),
-//                        Utility.buildSignString(this.getAddress(), this.getSecret()) + param.toString()),
-//                null,
-//                Wallet.class).getMyRelations();
     } 
     /**
      * Get all counter party relations
@@ -967,16 +1054,119 @@ public class Wallet extends AccountClass {
      * @throws ChannelException
      * @throws FailedException 
      */
-    public RelationCollection getCoRelationList() throws AuthenticationException, 
+    public Settings getSettings() throws AuthenticationException,
     InvalidRequestException, APIConnectionException, APIException, ChannelException, FailedException{
-    	try {
-			return getCoRelationList(Relation.RelationType.all,null,null,null);
-		} catch (InvalidParameterException e) {
-			e.printStackTrace();
+
+		try{
+			if(!isActivated()){
+				throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
+			}
+		}catch(InvalidRequestException e){
+			throw new APIException(JingtumMessage.INACTIVATED_ACCOUNT,null);
 		}
-		return null;
+
+    	StringBuffer request = new StringBuffer();
+
+		request.append(this.getAddress());
+		request.append("/settings");
+
+
+		return APIServer.request(
+				APIServer.RequestMethod.GET,
+				APIServer.formatURL(request.toString()),
+				null,
+				Wallet.class).getMySettings();
     }
-    /**
+	/**
+	 * Get disable_master flag.
+	 * This flag only to be true if
+	 * Regular Key is set
+	 * @return disable_master
+	 */
+	public boolean getDisableMaster() {
+		return settings.getDisableMaster();//disable_master;
+	}
+
+
+	/**
+	 * Get disallow_swt flag
+	 * @return disallow_swt
+	 */
+	public boolean getDisallowSwt(){return settings.getDisallowSwt();}//disallow_swt;}
+
+	/**
+	 * Get the domain string
+	 *
+	 * @return domain
+	 */
+	public String getDomain(){return settings.getDomain();}//domain;}
+
+	/**
+	 * Get the email_hash string
+	 *
+	 * @return email_hash
+	 */
+	public String getEmail(){return settings.getEmail();}//email_hash;}
+
+	/**
+	 * Get the message_key string
+	 *
+	 * @return message_key
+	 */
+	public String getMessageKey(){return settings.getMessageKey();}//message_key;}
+
+	/**
+	 * Get the nickname string
+	 *
+	 * @return nickname
+	 */
+	public String getNickname(){return settings.getNickname();}//nickname;}
+
+	/**
+	 * Get global_freeze flag
+	 *
+	 * @return global_freeze
+	 */
+	public boolean getGlobalFreeze(){return settings.getGlobalFreeze();}//global_freeze;}
+	/**
+	 * Get disallow_swt flag
+	 * @return disallow_swt
+	 */
+	public boolean getNoFreeze(){return settings.getNoFreeze();}//no_freeze;}
+
+	/**
+	 * Get require_authorization flag
+	 * @return require_authorization
+	 */
+	public boolean getRequireAuthorization(){return settings.getRequireAuthorization();}//require_authorization;}
+	/**
+	 * Get require_destination_tag flag
+	 * @return require_destination_tag
+	 */
+	public boolean getRequireDestinationTag(){return settings.getRequireDestinationTag();}//require_destination_tag;}
+	/**
+	 * Get the transfer_rate value
+	 * transfer_rate should >= 1.0
+	 * @return transfer_rate
+	 */
+	public double getTransferRate(){return settings.getTransferRate();}//transfer_rate;}
+
+	/**
+	 * Get the 钱包定位器
+	 *
+	 * @return wallet_locator
+	 */
+	public String getWalletLocator(){return settings.getWalletLocator();}//wallet_locator;}
+
+	/**
+	 * Get the transfer_rate value
+	 * transfer_rate should >= 1.0
+	 * @return transfer_rate
+	 */
+	public double getWalletSize(){return settings.getWalletSize();}
+
+
+	/**
      * Get relation collection using counter party as input, filtered by type, address, amount
      * @param type
      * @param address
