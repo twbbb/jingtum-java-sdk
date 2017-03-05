@@ -298,9 +298,9 @@ public class APIServer extends ServerClass {
         HttpResponse<JsonNode> jsonResponse = null;
         Unirest.setTimeouts(30 * 1000, 80 * 1000);
 
-        System.out.println("-------URL------------");
-        System.out.println(url);
-        System.out.println("----------------------"+method);
+//        System.out.println("-------URL------------");
+//        System.out.println(url);
+//        System.out.println("----------------------"+method);
         try {
             switch (method) {
                 case GET:

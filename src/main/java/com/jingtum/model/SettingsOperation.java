@@ -212,7 +212,7 @@ public class SettingsOperation extends OperationClass{
         content.put("settings", settings_data);
 
         String params = APIServer.GSON.toJson(content);
-        String url = APIServer.formatURL(Order.class, this.getSrcAddress(), VALIDATED + Boolean.toString(this.validate));
+        String url = APIServer.formatURL(Settings.class, this.getSrcAddress(), VALIDATED + Boolean.toString(this.validate));
 //        System.out.println("Order URL:" + url);
         System.out.println("data: " + params);
 

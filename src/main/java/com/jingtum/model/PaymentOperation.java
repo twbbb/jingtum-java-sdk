@@ -131,7 +131,12 @@ public class PaymentOperation extends OperationClass{
         this.memo.setMemoData(in_str);
     };
 
-    public void setDestAddress(String in_address){dest_address = in_address;};
+    public void setDestAddress(String in_address)throws InvalidParameterException{
+        if(Utility.isValidAddress(dest_address))
+            dest_address = in_address;
+        else
+            throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,null,null);
+    };
 
     /*
      * Set the payment path

@@ -913,7 +913,7 @@ public class Wallet extends AccountClass {
     public RelationCollection getRelation() throws AuthenticationException, InvalidRequestException,
     	APIConnectionException, APIException, ChannelException, FailedException{
     	try {
-			return getRelation(Relation.RelationType.all,null,null,null);
+			return getRelation(Relation.RelationType.authorize,null,null,null);
 		} catch (InvalidParameterException e) {
 			e.printStackTrace();
 		}
@@ -946,14 +946,14 @@ public class Wallet extends AccountClass {
 		}else if(Utility.isValidAddress(in_str)){
 			//Counter party
 			try {
-				return getRelation(Relation.RelationType.all,in_str,null,null);
+				return getRelation(Relation.RelationType.authorize,in_str,null,null);
 			} catch (InvalidParameterException e) {
 				e.printStackTrace();
 			}
 		}else if(Utility.isValidTumString(in_str)) {
 			//Tum pair
 			try {
-				return getRelation(Relation.RelationType.all, null, in_str, null);
+				return getRelation(Relation.RelationType.authorize, null, in_str, null);
 			} catch (InvalidParameterException e) {
 				e.printStackTrace();
 			}

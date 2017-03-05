@@ -32,13 +32,13 @@ public class RelationTest {
 	public void testGetRelation() throws InvalidParameterException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, APIException, ChannelException, FailedException {
 
-		//设置
-		FinGate.getInstance().setMode(1);
+		//设置环境
+		FinGate.getInstance().setMode(FinGate.getInstance().DEVELOPMENT);
 
-		//已有钱包1
+		//产生钱包
 		Wallet wallet1 = new Wallet("ssHC71HCbhp6FVLLcK2oyyUVjcAY4");
 
-		//Test get the relation with one type
+		//正常情况 1  获取关系数据，类型为authorize
 		RelationCollection rc = wallet1.getRelation("authorize");
 
 		//测试对象rc是否为null
@@ -54,10 +54,12 @@ public class RelationTest {
 		}
 
 		System.out.println(Utility.isValidAddress("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ"));
-		//Test get the relation with one counterparty
+
+		//正常情况 2  获取关系数据，类型为authorize,，对家为指定地址。
+
 		RelationCollection rc2 = wallet1.getRelation("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ");
 
-		assertNotNull(rc);
+		assertNotNull(rc2);
 
 		it = rc2.getData().iterator();
 
@@ -68,13 +70,7 @@ public class RelationTest {
 			assertEquals("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ", rl.getCounterparty()); //关系是否成功
 		}
 
-
-		//正常情况1  是否等待结果为true时
-//		assertEquals("authorize", it.next().getType()); //关系是否成功
-//		assertEquals("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ", it.next().getCounterparty()); //关系对家
-		//assertEquals(500, it.next().getLimit()); //支付服务器结果
-
-		//正常情况2    钱包未激活时
+		//异常情况 1    钱包未激活时
 		Wallet wallet01 = new Wallet("saadV1p5vQeh4N1YdPGo3N3NS7dZo");
 		try {
 			@SuppressWarnings("unused")
@@ -97,42 +93,69 @@ public class RelationTest {
 			InvalidRequestException, APIConnectionException, APIException, ChannelException, FailedException {
 
 
+		//设置环境
 		FinGate.getInstance().setMode(FinGate.getInstance().DEVELOPMENT);
 
-		//已有钱包1余额充足  作为支付方
+		//产生钱包
+		Wallet wallet1 = new Wallet("ssHC71HCbhp6FVLLcK2oyyUVjcAY4");
 
-		Wallet wallet1 = new Wallet("ssHC71HCbhp6FVLLcK2oyyUVjcAY4"); //如进行支付，密钥为必须参数
-//		Amount jtc = new Amount(); //构建支付的货币
-//		jtc.setIssuer("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT"); //货币发行方
-//		jtc.setCurrency("CNY"); //货币单位
-//		jtc.setValue(0.05); //金额
-//
-//		//Init the payment operation
-//		PaymentChoiceCollection pcc = wallet1.getChoices("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ", jtc);
-//
-//
-//		//op.setDestAddress();
-//		if (pcc.getData().size() > 0) {
-//			// 2. construct payment operation
-//			PaymentOperation op = new PaymentOperation(wallet1);
-//			op.setDestAddress("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ");
-//			op.setAmount(jtc);
-//			String payment_id = "paymentWithPath" + Long.toString(System.currentTimeMillis());
-//			op.setClientID(payment_id);//optional
-//			op.setPath(pcc.getData().get(0).getPath());
-//
-//			// 3. submit payment
-//			RequestResult payment01 = op.submit();
-//			System.out.println("result:" + payment01.toString());
-//
-//			//正常情况1  是否等待结果为true时
-//			assertEquals(true, payment01.getSuccess()); //交易是否成功
-//			assertEquals("validated", payment01.getState()); //交易状态
-//			assertEquals("tesSUCCESS", payment01.getResult()); //支付服务器结果
-//
-//		}else
-//			System.out.println("path found "+pcc.getData().size());
+		RelationCollection rc2 = wallet1.getRelation("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ");
 
+		assertNotNull(rc2);
+
+		int relation_num = rc2.getData().size();
+
+		System.out.println("Relation num "+relation_num);
+		System.out.println("Address j44rkkVKxnqhm9cP7kQqpj27YGYTFAEFRh is "+Utility.isValidAddress("j44rkkVKxnqhm9cP7kQqpj27YGYTFAEFRh"));
+		String tadd = "j44rkkVKxnqhm9cP7kQqpj27YGYTFAEFRh";
+		System.out.println("Address "+tadd+" is "+Utility.isValidAddress(tadd));
+
+		Amount jtc = new Amount(); //构建支付的货币
+		jtc.setIssuer("jMcCACcfG37xHy7FgqHerzovjLM5FCk7tT"); //货币发行方
+		jtc.setCurrency("USD"); //货币单位
+		jtc.setValue(50.00); //金额
+
+
+		// 2. construct relation operation
+		RelationOperation op = new RelationOperation(wallet1);
+		op.setType("authorize");
+		op.setCounterparty("j44rkkVKxnqhm9cP7kQqpj27YGYTFAEFRh");
+		op.setAmount(jtc);
+
+
+
+		// 3. submit relation
+		RequestResult relation01 = op.submit();
+		System.out.println("result:" + relation01.toString());
+
+		//正常情况1  是否等待结果为true时
+		assertEquals(true, relation01.getSuccess()); //交易是否成功
+		assertEquals("validated", relation01.getState()); //交易状态
+		assertEquals(true, relation01.getSuccess()); //服务器结果
+
+		//update the relation number
+		rc2 = wallet1.getRelation("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ");
+
+		assertNotNull(rc2);
+
+		System.out.println("Relation num"+rc2.getData().size());
+
+		// 4. construct relation operation
+		RemoveRelationOperation op2 = new RemoveRelationOperation(wallet1);
+		op2.setType("authorize");
+		op2.setCounterparty("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ");
+		op2.setAmount(jtc);
+
+
+		// 5. submit relation
+		RequestResult relation02 = op2.submit();
+		System.out.println("result:" + relation02.toString());
+
+		//6. check if the remove succeed
+		assertEquals(true, relation02.getSuccess()); //交易是否成功
+		assertEquals("validated", relation02.getState()); //交易状态
+		//assertEquals("tesSUCCESS", relation02.getResult()); //返回服务器结果
+		assertEquals(true, relation01.getSuccess()); //
 	}
 	
 	@Test 
@@ -145,18 +168,18 @@ public class RelationTest {
 //		jtc.setCurrency("SWT"); //货币单位
 //		jtc.setValue(0.1); //金额
 //
-//		//Init the payment operation
-//		//PaymentOperation op = new PaymentOperation(wallet1);
+//		//Init the relation operation
+//		//relationOperation op = new relationOperation(wallet1);
 //
 //		//op.setDestAddress();
-//		// 2. construct payment operation
-//		PaymentOperation op = new PaymentOperation(wallet1);
+//		// 2. construct relation operation
+//		relationOperation op = new relationOperation(wallet1);
 //		op.setDestAddress("jJwtrfvKpvJf2w42rmsEzK5fZRqP9Y2xhQ");
 //		op.setAmount(jtc);
 ////		op.setValidate(true);
 ////		op.setClientId("20611171957");//can be set by user
 //
-//// 		3. submit payment
+//// 		3. submit relation
 //		final Waiter waiter = new Waiter();
 //		op.submit(new OperationListener() {
 //			public void onComplete(RequestResult result) {

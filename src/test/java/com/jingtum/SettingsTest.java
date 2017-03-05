@@ -33,7 +33,7 @@ public class SettingsTest {
 		Settings bc = wallet.getSettings();
 		//测试对象bc是否为null
 		assertNotNull(bc);
-		String test_domain = "Test.domain.com";
+		String test_domain = "Test1.domain.com";
 
 		SettingsOperation op = new SettingsOperation(wallet);
 		op.setDomain(test_domain);
