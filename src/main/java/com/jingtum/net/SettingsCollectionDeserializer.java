@@ -13,6 +13,7 @@ public class SettingsCollectionDeserializer implements JsonDeserializer<Settings
             throws JsonParseException {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .registerTypeAdapter(Settings.class, new SettingsDeserializer())
                 .create();
         if (json.isJsonArray()) {
             Type SettingsListType = new TypeToken<List<Settings>>() {

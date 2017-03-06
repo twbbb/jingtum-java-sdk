@@ -38,6 +38,8 @@ import com.jingtum.model.MemoCollection;
 import com.jingtum.model.PaymentCollection;
 import com.jingtum.model.PaymentChoiceCollection;
 import com.jingtum.model.RelationCollection;
+import com.jingtum.model.SettingsCollection;
+import com.jingtum.model.Settings;
 
 /**
  * @author zp li.
@@ -72,6 +74,8 @@ public class ServerClass extends JingtumObject {
      *            discard the
      *            .registerTypeAdapter(PaymentChoiceCollection.class, new PaymentChoiceCollectionDeserializer())
      *                        .registerTypeAdapter(PaymentCollection.class, new PaymentCollectionDeserializer())
+     * canceled
+     * .registerTypeAdapter(SettingsCollection.class, new SettingsCollectionDeserializer())
      */
     public static final Gson GSON = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -83,5 +87,6 @@ public class ServerClass extends JingtumObject {
             .registerTypeAdapter(TransactionCollection.class, new TransactionCollectionDeserializer())
             .registerTypeAdapter(MemoCollection.class, new MemoCollectionDeserializer())
             .registerTypeAdapter(PaymentCollection.class, new PaymentCollectionDeserializer())
+            .registerTypeAdapter(Settings.class, new SettingsDeserializer())
             .create();
 }

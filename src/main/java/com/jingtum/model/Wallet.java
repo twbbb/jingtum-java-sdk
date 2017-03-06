@@ -78,6 +78,8 @@ public class Wallet extends AccountClass {
 	@Expose
 	private OrderCollection orders;
 	@Expose
+	private SettingsCollection settings_list;
+	@Expose
 	private Settings settings;
 	@Expose
 	private TrustLineCollection trustlines;
@@ -637,14 +639,6 @@ public class Wallet extends AccountClass {
 				null,
 				Wallet.class).getTrustLinesCollection();
 
-//    	return APIProxy.request(
-//    	        APIProxy.RequestMethod.GET,
-//                APIProxy.formatURL(
-//                        TrustLine.class,
-//                        this.getAddress(),
-//                        Utility.buildSignString(this.getAddress(), this.getSecret()) + param.toString()),
-//                null,
-//                Wallet.class).getTrustLinesCollection();
     }    
 
     
@@ -1020,7 +1014,7 @@ public class Wallet extends AccountClass {
     		}
     		else {
 				String[] tmp_str = tum_string.split(":");
-				System.out.println("INput "+tum_string);
+				//System.out.println("INput "+tum_string);
 				if (tmp_str.length == 2) {
 					System.out.println(tmp_str[0]);
 					param.append("&");
@@ -1067,15 +1061,15 @@ public class Wallet extends AccountClass {
 
     	StringBuffer request = new StringBuffer();
 
-		request.append(this.getAddress());
-		request.append("/settings");
-
 
 		return APIServer.request(
 				APIServer.RequestMethod.GET,
-				APIServer.formatURL(request.toString()),
+				APIServer.formatURL(
+						Settings.class,
+						this.getAddress()),
 				null,
 				Wallet.class).getMySettings();
+
     }
 	/**
 	 * Get disable_master flag.

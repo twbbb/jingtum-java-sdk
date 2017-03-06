@@ -54,7 +54,7 @@ public class Settings extends JingtumObject{
 	@Expose
 	private String regular_key;
 	@Expose
-	private double transfer_rate ;
+	private int transfer_rate ;
 	@Expose
 	private String wallet_locator;
 	@Expose

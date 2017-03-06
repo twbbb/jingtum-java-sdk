@@ -20,33 +20,22 @@
  */
 
 package com.jingtum.net;
+
+import com.google.gson.*;
+import com.jingtum.model.Settings;
+import java.lang.reflect.Type;
+
 /**
  * @author jzhao
  * @version 1.0
  */
-public class JingtumResponse {
-    private int responseCode;
-    private String responseBody;
-    /**
-     * @param responseCode
-     * @param responseBody
-     */
-    public JingtumResponse(int responseCode, String responseBody) {
-        System.out.println("In JingtumResponse:"+responseBody);
-        this.responseCode = responseCode;
-        this.responseBody = responseBody;
-    }
-    /**
-     * @return http responseCode
-     */
-    public int getResponseCode() {
-        return responseCode;
-    }
-    /**
-     * @return http responseBody
-     */
-    public String getResponseBody() {
-        System.out.println("res body:"+responseBody);
-        return responseBody;
+public class SettingsDeserializer implements JsonDeserializer<Settings> {
+    public Settings deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+    		throws JsonParseException {
+        Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+        		.create();
+        System.out.println("Deser settings"+json.toString());
+        Settings settings = gson.fromJson(json, Settings.class);
+        return settings;
     }
 }

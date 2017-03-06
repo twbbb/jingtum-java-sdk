@@ -19,7 +19,7 @@ public class SettingsTest {
 
 	/**
 	* 
-	* 查询所有余额
+	* 设置属性，并查询所有设置
 	* @throws FailedException 
 	* 
 	*/
@@ -38,7 +38,7 @@ public class SettingsTest {
 		SettingsOperation op = new SettingsOperation(wallet);
 		op.setDomain(test_domain);
 
-// 3. submit payment
+        //提交设置
 		RequestResult set01 = op.submit();
 
 		System.out.println("result:" + set01.toString());
@@ -71,7 +71,7 @@ public class SettingsTest {
 
 		//已激活的钱包
 		Wallet wallet = new Wallet("snqFcHzRe22JTM8j7iZVpQYzxEEbW");
-		//正常情况1   货币为SWT，无银关时
+		//正常情况1   获取所有设置
 		Settings bc = wallet.getSettings();
 		//测试对象bc是否为null
 //		assertNotNull(bc);

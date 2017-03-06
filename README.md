@@ -12,7 +12,7 @@ For some examples on how to use this library, take a look at the Get Started doc
 
 #Documentation
 
-Javadoc is available at https://jingtum/jingtum-java-sdk
+The documentation is available at http://developer.jingtum.com/html
 
 #Contributing
 

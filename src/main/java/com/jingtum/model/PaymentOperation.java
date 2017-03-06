@@ -132,7 +132,7 @@ public class PaymentOperation extends OperationClass{
     };
 
     public void setDestAddress(String in_address)throws InvalidParameterException{
-        if(Utility.isValidAddress(dest_address))
+        if(Utility.isValidAddress(in_address))
             dest_address = in_address;
         else
             throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,null,null);
