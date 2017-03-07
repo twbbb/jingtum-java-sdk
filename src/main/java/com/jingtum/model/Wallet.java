@@ -1016,7 +1016,7 @@ public class Wallet extends AccountClass {
 				String[] tmp_str = tum_string.split(":");
 				//System.out.println("INput "+tum_string);
 				if (tmp_str.length == 2) {
-					System.out.println(tmp_str[0]);
+
 					param.append("&");
 					param.append("currency=");
 					param.append(tmp_str[0].toString());//amount.getCurrency());
@@ -1339,30 +1339,25 @@ public class Wallet extends AccountClass {
 		PaymentChoice choice = new PaymentChoice();
 		List<PaymentChoice> choice_list = new ArrayList<PaymentChoice>();
 
-//List<PaymentChoice> clist = new List<PaymentChoice>
 		if(this.payment_choices == null)
 			this.payment_choices = new PaymentChoiceCollection();
 
 		int path_num = in_path_list.getData().size();
 		//Conver the input path to the
 		for (int i = 0; i < path_num; i ++) {
+			String cur_path = in_path_list.getData().get(i).getPaths().toString();
 
-String cur_path = in_path_list.getData().get(i).getPaths().toString();
-
-			System.out.println("Path " + i + " " + cur_path);
 			choice.setChoice(in_path_list.getData().get(i).getSourceAmount());
 			choice.setPath(cur_path);
 			HashUtils path_hash = new HashUtils();
 			String key = path_hash.SHA256_RIPEMD160(cur_path.getBytes()).toString();
-			System.out.println("Path key"+key);
+
 			choice.setKey(key);
 			choice_list.add(choice);
 		}
 
-
-		System.out.println("Number of Path:"+path_num);
         payment_choices.setData(choice_list);
-		//return getChoicesFromPathList(getPathList(receiver,amount));
+
         return payment_choices;
 	}
     /*

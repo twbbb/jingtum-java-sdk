@@ -185,8 +185,9 @@ public class PaymentOperation extends OperationClass{
             //Generate an uid if the user didn't set it.
             this.client_resource_id = "paymentid"+Long.toString(System.currentTimeMillis() ); //获得唯一单号payment_id// generate a resouce ID
 
-        }else
-            System.out.println("Send with id:"+this.client_resource_id);
+        }else {
+        //    System.out.println("Send with id:" + this.client_resource_id);
+        }
 
         HashMap<String, String> destination_amount = new HashMap<String, String>();
         destination_amount.put("currency", source_amount.getCurrency());
@@ -215,10 +216,8 @@ public class PaymentOperation extends OperationClass{
         content.put("payment", payment);
 
         String params = APIServer.GSON.toJson(content);
-        System.out.println(params);
 
         String url = APIServer.formatURL(Payment.class, this.dest_address, VALIDATED + Boolean.toString(this.validate));
-       // System.out.println("Payment URL:" + url);
 
         return APIServer.request(APIServer.RequestMethod.POST, url, params, RequestResult.class);
     }
@@ -242,7 +241,7 @@ public class PaymentOperation extends OperationClass{
         public void run() {
             try {
 				RequestResult result = this.operator.submit();
-				System.out.println("payment:" + result.toString());
+
 				this.listener.onComplete(result);
 			} catch (AuthenticationException e) {
 				e.printStackTrace();

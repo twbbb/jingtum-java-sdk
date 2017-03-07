@@ -121,9 +121,6 @@ public class OrderOperation extends OperationClass{
        //split the pair to get the base and counter tum
         String tum_codes[] = this.pair.split("/");
 
-for (int i = 0; i<tum_codes.length; i ++)
-    System.out.println("Tumcodes:"+tum_codes[i]);
-
         if ( tum_codes.length != 2)
             throw new InvalidParameterException(JingtumMessage.INVALID_TUM_PAIR,this.pair,null);
 
@@ -131,26 +128,6 @@ for (int i = 0; i<tum_codes.length; i ++)
         String[] base_tum = tum_codes[0].split(":");;
         String[] counter_tum = tum_codes[1].split(":");
 
-//        if ( tum_codes[0] == "SWT"){
-//            base_tum[0] = "SWT";
-//            base_tum[1] = "";
-//
-//        }else
-//          base_tum = tum_codes[0].split(":");
-//
-//        if ( tum_codes[1] == "SWT"){
-//            counter_tum[0] = "SWT";
-//            counter_tum[1] = "";
-//
-//        }else
-//          counter_tum = tum_codes[1].split(":");
-
-        //Check the src_amount_value is valid
-        //This requires the balances check
-
-//        for (int i = 0; i<tum_codes.length; i ++)
-//          System.out.println("Base:"+tum_codes[i]);
-//        System.out.println("Counter:"+counter_tum[0]);
 
         //Set the source_amount and destination amount with pair, price and amount value
         HashMap<String, String> base_amount = new HashMap<String, String>();
@@ -191,8 +168,7 @@ for (int i = 0; i<tum_codes.length; i ++)
 
         String params = APIServer.GSON.toJson(content);
         String url = APIServer.formatURL(Order.class, this.getSrcAddress(), VALIDATED + Boolean.toString(this.validate));
-//        System.out.println("Order URL:" + url);
-        System.out.println("data: " + params);
+
 
         return APIServer.request(APIServer.RequestMethod.POST, url, params, RequestResult.class);
     }

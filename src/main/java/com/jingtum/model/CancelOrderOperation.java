@@ -98,7 +98,7 @@ public class CancelOrderOperation extends OperationClass{
 
         String params = APIServer.GSON.toJson(content);
         String url = APIServer.formatURL(Order.class, this.getSrcAddress(), "/"+this.order_id+VALIDATED + Boolean.toString(this.validate));
-        System.out.println("Cancel Order URL:" + url);
+        //System.out.println("Cancel Order URL:" + url);
 
         return APIServer.request(APIServer.RequestMethod.DELETE, url, params, RequestResult.class);
     }

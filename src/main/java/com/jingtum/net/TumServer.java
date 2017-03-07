@@ -164,7 +164,7 @@ public class TumServer extends ServerClass {
             }
             // trigger the request
             String rBody = jsonResponse.getBody().toString();
-            System.out.println("TumServer Res: "+rBody);
+
             Integer rCode = jsonResponse.getStatus();
 
             return new JingtumResponse(rCode, rBody);

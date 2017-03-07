@@ -50,18 +50,8 @@ public class OrderBookResult extends JingtumObject{
 
 			if (order_book.length() < 1)
 				throw new InvalidParameterException(JingtumMessage.INVALID_TUM_PAIR, "Empty tum pair in order book", null);
-//			String[] temp_str = order_book.split("+");
-//			StringBuffer new_pair = new StringBuffer();
-//			for ( int i = 0; i < temp_str.length; i ++ ) {
-//				new_pair.append(temp_str[i]);
-//				if (i < temp_str.length -1)
-//					new_pair.append(":");
-//			}
-			System.out.println("Init pair");
-			this.pair = order_book.replace("+",":");//new_pair.toString();
-			System.out.println(order_book);
-			System.out.println(pair);
 
+			this.pair = order_book.replace("+",":");//new_pair.toString();
 		}
 		return pair;
 	}

@@ -126,8 +126,6 @@ public class RemoveRelationOperation extends OperationClass{
         String params = APIServer.GSON.toJson(content);
         String url = APIServer.formatURL(Relation.class, this.getSrcAddress(), VALIDATED + Boolean.toString(this.validate));
 
-        System.out.println("data: " + params);
-
         return APIServer.request(APIServer.RequestMethod.DELETE, url, params, RequestResult.class);
     }
 }

@@ -110,8 +110,6 @@ public class MessageOperation extends OperationClass{
         String params = APIServer.GSON.toJson(content);
         String url = APIServer.formatURL(Message.class, this.getSrcAddress(), VALIDATED + Boolean.toString(this.validate));
 
-        System.out.println("data: " + params);
-
         return APIServer.request(APIServer.RequestMethod.POST, url, params, RequestResult.class);
     }
 }

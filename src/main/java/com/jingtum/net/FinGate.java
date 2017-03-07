@@ -256,7 +256,7 @@ public class FinGate extends AccountClass {
      * @throws InvalidParameterException
      */
     public boolean issueCustomTum(String order, String currency, double amount, String account) throws InvalidParameterException {
-        System.out.println("Tum Server: " + tum_server.getServerURL());
+        //System.out.println("Tum Server: " + tum_server.getServerURL());
         if (Utility.isEmpty(this.token)) {
             throw new InvalidParameterException(JingtumMessage.EMPTY_TOKEN, this.token, null);
         }
@@ -282,7 +282,7 @@ public class FinGate extends AccountClass {
         if (Utility.isEmpty(orderNumber)) {
             try {
                 orderNumber = JingtumAPIAndWSServer.getInstance().getNextUUID();
-                System.out.println(orderNumber);
+                //System.out.println(orderNumber);
             } catch (JingtumException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -320,25 +320,10 @@ public class FinGate extends AccountClass {
         content.put("account", account);
         content.put("hmac", hmac);
 
-        /*StringBuffer param = new StringBuffer();
-        param.append("cmd:");
-        param.append(TongTong.CmdType.IssueTum);
-        param.append(",token:");
-        param.append(this.token);
-        param.append(",order:");
-        param.append(orderNumber);
-        param.append(",currency:");
-        param.append(currency);
-        param.append(",amount:");
-        param.append(amountString);
-        param.append(",account:");
-        param.append(account);
-        param.append(",hmac:");
-        param.append(hmac);*/
         String param = TumServer.GSON.toJson(content);
 
-        System.out.println(param);
-        System.out.println("send to: " + tum_server.getServerURL());
+//        System.out.println(param);
+//        System.out.println("send to: " + tum_server.getServerURL());
 
         try {
             //Note the tum_server value is fixed at this moment
@@ -576,8 +561,6 @@ public class FinGate extends AccountClass {
     	//split the pair to get the base and counter tum
         String tum_codes[] = in_pair.split("/");
 
-        for (int i = 0; i<tum_codes.length; i ++)
-            System.out.println("Tumcodes:"+tum_codes[i]);
 
         if ( tum_codes.length != 2)
             throw new InvalidParameterException(JingtumMessage.INVALID_TUM_PAIR,in_pair,null);
@@ -591,7 +574,7 @@ public class FinGate extends AccountClass {
         base_amount.setCurrency(base_tum[0]);
         if (base_tum.length < 2) {
             if (!base_tum[0].equals("SWT")) {
-             System.out.println(base_tum[0]);
+             //System.out.println(base_tum[0]);
                 throw new InvalidParameterException(JingtumMessage.INVALID_TUM_PAIR, in_pair, null);
             }
 

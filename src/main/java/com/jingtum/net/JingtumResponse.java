@@ -32,7 +32,7 @@ public class JingtumResponse {
      * @param responseBody
      */
     public JingtumResponse(int responseCode, String responseBody) {
-        System.out.println("In JingtumResponse:"+responseBody);
+        //System.out.println("In JingtumResponse:"+responseBody);
         this.responseCode = responseCode;
         this.responseBody = responseBody;
     }
@@ -46,7 +46,7 @@ public class JingtumResponse {
      * @return http responseBody
      */
     public String getResponseBody() {
-        System.out.println("res body:"+responseBody);
+        //System.out.println("res body:"+responseBody);
         return responseBody;
     }
 }

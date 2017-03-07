@@ -176,7 +176,7 @@ public class APIServer extends ServerClass {
             String address,
             String param) throws InvalidRequestException {
 
-        System.out.println("build url for "+address);
+//        System.out.println("build url for "+address);
         return String.format(
                 "%s/%s/%s%s",
                 classURL(),
@@ -302,9 +302,6 @@ public class APIServer extends ServerClass {
         HttpResponse<JsonNode> jsonResponse = null;
         Unirest.setTimeouts(30 * 1000, 80 * 1000);
 
-        System.out.println("-------URL------------");
-        System.out.println(url);
-        System.out.println("----------------------"+method);
         try {
             switch (method) {
                 case GET:

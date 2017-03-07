@@ -233,7 +233,7 @@ public class Order extends JingtumObject{
 	 */
 	public Amount getPay() {
 		if (this.taker_gets == null && order != null){
-			System.out.println("Order item :"+order.getPair());
+			//System.out.println("Order item :"+order.getPair());
 			return order.getTaker_gets();
 		}
 		return taker_gets;
