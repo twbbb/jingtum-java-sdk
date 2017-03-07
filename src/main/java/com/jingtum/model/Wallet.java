@@ -1143,7 +1143,7 @@ public class Wallet extends AccountClass {
 	 * transfer_rate should >= 1.0
 	 * @return transfer_rate
 	 */
-	public double getTransferRate(){return settings.getTransferRate();}//transfer_rate;}
+	public String getTransferRate(){return settings.getTransferRate();}//transfer_rate;}
 
 	/**
 	 * Get the 钱包定位器
@@ -1157,7 +1157,7 @@ public class Wallet extends AccountClass {
 	 * transfer_rate should >= 1.0
 	 * @return transfer_rate
 	 */
-	public double getWalletSize(){return settings.getWalletSize();}
+	public String getWalletSize(){return settings.getWalletSize();}
 
 
 	/**

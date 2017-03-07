@@ -44,7 +44,7 @@ public class SettingsTest {
 		System.out.println("result:" + set01.toString());
 		bc = wallet.getSettings();
 		assertNotNull(bc);
-		assertEquals(test_domain,wallet.getDomain());
+		assertEquals(test_domain,bc.getDomain());
 
 
 		
@@ -53,6 +53,8 @@ public class SettingsTest {
 		try {
 			@SuppressWarnings("unused")
 			Settings bc2 = wallet01.getSettings();
+		} catch (APIException e){
+			assertEquals("Inactivated Account;", e.getMessage());
 	    } catch (InvalidRequestException ex) {
 	    	assertEquals("Error type: transaction\n\t Error message: Inactivated Account;Account not found.\n",ex.getMessage());
 	    }

@@ -62,11 +62,11 @@ public class SettingsOperation extends OperationClass{
     @Expose
     private String regular_key;
     @Expose
-    private double transfer_rate ;
+    private String transfer_rate ;
     @Expose
     private String wallet_locator;
     @Expose
-    private int wallet_size;
+    private String wallet_size;
     @Expose
     private String nickname;
 
@@ -155,7 +155,7 @@ public class SettingsOperation extends OperationClass{
      */
     public void setTransferRate(double in_val)throws InvalidParameterException{
         if (in_val >= 1.0 )
-            transfer_rate = in_val;
+            transfer_rate = Utility.doubleToString(in_val);
         else
             throw new InvalidParameterException("Transfer rate should >= 1.0",null,null);
     }
@@ -176,7 +176,7 @@ public class SettingsOperation extends OperationClass{
      */
     public void setWalletSize(int in_val)throws InvalidParameterException{
         if( in_val > 0 )
-            wallet_size = in_val;
+            wallet_size = in_val + "";
         else
             throw new InvalidParameterException("Transfer rate should >= 1.0",null,null);
     }
@@ -204,7 +204,7 @@ public class SettingsOperation extends OperationClass{
         HashMap<String, String> settings_data = new HashMap<String, String>();
 
         settings_data.put("domain", domain);
-        settings_data.put("transfer_rate", Utility.doubleToString(transfer_rate));
+        settings_data.put("transfer_rate", transfer_rate);
 
 
         HashMap<String, Object> content = new HashMap<String, Object>();

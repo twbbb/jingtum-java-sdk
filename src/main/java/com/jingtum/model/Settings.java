@@ -54,11 +54,11 @@ public class Settings extends JingtumObject{
 	@Expose
 	private String regular_key;
 	@Expose
-	private int transfer_rate ;
+	private String transfer_rate ;
 	@Expose
 	private String wallet_locator;
 	@Expose
-	private int wallet_size;
+	private String wallet_size;
 	@Expose
 	private String nickname;
 
@@ -135,7 +135,7 @@ public class Settings extends JingtumObject{
 	 * transfer_rate should >= 1.0
 	 * @return transfer_rate
 	 */
-	public double getTransferRate(){return transfer_rate;}
+	public String getTransferRate(){return transfer_rate;}
 
 	/**
 	 * Get the 钱包定位器
@@ -149,7 +149,7 @@ public class Settings extends JingtumObject{
 	 * transfer_rate should >= 1.0
 	 * @return transfer_rate
 	 */
-	public double getWalletSize(){return wallet_size;}
+	public String getWalletSize(){return wallet_size;}
 
 
 }
