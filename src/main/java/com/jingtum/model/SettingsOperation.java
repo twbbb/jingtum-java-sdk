@@ -83,7 +83,7 @@ public class SettingsOperation extends OperationClass{
      * set disable_master flag.
      * This flag only to be true if
      * Regular Key is set
-     * @return disable_master
+     * @param in_var
      */
     public void setDisableMaster(boolean in_var) {
         disable_master =  in_var;
@@ -92,66 +92,53 @@ public class SettingsOperation extends OperationClass{
 
     /**
      * set disallow_swt flag
-     * @return disallow_swt
+     * @param in_var
      */
     public void setDisallowSwt(boolean in_var){disallow_swt = in_var;}
 
     /**
      * set the domain string
      *
-     * @ domain
+     * @param in_str
      */
     public void setDomain(String in_str){ domain = in_str;}
 
     /**
      * set the email_hash string
      *
-     * @ email_hash
+     * @param in_str
      */
     public void setEmail(String in_str){ email_hash = in_str;}
 
     /**
      * set the message_key string
      *
-     * @ message_key
+     * @param in_str
      */
     public void setMessageKey(String in_str){ message_key = in_str;}
 
     /**
      * set the nickname string
      *
-     * @ nickname
+     * @param in_str
      */
     public void setNickname(String in_str){ nickname = in_str;}
 
-//    /**
-//     * set global_freeze flag
-//    cannot do this from account, this is set by the system
-//     *
-//     * @ global_freeze
-//     */
-//    public void setGlobalFreeze(){ global_freeze;}
-//    /**
-//     * set disallow_swt flag
-//     * @ disallow_swt
-//     */
-//    public void setNoFreeze(){ no_freeze;}
-
     /**
      * set require_authorization flag
-     * @ require_authorization
+     * @param in_var
      */
     public void setRequireAuthorization(boolean in_var){ require_authorization = in_var;}
 
     /**
      * set require_destination_tag flag
-     * @ require_destination_tag
+     * @param in_var
      */
     public void setRequireDestinationTag(boolean in_var){ require_destination_tag = in_var;}
     /**
      * set the transfer_rate value
-     * transfer_rate should >= 1.0
-     * @ transfer_rate
+     * transfer_rate should be no less than 1.0
+     * @param in_val
      */
     public void setTransferRate(double in_val)throws InvalidParameterException{
         if (in_val >= 1.0 )
@@ -163,7 +150,7 @@ public class SettingsOperation extends OperationClass{
     /**
      * set the 钱包定位器
      *
-     * @return wallet_locator
+     * @param in_str
      */
     public void setWalletLocator(String in_str){
         wallet_locator = in_str;
@@ -172,7 +159,7 @@ public class SettingsOperation extends OperationClass{
     /**
      * set the wallet_size value
      *
-     * @return wallet_size
+     * @param in_val
      */
     public void setWalletSize(int in_val)throws InvalidParameterException{
         if( in_val > 0 )

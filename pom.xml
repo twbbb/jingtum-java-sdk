@@ -2,14 +2,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.jingtum</groupId>
-    <artifactId>jingtum-sdk</artifactId>
+    <artifactId>sdk</artifactId>
     <packaging>jar</packaging>
 
     <name>Jingtum SDK</name>
-    <version>1.1.3</version>
-    <url>http://git.jingtum.com/Jingtum_Jing/JingtumSDK</url>
+    <version>1.0.1</version>
+    <url>https://github.com/jingtum/jingtum-java-sdk</url>
     <description>Jingtum SDK</description>
-    <inceptionYear>2016</inceptionYear>
+    <inceptionYear>2017</inceptionYear>
     
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -187,11 +187,11 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.10.4</version>
                 <configuration>
-                    <doctitle>JAVA doc for Jingtum SDK 1.1.1</doctitle> <!-- Used by javadoc:javadoc goal -->
-                    <windowtitle>JAVA doc for Jingtum SDK 1.1.1</windowtitle> <!-- Used by javadoc:javadoc goal -->
+                    <doctitle>JAVA doc for Jingtum SDK 1.0.1</doctitle> <!-- Used by javadoc:javadoc goal -->
+                    <windowtitle>JAVA doc for Jingtum SDK 1.0.1</windowtitle> <!-- Used by javadoc:javadoc goal -->
 
-                    <testDoctitle>JAVA doc for Jingtum SDK 1.1.1 test</testDoctitle> <!-- Used by javadoc:test-javadoc goal -->
-                    <testWindowtitle>JAVA doc for Jingtum SDK 1.1.1 test</testWindowtitle> <!-- Used by javadoc:test-javadoc goal -->
+                    <testDoctitle>JAVA doc for Jingtum SDK 1.0.1 test</testDoctitle> <!-- Used by javadoc:test-javadoc goal -->
+                    <testWindowtitle>JAVA doc for Jingtum SDK 1.0.1 test</testWindowtitle> <!-- Used by javadoc:test-javadoc goal -->
                 </configuration>
                 <executions>
                     <execution>

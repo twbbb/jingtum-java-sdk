@@ -61,7 +61,7 @@ public class RelationOperation extends OperationClass{
      * set disable_master flag.
      * This flag only to be true if
      * Regular Key is set
-     * @return disable_master
+     * @param in_var
      */
     public void setType(String in_var)throws InvalidParameterException{
         //check to make sure input is a valid type
@@ -75,6 +75,7 @@ public class RelationOperation extends OperationClass{
     /**
      * set the counterparty address
      *
+     * @param in_address The public address of the counter party account
      */
     public void setCounterparty(String in_address)throws InvalidParameterException{
 
@@ -85,7 +86,11 @@ public class RelationOperation extends OperationClass{
 
     };
 
-
+    /**
+     * set the counterparty amount
+     *
+     * @param in_amt The amount of the relations 
+     */
     public void setAmount(Amount in_amt)throws InvalidParameterException{
         if(!Utility.isValidAmount(in_amt)){
             throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_AMOUNT,null,null);

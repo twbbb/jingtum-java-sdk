@@ -132,7 +132,7 @@ public class Settings extends JingtumObject{
 	public boolean getRequireDestinationTag(){return require_destination_tag;}
 	/**
 	 * Get the transfer_rate value
-	 * transfer_rate should >= 1.0
+	 * transfer_rate should no less than 1.0
 	 * @return transfer_rate
 	 */
 	public String getTransferRate(){return transfer_rate;}
@@ -146,7 +146,7 @@ public class Settings extends JingtumObject{
 
 	/**
 	 * Get the transfer_rate value
-	 * transfer_rate should >= 1.0
+	 * transfer_rate should no less than 1.0
 	 * @return transfer_rate
 	 */
 	public String getWalletSize(){return wallet_size;}

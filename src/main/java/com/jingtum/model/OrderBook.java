@@ -25,47 +25,10 @@ import com.jingtum.JingtumMessage;
 import com.jingtum.exception.InvalidParameterException;
 
 /**
- * @author jzhao
- * @version 1.0
+ * @author zp li
+ * @version 1.0.1
  * Order book class
  * changed to new format by simplifing the inputs
- * "price": {
-"currency": "USD",
-"counterparty": "jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",
-"value": "0.88"
-},
-"taker_gets_funded": {
-"currency": "CNY",
-"counterparty": "jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",
-"value": "93"
-},
-"taker_gets_total": {
-"currency": "CNY",
-"counterparty": "jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",
-"value": "93"
-},
-"taker_pays_funded": {
-"currency": "USD",
-"counterparty": "jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",
-"value": "81.84"
-},
-"taker_pays_total": {
-"currency": "USD",
-"counterparty": "jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS",
-"value": "81.84"
-},
-"order_maker": "js46SK8GtxSeGRR6hszxozFxftEnwEK8my",
-"sequence": 12,
-"passive": false,
-"sell": true
-}
- to
-{ price: '6',
-order_maker: 'js46SK8GtxSeGRR6hszxozFxftEnwEK8my',
-sequence: 5,
-funded: '3',
-total: '3' }
-
  *
  *
  */
@@ -81,7 +44,7 @@ public class OrderBook extends JingtumObject {
 	private boolean sell;	
 	/**
 	 * Get  base currency price as Amount object
-	 * @return price
+	 * @return amount 
 	 *
 	 */
 	public Amount getAmountPrice() {
@@ -110,7 +73,7 @@ public class OrderBook extends JingtumObject {
 	* asks(sell = true)
 	 * Funded
 	* bids(sell = false)
-	 *
+	 * @return string value of the currency
 	 *
 	 */
 	public String getFunded() {

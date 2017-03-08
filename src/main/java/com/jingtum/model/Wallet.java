@@ -1140,7 +1140,7 @@ public class Wallet extends AccountClass {
 	public boolean getRequireDestinationTag(){return settings.getRequireDestinationTag();}//require_destination_tag;}
 	/**
 	 * Get the transfer_rate value
-	 * transfer_rate should >= 1.0
+	 * transfer_rate should larger than or equal 1.0
 	 * @return transfer_rate
 	 */
 	public String getTransferRate(){return settings.getTransferRate();}//transfer_rate;}
@@ -1154,7 +1154,7 @@ public class Wallet extends AccountClass {
 
 	/**
 	 * Get the transfer_rate value
-	 * transfer_rate should >= 1.0
+	 * transfer_rate should larger or equal 1.0
 	 * @return transfer_rate
 	 */
 	public String getWalletSize(){return settings.getWalletSize();}
@@ -1329,8 +1329,9 @@ public class Wallet extends AccountClass {
 
     }
 
-    /*
+    /**
      * Form the choices array with input path list
+     * @param in_path_list
      */
 	public PaymentChoiceCollection getChoicesFromPathList(PaymentCollection in_path_list)
 			throws InvalidParameterException, AuthenticationException, InvalidRequestException, APIConnectionException,
@@ -1360,8 +1361,11 @@ public class Wallet extends AccountClass {
 
         return payment_choices;
 	}
-    /*
-    *
+
+ 	/**
+     * Get payment choice collection using receive and amount
+     * @param receiver
+     * @param amount
      */
 	public PaymentChoiceCollection getChoices(String receiver, Amount amount) throws InvalidParameterException,
 			AuthenticationException, InvalidRequestException, APIConnectionException,

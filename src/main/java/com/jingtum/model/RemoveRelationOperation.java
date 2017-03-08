@@ -61,7 +61,7 @@ public class RemoveRelationOperation extends OperationClass{
      * set disable_master flag.
      * This flag only to be true if
      * Regular Key is set
-     * @return disable_master
+     * @param in_var
      */
     public void setType(String in_var)throws InvalidParameterException{
         //check to make sure input is a valid type
@@ -74,7 +74,7 @@ public class RemoveRelationOperation extends OperationClass{
 
     /**
      * set the counterparty address
-     *
+     * @param in_address
      */
     public void setCounterparty(String in_address)throws InvalidParameterException{
 
@@ -84,7 +84,11 @@ public class RemoveRelationOperation extends OperationClass{
             throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS,null,null);
     };
 
-
+    /**
+     * set the counterparty amount
+     *
+     * @param in_amt The amount of the relations 
+     */
     public void setAmount(Amount in_amt)throws InvalidParameterException{
         if(!Utility.isValidAmount(in_amt)){
             throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_AMOUNT,null,null);

@@ -1,7 +1,10 @@
 #Jingtum-java-sdk
 
 The Jingtum Java Sdk library provides APIs to build transactions and connect to Jingtum networks.
+
 SDK version 1.0.1
+
+MAVEN Repository Path: /com/jingtum/sdk/1.0.1/sdk-1.0.1.jar
 
 #Installation
 
