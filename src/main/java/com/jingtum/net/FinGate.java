@@ -228,8 +228,8 @@ public class FinGate extends AccountClass {
      * @param secret
      * @throws InvalidParameterException
      */
-    public void setAccount(String secret, String address) throws InvalidParameterException {
-        if (!Utility.validateKeyPair(secret, address)) {
+    public void setAccount(String address, String secret) throws InvalidParameterException {
+        if (!Utility.validateKeyPair(address, secret)) {
             throw new InvalidParameterException(JingtumMessage.INVALID_JINGTUM_ADDRESS_OR_SECRET, secret+address ,
                     null);
         }
